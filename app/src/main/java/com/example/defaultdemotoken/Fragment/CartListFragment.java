@@ -39,6 +39,7 @@ public class CartListFragment extends Fragment {
                 .setDisplayHomeAsUpEnabled(true);
         ((NavigationActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.signs);
 
+        //demo
         toolbar_cart.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
