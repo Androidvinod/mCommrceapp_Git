@@ -1,0 +1,49 @@
+<resources>
+    <string name="app_name">DefaultDemoToken</string>
+    <string name="price">100</string>
+    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="back">Please press back again to exit</string>
+
+    <string name="nointernet">Please connect to internet and try again</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_send">Send</string>
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="favourite">Wishlist</string>
+    <string name="cart">Cart</string>
+    <string name="account">My Account</string>
+    <string name="manufacturer">Manufacturers</string>
+    <string name="apply">Apply</string>
+    <string name="reset">RESET</string>
+    <string name="home_second">Home Second</string>
+    <string name="wentwrong">Something went wrong ..</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+
+    <string name="google_maps_key">AIzaSyACEdrg8VTLbxmOWcGGYI8YMsQN-OfdwKE</string>
+    <string name="delete">Delete</string>
+    <string name="search_hint">Search Here..</string>
+    <string name="your_string_here">USE CODE : FASH20<u>underline</u>.</string>
+    <string name="browse">Browse Categories</string>
+    <string name="bestselling">Best Selling</string>
+    <string name="seeall">See all</string>
+    <string name="arrival">New Arrivals</string>
+    <string name="newee">New</string>
+    <string name="filter">Filter</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="showresult">Show Result</string>
+    <string name="clearall">Clear All</string>
+    <string name="sortby">Sort By</string>
+    <string name="filterby">Filter By</string>
+
+</resources>

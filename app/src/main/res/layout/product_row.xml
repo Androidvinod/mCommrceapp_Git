@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/padding10"
+    android:id="@+id/lv_product_clickk"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="210dp">
+
+            <com.example.defaultdemotoken.RoundRectCornerImageView
+                android:id="@+id/iv_product_img"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:src="@drawable/image" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="@dimen/padding5"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:weightSum="4">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:layout_marginRight="@dimen/padding10"
+                    android:orientation="vertical"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_gravity="end"
+                    android:layout_alignParentRight="true">
+                    <ImageView
+                        android:id="@+id/iv_pluss"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/pluss" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="@dimen/padding10"
+            android:weightSum="6">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded"
+                    android:padding="@dimen/padding3">
+                    <TextView
+                        android:id="@+id/tv_product_new"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/newee"
+                        android:textSize="@dimen/text_12"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:textColor="@color/white"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2.5"
+                android:orientation="vertical"
+                android:weightSum="4"
+                android:layout_gravity="end">
+                <ImageView
+                    android:id="@+id/iv_wishlist"
+                    android:layout_gravity="end"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:tint="@color/black"
+                    android:src="@drawable/wishlist"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textSize="@dimen/text_16"
+        android:id="@+id/tv_product_name"
+        android:includeFontPadding="false"
+        android:lines="1"
+        android:ellipsize="end"
+        android:text="You can Get It Top - Orange"
+        android:layout_marginTop="@dimen/padding5"
+        android:layout_gravity="center|start"
+        android:gravity="center|start"
+        android:padding="@dimen/padding3"/>
+    <RatingBar
+        android:id="@+id/ratingbar_gourment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|start"
+        android:gravity="center|start"
+        style="@style/Base.Widget.AppCompat.RatingBar.Small"
+        android:theme="@style/RatingBar"
+        android:rating="5"/>
+    <TextView
+        android:id="@+id/tv_product_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textSize="@dimen/text_16"
+        android:includeFontPadding="false"
+        android:text="$777"
+        android:layout_marginTop="@dimen/padding3"
+        android:layout_gravity="center|start"
+        android:gravity="center|start"
+        android:padding="@dimen/padding3"/>
+</LinearLayout>
