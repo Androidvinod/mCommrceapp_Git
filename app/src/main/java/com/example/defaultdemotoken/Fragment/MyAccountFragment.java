@@ -5,12 +5,19 @@ import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.defaultdemotoken.Activity.NavigationActivity;
+import com.example.defaultdemotoken.Activity.SplashActivity;
 import com.example.defaultdemotoken.R;
 
 import static com.example.defaultdemotoken.Activity.NavigationActivity.bottom_navigation;
@@ -19,9 +26,12 @@ import static com.example.defaultdemotoken.Activity.NavigationActivity.drawer;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MyAccountFragment extends Fragment {
+public class MyAccountFragment extends Fragment implements View.OnClickListener {
 
     public Toolbar toolbar_account;
+    TextView tv_signinnn,tv_create_acc,tv_sihnin,tv_my_settings_title,tv_app_setting,tv_help,tv_hotline,tv_no,tv_terms_condition,tv_privacy,tv_changepssword,tv_my_account_title,tv_detail;
+
+    LinearLayout lv_create_account,lv_sign_in,lv_app_ssettings,lv_help,lv_hotline,lv_terms_condition,lv_privacy,lv_change_password,lv_my_detail;
 
     public MyAccountFragment() {
         // Required empty public constructor
@@ -35,6 +45,7 @@ public class MyAccountFragment extends Fragment {
         v=inflater.inflate(R.layout.fragment_my_account, container, false);
         bottom_navigation.getMenu().getItem(4).setChecked(true);
         AllocateMemory(v);
+        setHasOptionsMenu(true);
         ((NavigationActivity) getActivity()).setSupportActionBar(toolbar_account);
         ((NavigationActivity) getActivity()).getSupportActionBar()
                 .setDisplayHomeAsUpEnabled(true);
@@ -47,10 +58,87 @@ public class MyAccountFragment extends Fragment {
                         .openDrawer(GravityCompat.START);
             }
         });
+
+        lv_change_password.setOnClickListener(this);
+        lv_my_detail.setOnClickListener(this);
         return v;
     }
 
     private void AllocateMemory(View v) {
+        tv_detail = v.findViewById(R.id.tv_detail);
+        lv_my_detail = v.findViewById(R.id.lv_my_detail);
+        tv_my_account_title = v.findViewById(R.id.tv_my_account_title);
+        tv_changepssword = v.findViewById(R.id.tv_changepssword);
+        tv_privacy = v.findViewById(R.id.tv_privacy);
+        lv_privacy = v.findViewById(R.id.lv_privacy);
+        tv_terms_condition = v.findViewById(R.id.tv_terms_condition);
+        lv_terms_condition = v.findViewById(R.id.lv_terms_condition);
+        tv_no = v.findViewById(R.id.tv_no);
+        tv_hotline = v.findViewById(R.id.tv_hotline);
+        lv_hotline = v.findViewById(R.id.lv_hotline);
+        tv_help = v.findViewById(R.id.tv_help);
+        lv_help = v.findViewById(R.id.lv_help);
+        tv_app_setting = v.findViewById(R.id.tv_app_setting);
+        lv_app_ssettings = v.findViewById(R.id.lv_app_ssettings);
+        lv_sign_in = v.findViewById(R.id.lv_sign_in);
         toolbar_account = v.findViewById(R.id.toolbar_account);
+        tv_signinnn = v.findViewById(R.id.tv_signinnn);
+        lv_create_account = v.findViewById(R.id.lv_create_account);
+        tv_create_acc = v.findViewById(R.id.tv_create_acc);
+        tv_sihnin = v.findViewById(R.id.tv_sihnin);
+        tv_my_settings_title = v.findViewById(R.id.tv_my_settings_title);
+        lv_change_password = v.findViewById(R.id.lv_change_password);
+
+
+
+        tv_app_setting.setTypeface(SplashActivity.montserrat_medium);
+        tv_my_account_title.setTypeface(SplashActivity.montserrat_semibold);
+        tv_my_settings_title.setTypeface(SplashActivity.montserrat_semibold);
+        tv_sihnin.setTypeface(SplashActivity.montserrat_medium);
+        tv_create_acc.setTypeface(SplashActivity.montserrat_medium);
+        tv_signinnn.setTypeface(SplashActivity.montserrat_medium);
+        tv_help.setTypeface(SplashActivity.montserrat_medium);
+        tv_hotline.setTypeface(SplashActivity.montserrat_medium);
+        tv_no.setTypeface(SplashActivity.montserrat_medium);
+        tv_terms_condition.setTypeface(SplashActivity.montserrat_medium);
+        tv_privacy.setTypeface(SplashActivity.montserrat_medium);
+        tv_changepssword.setTypeface(SplashActivity.montserrat_medium);
+        tv_detail.setTypeface(SplashActivity.montserrat_medium);
+    }
+    private void pushFragment(Fragment fragment, String add_to_backstack) {
+        if (fragment == null)
+            return;
+        FragmentManager fragmentManager = getFragmentManager();
+        if (fragmentManager != null) {
+            FragmentTransaction ft = fragmentManager.beginTransaction();
+            if (ft != null) {
+                ft.replace(R.id.framlayout, fragment);
+                ft.addToBackStack(add_to_backstack);
+
+                ft.commit();
+            }
+        }
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        }
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+    //    inflater.inflate(R.menu.menu_cart, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v==lv_change_password)
+        {
+            pushFragment(new ChangePasswordFragment(),"password");
+        }else if(v== lv_my_detail)
+        {
+            pushFragment(new MyAddressFragment(),"detail");
+        }
     }
 }

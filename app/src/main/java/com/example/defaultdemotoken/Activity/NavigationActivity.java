@@ -1,7 +1,9 @@
 package com.example.defaultdemotoken.Activity;
 
+import android.annotation.SuppressLint;
 import android.content.res.AssetManager;
-import android.content.res.ColorStateList;
+
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -65,7 +67,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class NavigationActivity extends AppCompatActivity {
-
+    private ActionBarDrawerToggle mDrawerToggle;
     private AppBarConfiguration mAppBarConfiguration;
     RecyclerView recv_category;
     //public static Toolbar toolbar;
@@ -96,9 +98,8 @@ public class NavigationActivity extends AppCompatActivity {
         AllocateMemory();
 
         setSupportActionBar(toolbar);
-
-
         toolbar.setNavigationIcon(R.drawable.signs);
+
         View header = navigationView.getHeaderView(0);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,6 +107,30 @@ public class NavigationActivity extends AppCompatActivity {
                 drawer.openDrawer(GravityCompat.START);
             }
         });
+
+        mAppBarConfiguration = new AppBarConfiguration.Builder()
+                .setDrawerLayout(drawer)
+                .build();
+        mDrawerToggle = new ActionBarDrawerToggle(this,
+                drawer,
+                toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_open) {
+
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                getSupportActionBar().setTitle("test");
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                getSupportActionBar().setTitle("drawer title");
+            }
+        };
+        drawer.addDrawerListener(mDrawerToggle);
+
+
+
 
          /*toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -161,18 +186,6 @@ public class NavigationActivity extends AppCompatActivity {
             Toast.makeText(NavigationActivity.this, getResources().getString(R.string.nointernet), Toast.LENGTH_SHORT).show();
         }
 
-        //code for big one icon size of bottom navigation item00
-        BottomNavigationMenuView menuView = (BottomNavigationMenuView) bottom_navigation.getChildAt(0);
-        for (int i = 0; i < menuView.getChildCount(); i++) {
-            final View iconView = menuView.getChildAt(2).findViewById(R.id.icon);
-            final ViewGroup.LayoutParams layoutParams = iconView.getLayoutParams();
-            final DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-            // set your height here
-            layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 42, displayMetrics);
-            // set your width here
-            layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, displayMetrics);
-            iconView.setLayoutParams(layoutParams);
-        }
 
     }
     public DrawerLayout getmDrawerLayout() {
@@ -232,19 +245,65 @@ public class NavigationActivity extends AppCompatActivity {
         }
     };
 
+    /*public static class BottomNavigationViewHelper {
+        @SuppressLint("RestrictedApi")
+        public static void disableShiftMode(BottomNavigationView view) {
+            BottomNavigationMenuView menuView = (BottomNavigationMenuView) view.getChildAt(0);
+            try {
+                Field shiftingMode = menuView.getClass().getDeclaredField("mShiftingMode");
+                shiftingMode.setAccessible(true);
+                shiftingMode.setBoolean(menuView, false);
+                shiftingMode.setAccessible(false);
+                for (int i = 0; i < menuView.getChildCount(); i++) {
+                    BottomNavigationItemView item = (BottomNavigationItemView) menuView.getChildAt(i);
+                    //noinspection RestrictedApi
+                    item.setShifting(false);
+
+                  ///  item .setShiftingMode(false);
+                    // set once again checked value, so view will be updated
+                    //noinspection RestrictedApi
+                    item.setChecked(item.getItemData().isChecked());
+                }
+            } catch (NoSuchFieldException e) {
+                Log.e("BNVHelper", "Unable to get shift mode field", e);
+            } catch (IllegalAccessException e) {
+                Log.e("BNVHelper", "Unable to change value of shift mode", e);
+            }
+        }
+    }*/
     private void Bootom_Navigation_view() {
+
+
+        //code for big one icon size of bottom navigation item00
+        BottomNavigationMenuView menuView = (BottomNavigationMenuView) bottom_navigation.getChildAt(0);
+        for (int i = 0; i < menuView.getChildCount(); i++) {
+            final View iconView = menuView.getChildAt(2).findViewById(R.id.icon);
+            final ViewGroup.LayoutParams layoutParams = iconView.getLayoutParams();
+            final DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+            // set your height here
+            layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 42, displayMetrics);
+            // set your width here
+            layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, displayMetrics);
+            iconView.setLayoutParams(layoutParams);
+        }
+
+
+
+     //   BottomNavigationViewHelper.disableShiftMode(bottom_navigation);
+
         bottom_navigation.setItemIconTintList(null);
         bottom_navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         Menu menu = bottom_navigation.getMenu();
         selectFragment(menu.getItem(2));
 
         //cartitem_count = Login_preference.getCart_item_count(NavigationActivity.this);
-        BottomNavigationMenuView menuView = (BottomNavigationMenuView) bottom_navigation.getChildAt(0);
+     //   BottomNavigationMenuView menuView = (BottomNavigationMenuView) bottom_navigation.getChildAt(0);
     }
 
     private void pushFragment(Fragment fragment, String add_to_backstack) {
         if (fragment == null)
             return;
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (fragmentManager != null) {
             FragmentTransaction ft = fragmentManager.beginTransaction();
@@ -347,17 +406,7 @@ public class NavigationActivity extends AppCompatActivity {
         montserrat_light = Typeface.createFromAsset(am,
                 String.format(Locale.getDefault(), "montserrat_light.ttf"));
     }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Pass the event to ActionBarDrawerToggle, if it returns
-        // true, then it has handled the app icon touch event
-        if (toggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        // Handle your other action bar items...
 
-        return super.onOptionsItemSelected(item);
-    }
     private void setNavigationIcon_headerview() {
 
 
@@ -387,6 +436,26 @@ public class NavigationActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_cart, menu);
         return true;
+    }
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     @Override

@@ -108,8 +108,17 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 public void onClick(View v) {
 
                     Log.e("debu_home","=kj");
+                    ((NavigationActivity) getActivity()).getmDrawerLayout().openDrawer(GravityCompat.START);
+                    //drawer.openDrawer(GravityCompat.START);
 
-                    drawer.openDrawer(GravityCompat.START);
+                }
+            });
+
+            toolbar_home.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.e("debu_home","=kkk");
+                    ((NavigationActivity) getActivity()).getmDrawerLayout().openDrawer(GravityCompat.START);
 
                 }
             });

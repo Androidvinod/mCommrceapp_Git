@@ -22,7 +22,9 @@
     <color name="login_edit_color">#898c91</color>
     <color name="view_color">#ebebeb</color>
     <color name="light_grey">#b7b7b7</color>
-
+    <color name="round_corner_color">#cccccc</color>
+    <color name="ed_text_signin">#919191</color>
+    <color name="greey">#cccccc</color>
     <color name="grey">#6b6b6b</color>
     <color name="grey_popup_line">#dfdfdf</color>
     <color name="green">#00c569</color>
@@ -32,5 +34,5 @@
     <color name="offgrey">#797979</color>
     <color name="greyyy">#f7f7f7</color>
     <color name="lightgreyy">#e4e4e4</color>
-
+    <color name="togelbutton">#777777</color>
 </resources>

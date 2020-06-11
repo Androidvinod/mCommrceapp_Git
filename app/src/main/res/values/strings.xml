@@ -38,12 +38,54 @@
     <string name="arrival">New Arrivals</string>
     <string name="newee">New</string>
     <string name="filter">Filter</string>
-
+    <string name="newpassword">New Password</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="showresult">Show Result</string>
     <string name="clearall">Clear All</string>
     <string name="sortby">Sort By</string>
     <string name="filterby">Filter By</string>
+    <string name="createaccount">Create Account</string>
+    <string name="signin">Sign In</string>
+    <string name="mysettings">Settings</string>
+    <string name="app_setting">App Settings</string>
+    <string name="helpinfo"><![CDATA[Help & Info]]></string>
+    <string name="hotline">Hot Line</string>
+    <string name="terms">Terms and Conditions</string>
+    <string name="privacy"><![CDATA[Privacy & Policy]]></string>
+    <string name="detail"><![CDATA[Address & Details]]></string>
+    <string name="changepsw">Change Password</string>
+    <string name="changepassword">Change my Password</string>
+    <string name="confirmpassword">Confirm Password</string>
+    <string name="password_desc">Your new password must be at least 6 characters long.</string>
+    <string name="savepassword">Save my new  password</string>
+    <string name="currentpassword">Current Password</string>
+    <string name="accinfo">Account Information</string>
+    <string name="addnewAddress"> ADD NEW ADDRESS </string>
+    <string name="save"> SAVE </string>
+    <string name="fullname">Enter Fullname</string>
+    <string name="phoneno">Enter Phone number</string>
+    <string name="myaccount">MY ACCOUNT</string>
+    <string name="my_details">My Details</string>
+    <string name="firstname">First Name</string>
+    <string name="typeyourfname">Type your first name</string>
+    <string name="lastname">Last Name</string>
+    <string name="typeyourlname">Type your last name</string>
+    <string name="phonenumber">Phone Number</string>
+    <string name="typephonewithcc">Type your country code and phone number</string>
+    <string name="streetadd">Street Address</string>
+    <string name="typeyourstreetadd">Type our street address</string>
+    <string name="district">District</string>
+    <string name="typeyourdistrict">Type your district</string>
+    <string name="city">City</string>
+    <string name="choosecity">Choose your city</string>
+    <string name="country">Country</string>
+    <string name="choosecountry">Choose your country</string>
+    <string name="emailaddresss">Email Address</string>
 
+    <string name="updatemydetails">Update my Details</string>
+    <string name="address">Address</string>
+    <string name="editadd">Edit Address</string>
+    <string name="editdetails">Edit Details</string>
+    <string name="postalcode">Postal Code</string>
 </resources>
