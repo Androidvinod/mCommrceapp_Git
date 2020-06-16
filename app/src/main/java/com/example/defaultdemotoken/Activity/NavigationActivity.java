@@ -11,6 +11,7 @@ import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
@@ -26,6 +27,7 @@ import com.example.defaultdemotoken.Fragment.HomeFragment;
 
 import com.example.defaultdemotoken.Adapter.ChildDataAdapter;
 import com.example.defaultdemotoken.CheckNetwork;
+import com.example.defaultdemotoken.Fragment.LoginFragment;
 import com.example.defaultdemotoken.Fragment.MyAccountFragment;
 import com.example.defaultdemotoken.Fragment.SearchFragment;
 import com.example.defaultdemotoken.Fragment.WishlistFragment;
@@ -58,10 +60,15 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Locale;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -76,9 +83,7 @@ public class NavigationActivity extends AppCompatActivity {
     NavigationView navigationView;
     RelativeLayout relative_layout;
     public static BottomNavigationView bottom_navigation;
-    public static AssetManager am;
-    public static Typeface montserrat_medium, montserrat_regular, montserrat_semibold, montserratbold, montserrat_light;
-    boolean doubleBackToExitPressedOnce = false;
+     boolean doubleBackToExitPressedOnce = false;
     ApiInterface api;
     ImageView nav_iv_close;
     ChildDataAdapter categoryAdapter;
@@ -108,7 +113,7 @@ public class NavigationActivity extends AppCompatActivity {
             }
         });
 
-        mAppBarConfiguration = new AppBarConfiguration.Builder()
+      /*  mAppBarConfiguration = new AppBarConfiguration.Builder()
                 .setDrawerLayout(drawer)
                 .build();
         mDrawerToggle = new ActionBarDrawerToggle(this,
@@ -119,52 +124,23 @@ public class NavigationActivity extends AppCompatActivity {
 
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
-                getSupportActionBar().setTitle("test");
+              //  getSupportActionBar().setTitle("test");
             }
 
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                getSupportActionBar().setTitle("drawer title");
+              //  getSupportActionBar().setTitle("drawer title");
             }
         };
-        drawer.addDrawerListener(mDrawerToggle);
+        drawer.addDrawerListener(mDrawerToggle);*/
 
 
-
-
-         /*toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-    */
-/*
-        toggle = new ActionBarDrawerToggle(
-                this,
-                drawer,
-                toolbar,
-                R.string.navigation_drawer_open,
-                R.string.navigation_drawer_open)
-        {
-            public void onDrawerClosed(View view)
-            {
-              //  getActionBar().setTitle(mTitle);
-                invalidateOptionsMenu();
-            }
-
-            public void onDrawerOpened(View drawerView)
-            {
-                //getActionBar().setTitle(mDrawerTitle);
-                invalidateOptionsMenu();
-            }
-        };
-        toggle.syncState();
-
-        drawer.addDrawerListener(toggle);*/
-
-        //  setNavigationIcon_headerview();
-        Bootom_Navigation_view();
+        api = ApiClient.getClient().create(ApiInterface.class);
         AttachRecyclerView();
         bottom_navigation.setItemIconTintList(null);
-        api = ApiClient.getClient().create(ApiInterface.class);
+        Bootom_Navigation_view();
+
+
 
         bottom_navigation.setBackgroundColor(getResources().getColor(R.color.white));
     //    bottom_navigation.setItemTextAppearanceActive(NavigationActivity.this,R .style.BottomNavigationVieww);
@@ -173,14 +149,10 @@ public class NavigationActivity extends AppCompatActivity {
         //setSupportActionBar(toolbar);
         //toolbar.setTitle("");
 
-        //setFontStyle();
-        //SetTypeface();
-
-        //bind data to recyclerview
-
         //calling api of categiry list for side menu
         if (CheckNetwork.isNetworkAvailable(NavigationActivity.this)) {
             getCategoryList();
+            get_Customer_tokenapi();
         } else {
             //    noInternetDialog(NavigationActivity.this);
             Toast.makeText(NavigationActivity.this, getResources().getString(R.string.nointernet), Toast.LENGTH_SHORT).show();
@@ -192,6 +164,63 @@ public class NavigationActivity extends AppCompatActivity {
         return drawer;
     }
 
+   private void get_Customer_tokenapi() {
+        Log.e("response201tokenff",""+Login_preference.gettoken(NavigationActivity.this));
+        Call<String> customertoken = api.getcustomerToken(ApiClient.MAIN_URLL+"integration/customer/token?username=vinod@dolphinwebsolution.com&password=vinod@203");
+        customertoken.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.e("response200",""+response.toString());
+                Log.e("response201",""+response.body());
+                Login_preference.setCustomertoken(NavigationActivity.this,response.body());
+               // get_Customer_QuoteId();
+
+                callWishlistCountApi();
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(NavigationActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                t.printStackTrace();
+            }
+        });
+    }
+    private void callWishlistCountApi() {
+        Log.e("response201tokenff",""+Login_preference.gettoken(NavigationActivity.this));
+        Call<ResponseBody> customertoken = api.defaultWishlistCount("Bearer "+Login_preference.getCustomertoken(NavigationActivity.this));
+        customertoken.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.e("response200gffgdf",""+response.toString());
+                Log.e("response201fgd",""+response.body());
+                if(response.code()==200 || response.isSuccessful())
+                {
+                    try {
+                        JSONArray jsonObject = new JSONArray(response.body().string());
+
+                        String count= jsonObject.getJSONObject(0).getString("total_items");
+                        tv_wishlist_count.setText(count);
+                        Login_preference.set_wishlist_count(NavigationActivity.this,count);
+
+                        tv_wishlist_count.setText(Login_preference.get_wishlist_count(NavigationActivity.this));
+
+                        Log.e("wishcount",""+count);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }else {
+
+                }
+
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(NavigationActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                t.printStackTrace();
+            }
+        });
+    }
 
     private void AttachRecyclerView() {
         categoryAdapter = new ChildDataAdapter(NavigationActivity.this);
@@ -199,6 +228,7 @@ public class NavigationActivity extends AppCompatActivity {
         recv_category.setItemAnimator(new DefaultItemAnimator());
         recv_category.setAdapter(categoryAdapter);
     }
+
     private void getCategoryList() {
         lv_nodata_category.setVisibility(View.GONE);
         recv_category.setVisibility(View.VISIBLE);
@@ -231,6 +261,7 @@ public class NavigationActivity extends AppCompatActivity {
         return api.categories("Bearer "+Login_preference.gettoken(NavigationActivity.this));
 
     }
+
     private List<ChildData> fetchResults(Response<CategoriesModel> response) {
         Log.e("newin_home_209", "" + response.body());
         CategoriesModel CategoriesModel = response.body();
@@ -298,6 +329,27 @@ public class NavigationActivity extends AppCompatActivity {
 
         //cartitem_count = Login_preference.getCart_item_count(NavigationActivity.this);
      //   BottomNavigationMenuView menuView = (BottomNavigationMenuView) bottom_navigation.getChildAt(0);
+
+
+
+        //wishlist count show
+        wishlist_count = Login_preference.get_wishlist_count(NavigationActivity.this);
+        BottomNavigationMenuView menuView1 = (BottomNavigationMenuView) bottom_navigation.getChildAt(0);
+
+        BottomNavigationItemView itemView_wishlist = (BottomNavigationItemView) menuView1.getChildAt(1);
+      View  wishlist_badge = LayoutInflater.from(this).inflate(R.layout.wishlist_count, menuView1, false);
+        tv_wishlist_count = (TextView) wishlist_badge.findViewById(R.id.badge_wishlist);
+        Log.e("debug_309","fg"+Login_preference.get_wishlist_count(NavigationActivity.this));
+
+        if (wishlist_count.equalsIgnoreCase("null") || wishlist_count.equals("") || wishlist_count.equals("0")) {
+            tv_wishlist_count.setVisibility(View.GONE);
+        } else {
+            tv_wishlist_count.setVisibility(View.VISIBLE);
+            tv_wishlist_count.setText(wishlist_count);
+        }
+
+        itemView_wishlist.addView(wishlist_badge);
+
     }
 
     private void pushFragment(Fragment fragment, String add_to_backstack) {
@@ -391,21 +443,7 @@ public class NavigationActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
     }
 
-    private void setFontStyle() {
-        //holder.txt_pack_title.setTypeface(Home.typeface);
-        //holder.txt_pack_title.setText(package_model.getPackage_title());
-        am = NavigationActivity.this.getAssets();
-        montserrat_medium = Typeface.createFromAsset(am,
-                String.format(Locale.getDefault(), "montserrat_medium.ttf"));
-        montserrat_regular = Typeface.createFromAsset(am,
-                String.format(Locale.getDefault(), "montserrat_regular.ttf"));
-        montserrat_semibold = Typeface.createFromAsset(am,
-                String.format(Locale.getDefault(), "montserrat_semibold.ttf"));
-        montserratbold = Typeface.createFromAsset(am,
-                String.format(Locale.getDefault(), "montserratbold.ttf"));
-        montserrat_light = Typeface.createFromAsset(am,
-                String.format(Locale.getDefault(), "montserrat_light.ttf"));
-    }
+
 
     private void setNavigationIcon_headerview() {
 
@@ -431,27 +469,14 @@ public class NavigationActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_cart, menu);
-        return true;
-    }
 
 
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
-    }
+
+
+
+
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);

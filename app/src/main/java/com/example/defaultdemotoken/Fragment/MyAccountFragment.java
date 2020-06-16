@@ -1,5 +1,6 @@
 package com.example.defaultdemotoken.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.Toolbar;
@@ -15,10 +16,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.defaultdemotoken.Activity.NavigationActivity;
 import com.example.defaultdemotoken.Activity.SplashActivity;
+import com.example.defaultdemotoken.Login_preference;
 import com.example.defaultdemotoken.R;
+import com.gdacciaro.iOSDialog.iOSDialog;
+import com.gdacciaro.iOSDialog.iOSDialogBuilder;
+import com.gdacciaro.iOSDialog.iOSDialogClickListener;
 
 import static com.example.defaultdemotoken.Activity.NavigationActivity.bottom_navigation;
 import static com.example.defaultdemotoken.Activity.NavigationActivity.drawer;
@@ -29,9 +35,11 @@ import static com.example.defaultdemotoken.Activity.NavigationActivity.drawer;
 public class MyAccountFragment extends Fragment implements View.OnClickListener {
 
     public Toolbar toolbar_account;
-    TextView tv_signinnn,tv_create_acc,tv_sihnin,tv_my_settings_title,tv_app_setting,tv_help,tv_hotline,tv_no,tv_terms_condition,tv_privacy,tv_changepssword,tv_my_account_title,tv_detail;
+    TextView tv_signinnn,tv_create_acc,tv_sihnin,tv_my_settings_title,tv_app_setting,tv_help,
+            tv_hotline,tv_no,tv_terms_condition,tv_privacy,tv_changepssword,tv_my_account_title,tv_detail,tv_create_logout;
 
-    LinearLayout lv_create_account,lv_sign_in,lv_app_ssettings,lv_help,lv_hotline,lv_terms_condition,lv_privacy,lv_change_password,lv_my_detail;
+    LinearLayout lv_create_account,lv_sign_in,lv_app_ssettings,lv_help,lv_hotline,lv_terms_condition,lv_privacy,lv_change_password,lv_my_detail,lv_with_login,
+            lv_without_login,lv_logut;
 
     public MyAccountFragment() {
         // Required empty public constructor
@@ -61,10 +69,30 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
 
         lv_change_password.setOnClickListener(this);
         lv_my_detail.setOnClickListener(this);
+        lv_sign_in.setOnClickListener(this);
+        lv_create_account.setOnClickListener(this);
+        lv_logut.setOnClickListener(this);
+
+
+        if(Login_preference.getLogin_flag(getActivity()).equalsIgnoreCase("1"))
+        {
+            lv_logut.setVisibility(View.VISIBLE);
+            lv_with_login.setVisibility(View.VISIBLE);
+            lv_without_login.setVisibility(View.GONE);
+        }else {
+            lv_logut.setVisibility(View.GONE);
+            lv_with_login.setVisibility(View.GONE);
+            lv_without_login.setVisibility(View.VISIBLE);
+        }
+
         return v;
     }
 
     private void AllocateMemory(View v) {
+        tv_create_logout = v.findViewById(R.id.tv_create_logout);
+        lv_logut = v.findViewById(R.id.lv_logut);
+        lv_without_login = v.findViewById(R.id.lv_without_login);
+        lv_with_login = v.findViewById(R.id.lv_with_login);
         tv_detail = v.findViewById(R.id.tv_detail);
         lv_my_detail = v.findViewById(R.id.lv_my_detail);
         tv_my_account_title = v.findViewById(R.id.tv_my_account_title);
@@ -97,6 +125,7 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
         tv_sihnin.setTypeface(SplashActivity.montserrat_medium);
         tv_create_acc.setTypeface(SplashActivity.montserrat_medium);
         tv_signinnn.setTypeface(SplashActivity.montserrat_medium);
+        tv_create_logout.setTypeface(SplashActivity.montserrat_medium);
         tv_help.setTypeface(SplashActivity.montserrat_medium);
         tv_hotline.setTypeface(SplashActivity.montserrat_medium);
         tv_no.setTypeface(SplashActivity.montserrat_medium);
@@ -139,6 +168,67 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
         }else if(v== lv_my_detail)
         {
             pushFragment(new MyAddressFragment(),"detail");
+        }else if(v==lv_sign_in)
+        {
+            pushFragment(new LoginFragment(),"new Login");
+        }else if(v==lv_create_account)
+        {
+            pushFragment(new RegisterFragment(),"register");
+        }else if(v==lv_logut)
+        {
+            if (Login_preference.getLogin_flag(getActivity()).equalsIgnoreCase("1")) {
+                new iOSDialogBuilder(getActivity())
+                        .setTitle(getString(R.string.app_name))
+                        .setSubtitle(getString(R.string.logoutmessge))
+                        .setBoldPositiveLabel(true)
+                        .setCancelable(false)
+                        .setPositiveListener(getString(R.string.yes), new iOSDialogClickListener() {
+                            @Override
+                            public void onClick(iOSDialog dialog) {
+                                Intent intent = new Intent(getActivity(), NavigationActivity.class);
+                                startActivity(intent);
+                               /* if(getActivity()!=null)
+                                {
+                                    Login_preference.setLogin_flag(getActivity(), "0");
+                                }*/
+                                Login_preference.setLogin_flag(getActivity(), "0");
+                                Login_preference.prefsEditor.remove("customertoken").apply();
+                                Login_preference.prefsEditor.remove("quote_id").apply();
+                                Login_preference.prefsEditor.remove("item_count").apply();
+                                Login_preference.prefsEditor.remove("customer_id").apply();
+                                Login_preference.prefsEditor.remove("email").apply();
+                                Login_preference.prefsEditor.remove("fullname").apply();
+                                ///   Login_preference.prefsEditor.remove("items_qty").apply();
+                                //Login_preference.prefsEditor.remove("login_flag").apply();
+                                Login_preference.prefsEditor.remove("wishlist_count").apply();
+
+                                dialog.dismiss();
+                                getActivity().finish();
+                                Toast.makeText(getContext(), "" + getActivity().getResources().getString(R.string.logout_message), Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeListener(getString(R.string.no), new iOSDialogClickListener() {
+                            @Override
+                            public void onClick(iOSDialog dialog) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .build().show();
+            } else {
+                LoginFragment myFragment = new LoginFragment();
+                String screen = "Account";
+                Bundle b = new Bundle();
+                b.putString("screen", "" + screen);
+                myFragment.setArguments(b);
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.fade_in,
+                                0, 0, R.anim.fade_out)
+                        .addToBackStack("Account")
+                        .add(R.id.framlayout, myFragment)
+                        .commit();
+
+            }
+
         }
     }
 }

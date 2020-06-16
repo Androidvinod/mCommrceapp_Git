@@ -1,47 +1,60 @@
 package com.example.defaultdemotoken.Fragment;
 
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.defaultdemotoken.Activity.NavigationActivity;
-import com.example.defaultdemotoken.Adapter.GooglemapAdapter;
-import com.example.defaultdemotoken.Adapter.ProductListAdater;
+import com.example.defaultdemotoken.Adapter.WishListAdapter;
+import com.example.defaultdemotoken.CheckNetwork;
+import com.example.defaultdemotoken.Login_preference;
 import com.example.defaultdemotoken.Model.GoogleMapModel;
+import com.example.defaultdemotoken.Model.WishlistModel;
 import com.example.defaultdemotoken.R;
-import com.example.defaultdemotoken.RecyclerItemTouchHelper;
-import com.google.android.material.snackbar.Snackbar;
+import com.example.defaultdemotoken.Retrofit.ApiClient;
+import com.example.defaultdemotoken.Retrofit.ApiInterface;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 import static com.example.defaultdemotoken.Activity.NavigationActivity.bottom_navigation;
-import static com.example.defaultdemotoken.Activity.NavigationActivity.drawer;
+import static com.example.defaultdemotoken.Activity.NavigationActivity.tv_wishlist_count;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class WishlistFragment extends Fragment implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
+public class WishlistFragment extends Fragment  {
+    public static List<WishlistModel> favouriteproductlist = new ArrayList<WishlistModel>();
 
     View v;
-    GooglemapAdapter googlemapAdapter;
+    WishListAdapter wishListAdapter;
     Toolbar toolbar_wislist;
-    LinearLayout lvnodata_wishlistlist,lv_progress_wishist;
-    RecyclerView recv_wishlist;
+  public static   LinearLayout lvnodata_wishlistlist,lv_progress_wishist;
+  public static   RecyclerView recv_wishlist;
     List<GoogleMapModel> googleMapModelList=new ArrayList<>();
 
     public WishlistFragment() {
@@ -56,6 +69,7 @@ public class WishlistFragment extends Fragment implements RecyclerItemTouchHelpe
         v= inflater.inflate(R.layout.fragment_wishlist, container, false);
         bottom_navigation.getMenu().getItem(1).setChecked(true);
         AllocateMemory();
+        setHasOptionsMenu(true);
         ((NavigationActivity) getActivity()).setSupportActionBar(toolbar_wislist);
         ((NavigationActivity) getActivity()).getSupportActionBar()
                 .setDisplayHomeAsUpEnabled(true);
@@ -72,40 +86,146 @@ public class WishlistFragment extends Fragment implements RecyclerItemTouchHelpe
         toolbar_wislist.setTitle("WishList");
         toolbar_wislist.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
 
-        googlemapAdapter = new GooglemapAdapter(getActivity(),googleMapModelList);
+        wishListAdapter = new WishListAdapter(getActivity(),favouriteproductlist);
         recv_wishlist.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
-        recv_wishlist.setAdapter(googlemapAdapter);
+        recv_wishlist.setAdapter(wishListAdapter);
         for (int i=0; i<5;i++)
         {
-            googleMapModelList.add(new GoogleMapModel(""));
+            favouriteproductlist.add(new WishlistModel("","","","","","","",""));
 
         }
+        if (CheckNetwork.isNetworkAvailable(getActivity())) {
+            //CallGetWishlistApi(page_no);
+            callWishlistCountApi();
+            callWishistApi();
 
-        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
-        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recv_wishlist);
 
-        ItemTouchHelper.SimpleCallback itemTouchHelperCallback1 = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT | ItemTouchHelper.UP) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                // Row is swiped from recycler view
-                // remove it from adapter
-            }
-
-            @Override
-            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
-            }
-        };
-
-        // attaching the touch helper to recycler view
-        new ItemTouchHelper(itemTouchHelperCallback1).attachToRecyclerView(recv_wishlist);
+        } else {
+            Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.nointernet), Toast.LENGTH_SHORT).show();
+        }
 
         return v;
+    }
+
+    private void callWishistApi() {
+
+
+        lvnodata_wishlistlist.setVisibility(View.GONE);
+        favouriteproductlist.clear();
+        lv_progress_wishist.setVisibility(View.VISIBLE);
+        recv_wishlist.setVisibility(View.VISIBLE);
+
+
+        getwishlistdata().enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.e("response_favourite", "" + response.body());
+                Log.e("response_favourite", "" + response);
+                ResponseBody getFavouriteslist = response.body();
+
+
+                lv_progress_wishist.setVisibility(View.GONE);
+                lvnodata_wishlistlist.setVisibility(View.GONE);
+                recv_wishlist.setVisibility(View.VISIBLE);
+
+
+                if(response.isSuccessful() || response.code()==200)
+                {
+                    JSONArray jsonArray = null;
+                    try {
+                        jsonArray = new JSONArray(response.body().string());
+                        Log.e("jsonarray", "=" +jsonArray);
+                        Log.e("jsonarraylength", "=" +jsonArray.length());
+                        //  Log.e("jsonarray66ss", "=" +jsonArray.getJSONObject(0).getJSONObject("product"));
+
+                        if(jsonArray.length()==0)
+                        {
+
+                            lv_progress_wishist.setVisibility(View.GONE);
+                            lvnodata_wishlistlist.setVisibility(View.VISIBLE);
+                            recv_wishlist.setVisibility(View.GONE);
+
+                        }else {
+
+                            lv_progress_wishist.setVisibility(View.GONE);
+                            lvnodata_wishlistlist.setVisibility(View.GONE);
+                            recv_wishlist.setVisibility(View.VISIBLE);
+
+                            for (int i = 0; i < jsonArray.length(); i++) {
+
+
+                                try {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    Log.e("price", "=" + jsonObject.getJSONObject("product").getString("price"));
+                                    Log.e("name", "=" + jsonObject.getJSONObject("product").getString("name"));
+                                    Log.e("special_price", "=" + jsonObject.getJSONObject("product").getString("special_price"));
+                                    Log.e("thumbnail", "=" + jsonObject.getJSONObject("product").getString("thumbnail"));
+                                    favouriteproductlist.add(new WishlistModel
+                                            (jsonObject.getString("wishlist_item_id"),
+                                                    jsonObject.getString("wishlist_id"),
+                                                    jsonObject.getString("product_id"),
+                                                    jsonObject.getJSONObject("product").getString("sku"),
+                                                    jsonObject.getJSONObject("product").getString("price"),
+                                                    jsonObject.getJSONObject("product").getString("special_price"),
+                                                    jsonObject.getJSONObject("product").getString("name"),
+                                                    jsonObject.getJSONObject("product").getString("thumbnail")));
+                                } catch (Exception e) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    Log.e("exception22", "=" + e.getLocalizedMessage());
+                                    favouriteproductlist.add(new WishlistModel
+                                            (jsonObject.getString("wishlist_item_id"),
+                                                    jsonObject.getString("wishlist_id"),
+                                                    jsonObject.getString("product_id"),
+                                                    jsonObject.getJSONObject("product").getString("sku"),
+                                                    jsonObject.getJSONObject("product").getString("price"),
+                                                    jsonObject.getJSONObject("product").getString("null"),
+                                                    jsonObject.getJSONObject("product").getString("name"),
+                                                    jsonObject.getJSONObject("product").getString("thumbnail")));
+                                }
+
+
+                            }
+                            wishListAdapter.notifyDataSetChanged();
+                        }
+
+                          /*  Log.e("size", "=" +favouriteproductlist.size());
+                            wishListAdapter = new NewWishListAdapter(getAct ivity(), favouriteproductlist);
+                            recv_favourites.setLayoutManager( new LinearLayoutManager(parent, LinearLayoutManager.VERTICAL, false));
+                            recv_favourites.setAdapter(wishListAdapter)*/;
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }else {
+
+
+                    lv_progress_wishist.setVisibility(View.VISIBLE);
+                    lvnodata_wishlistlist.setVisibility(View.GONE);
+                    recv_wishlist.setVisibility(View.GONE);
+
+                    // Toast.makeText(parent, ""+getFavouriteslist.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+                lv_progress_wishist.setVisibility(View.VISIBLE);
+                lvnodata_wishlistlist.setVisibility(View.GONE);
+                recv_wishlist.setVisibility(View.GONE);
+                Toast.makeText(getActivity(), "" + getActivity().getResources().getString(R.string.wentwrong), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
+    private Call<ResponseBody> getwishlistdata() {
+
+        ApiInterface api = ApiClient.getClient().create(ApiInterface.class);
+        Log.e("debug_11token22","=="+ Login_preference.getCustomertoken(getActivity()));
+
+        return api.defaultgetWishlistData("Bearer "+Login_preference.getCustomertoken(getActivity()));
     }
 
     private void AllocateMemory() {
@@ -115,35 +235,63 @@ public class WishlistFragment extends Fragment implements RecyclerItemTouchHelpe
         recv_wishlist=v.findViewById(R.id.recv_wishlist);
     }
 
-    @Override
-    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
-        if (viewHolder instanceof GooglemapAdapter.MyViewHolder) {
-            // get the removed item name to display it in snack bar
-         /*   String name = cartList.get(viewHolder.getAdapterPosition()).getName();
+    private void callWishlistCountApi() {
+        Log.e("response201tokenff",""+Login_preference.getCustomertoken(getActivity()));
+        ApiInterface api = ApiClient.getClient().create(ApiInterface.class);
+        Call<ResponseBody> customertoken = api.defaultWishlistCount("Bearer "+Login_preference.getCustomertoken(getActivity()));
+        customertoken.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.e("response200gffgdf",""+response.toString());
+                Log.e("response201fgd",""+response.body());
+                if(response.code()==200 || response.isSuccessful())
+                {
+                    try {
+                        JSONArray jsonObject = new JSONArray(response.body().string());
 
-            // backup of removed item for undo purpose
-            final Item deletedItem = cartList.get(viewHolder.getAdapterPosition());
-            final int deletedIndex = viewHolder.getAdapterPosition();
+                        String count= jsonObject.getJSONObject(0).getString("total_items");
+                        tv_wishlist_count.setText(count);
+                        Login_preference.set_wishlist_count(getActivity(),count);
+                        Log.e("wishcount",""+count);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }else {
 
-            // remove the item from recycler view
-            mAdapter.removeItem(viewHolder.getAdapterPosition());
-*/
-            // showing snack bar with Undo option
-           /* Snackbar snackbar = Snackbar
-                    .make(coordinatorLayout, name + " removed from cart!", Snackbar.LENGTH_LONG);
-            snackbar.setAction("UNDO", new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    // undo is selected, restore the deleted item
-                    mAdapter.restoreItem(deletedItem, deletedIndex);
                 }
-            });
-            snackbar.setActionTextColor(Color.YELLOW);
-            snackbar.show();*/
 
-            Toast.makeText(getActivity(), "testtt", Toast.LENGTH_SHORT).show();
-        }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                t.printStackTrace();
+            }
+        });
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.menu_cart, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        /*  switch (item.getItemId()) {
+         *//*case R.id.cart:
+                pushFragment(new CartFragment());
+                return true;
+            case android.R.id.home:
+                getActivity().onBackPressed();
+                return true;
+            default:*//*
+                //return super.onOptionsItemSelected(item);
+        }
+    */
+        return super.onOptionsItemSelected(item);
+    }
 }

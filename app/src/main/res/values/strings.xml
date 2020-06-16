@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DefaultDemoToken</string>
+    <string name="app_name">mCommerce App</string>
     <string name="price">100</string>
     <string name="title_activity_navigation">NavigationActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -26,7 +26,7 @@
     <string name="home_second">Home Second</string>
     <string name="wentwrong">Something went wrong ..</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
+
 
     <string name="google_maps_key">AIzaSyACEdrg8VTLbxmOWcGGYI8YMsQN-OfdwKE</string>
     <string name="delete">Delete</string>
@@ -88,4 +88,46 @@
     <string name="editadd">Edit Address</string>
     <string name="editdetails">Edit Details</string>
     <string name="postalcode">Postal Code</string>
+    <string name="special">Special Price :</string>
+    <string name="priceee">Price :</string>
+    <string name="internet">Please check your internet connection</string>
+    <string name="login">Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="forgetpsw">Forget Password ?</string>
+    <string name="or">-OR-</string>
+    <string name="welcome">Welcome,</string>
+    <string name="signincontinue">Sign in to Continue</string>
+    <string name="sign_withfb">Sign In With Facebook</string>
+    <string name="sign_upgoogleaccount">Sign In With Google</string>
+    <string name="register">Register</string>
+    <string name="name" >Name</string>
+    <string name="signup">SIGN UP</string>
+    <string name="createaccounttt">Create An Account</string>
+
+
+
+    <string name="enterfirstname">Please Enter First Name</string>
+    <string name="enterlastname">Please Enter Last Name</string>
+    <string name="enteremailaddress">Please Enter Email Address</string>
+    <string name="entermobilenumber">Please Enter Mobile Number</string>
+    <string name="entercivilid">Please Enter Civil ID</string>
+    <string name="enterweight">Please Enter Weight</string>
+    <string name="enterheight">Please Enter Height</string>
+    <string name="selectoption">Please Select Any Option</string>
+    <string name="enteraddress">Please Enter Address</string>
+    <string name="enterzip">Please Enter Zip</string>
+    <string name="enterdistrict">Please Enter District</string>
+    <string name="enterphonenumber">Please Enter Phone Number</string>
+    <string name="validemail">Please Enter Valid Email Address</string>
+    <string name="validpassword">Password must be at least 8 characters long</string>
+    <string name="enterpw">Please Enter Your Password</string>
+    <string name="validpassword_validate">Minumum password length should be 8 with uppercase ,lowercase ,Special Characters and digits</string>
+    <string name="logout">Logout</string>
+
+    <string name="logoutmessge">Are you sure you want to logout?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="logout_message">Logged out successfully</string>
 </resources>

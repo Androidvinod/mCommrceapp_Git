@@ -127,13 +127,14 @@
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
                         android:textColor="@color/black"
-                        android:padding="@dimen/padding5"
+                        android:paddingRight="@dimen/padding5"
+                        android:paddingLeft="@dimen/padding5"
                         android:textSize="@dimen/text_16"
                         android:text="@string/filter"/>
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/filter"/>
+                        android:src="@drawable/ic_filter_list_black_24dp"/>
                 </LinearLayout>
 
             </LinearLayout>
@@ -151,7 +152,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/padding5"
                     android:layout_marginRight="@dimen/padding5"
-                    android:src="@drawable/ic_menu_camera"/>
+                    android:src="@drawable/ic_border_all_black_24dp"/>
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

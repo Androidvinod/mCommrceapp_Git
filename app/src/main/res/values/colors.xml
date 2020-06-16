@@ -19,6 +19,7 @@
     <color name="rounded_blue">#d4eaff</color>
     <color name="sqcolor">#fdfdfd</color>
 
+    <color name="off_grey">#b1b1b1</color>
     <color name="login_edit_color">#898c91</color>
     <color name="view_color">#ebebeb</color>
     <color name="light_grey">#b7b7b7</color>
@@ -27,7 +28,8 @@
     <color name="greey">#cccccc</color>
     <color name="grey">#6b6b6b</color>
     <color name="grey_popup_line">#dfdfdf</color>
-    <color name="green">#00c569</color>
+    <color name="green">#09ED83</color>
+    <color name="lightgreen">#FF0fED83</color>
     <color name="light_greyy">#dfdfdf</color>
     <color name="duskYellow">#ffec3d</color>
     <color name="offblack">#868686</color>
@@ -35,4 +37,6 @@
     <color name="greyyy">#f7f7f7</color>
     <color name="lightgreyy">#e4e4e4</color>
     <color name="togelbutton">#777777</color>
+    <color name="greeen">#00c569</color>
+    <color name="cart_bg">#fafafa</color>
 </resources>

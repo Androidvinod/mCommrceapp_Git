@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.example.defaultdemotoken.Activity.NavigationActivity;
 import com.example.defaultdemotoken.Activity.SplashActivity;
+import com.example.defaultdemotoken.Login_preference;
 import com.example.defaultdemotoken.R;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -80,6 +81,12 @@ public class EditAddressFragment extends Fragment {
 
         if(screen.equalsIgnoreCase("edit address"))
         { tv_mydetails.setText(getActivity().getResources().getString(R.string.editadd));
+
+
+            et_details_fullname.setText(Login_preference.getfirstname(getActivity()));
+            et_details_lastname.setText(Login_preference.getlastname(getActivity()));
+            et_deails_email.setText(Login_preference.getemail(getActivity()));
+
             layout_details_address.setVisibility(View.VISIBLE);
             layout_details_city.setVisibility(View.VISIBLE);
             layout_details_country.setVisibility(View.VISIBLE);
@@ -87,12 +94,20 @@ public class EditAddressFragment extends Fragment {
 
         }else if(screen.equalsIgnoreCase("edit detail"))
         {
+
+
+            et_details_fullname.setText(Login_preference.getfirstname(getActivity()));
+            et_details_lastname.setText(Login_preference.getlastname(getActivity()));
+            et_deails_email.setText(Login_preference.getemail(getActivity()));
+
             tv_mydetails.setText(getActivity().getResources().getString(R.string.editdetails));
             layout_details_address.setVisibility(View.GONE);
             layout_details_city.setVisibility(View.GONE);
             layout_details_country.setVisibility(View.GONE);
             layout_details_postalcode.setVisibility(View.GONE);
         }
+
+
 
         return v;
     }

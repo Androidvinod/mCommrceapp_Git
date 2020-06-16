@@ -10,13 +10,30 @@
     android:gravity="center"
     tools:context=".Activity.SplashActivity">
 
-    <TextView
+
+    <LinearLayout
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome..."
-        android:textStyle="bold"
-        android:gravity="center"
         android:layout_gravity="center"
-        android:textColor="@color/grey"
-        android:textSize="30sp"/>
+        android:layout_marginTop="35dp"
+        android:background="@drawable/roundede_login_green"
+        android:gravity="center"
+        android:padding="@dimen/padding10"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fervenzi"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingRight="@dimen/padding20"
+            android:paddingLeft="@dimen/padding20"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:textSize="30sp"/>
+
+
+    </LinearLayout>
 </LinearLayout>

@@ -1,12 +1,12 @@
 package com.example.defaultdemotoken.Retrofit;
 
 
-
-
 import com.example.defaultdemotoken.Model.CategoriesModel;
 import com.example.defaultdemotoken.Model.ProductModel.ProductModel;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
@@ -15,7 +15,57 @@ import retrofit2.http.Url;
 
 
 public interface ApiInterface {
+    //generate token
+    //http://dkbraende.demoproject.info/rest/V1/integration/admin/token/?username=admin&password=9yWpe6v7(OZ7
+    @POST()
+    Call<String> token(@Url String url);
 
+
+    //login data
+    //http://dkbraende.demoproject.info/rest/V1/customers/me
+    @GET("customers/me")
+    Call<ResponseBody> loginn(@Header("Authorization") String authHeader);
+
+
+    //http://app.demoproject.info/rest/V1/customers/?customer[email]=test12@yahoo.com&customer[firstname]=AA&customer[lastname]=BB&password=admin@123
+    //register
+    @POST()
+    Call<ResponseBody> register(@Header("Authorization") String authHeader,
+                                @Url String url);
+
+
+    //Add to wishlist api
+    //post method and customer token
+    //http://dkbraende.demoproject.info/rest/V1/wishlist/add/367
+    //http://dkbraende.demoproject.info/rest/V1/wishlist/add/:wishlist_item_id
+    @POST()
+    Call<Boolean> defaultaddtowishlist(@Header("Authorization") String authHeader, @Url String url);
+
+
+    //delete api  use the delete method
+    //https://app.demoproject.info/rest/V1/wishlist/delete/26
+    @DELETE()
+    Call<Boolean> removeitemfromWishlistt(@Header("Authorization") String authHeader,
+                                          @Url String url);
+
+    //get wish list api
+    //http://dkbraende.demoproject.info/rest/V1/wishlist/items
+    @GET("wishlist/items")
+    Call<ResponseBody> defaultgetWishlistData(@Header("Authorization") String authHeader);
+
+
+    //wishlist count
+    //count wishlist api
+    //get method
+    //http://dkbraende.demoproject.info/rest/V1/wishlist/info
+    @GET("wishlist/info")
+    // http://dkbraende.demoproject.info/rest/V1/wishlist/info
+    Call<ResponseBody> defaultWishlistCount(@Header("Authorization") String authHeader);
+
+
+    //custome token
+    @POST()
+    Call<String> getcustomerToken(@Url String url);
 
 
     //http://app.demoproject.info/rest/V1/integration/admin/token/?username=admin&password=juLaGh18lAJC
@@ -30,12 +80,17 @@ public interface ApiInterface {
                                 @Query("searchCriteria[filterGroups][0][filters][0][field]") String categoryid,
                                 @Query("searchCriteria[filterGroups][0][filters][0][value]") String id);
 
-    //generate token
-    //http://dkbraende.demoproject.info/rest/V1/integration/admin/token/?username=admin&password=9yWpe6v7(OZ7
+
     @POST()
-    Call<String> token(@Url String url);
+    Call<ResponseBody> addtocart(@Header("Authorization") String token,
+                                 @Url String url);
 
+    @GET("carts/mine/items")
+    Call<ResponseBody> getcartlist(@Header("Authorization") String token);
 
+    @DELETE()
+    Call<String> removeFromCart(@Header("Authorization") String token,
+                                @Url String url);
     /*
      Payment Methods
 	/V1/carts/{cartId}/payment-methods

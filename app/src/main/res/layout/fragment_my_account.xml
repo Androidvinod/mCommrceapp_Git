@@ -90,85 +90,94 @@
                 android:background="@color/white"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tv_signinnn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/text_16"
-                    android:text="Sign in to receive exclusive offers and Promotions"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="25dp"
-                    android:weightSum="3">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/lv_without_login">
+
+                    <TextView
+                        android:id="@+id/tv_signinnn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_16"
+                        android:text="Sign in to receive exclusive offers and Promotions"/>
 
                     <LinearLayout
-
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="0.8"
-                        android:gravity="center|start"
-                        android:orientation="vertical">
+                        android:orientation="horizontal"
+                        android:layout_marginTop="25dp"
+                        android:weightSum="3">
 
                         <LinearLayout
-                            android:id="@+id/lv_create_account"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/rounded_btn_dark_gray"
-                            android:gravity="center"
-                            android:padding="@dimen/padding10">
 
-                            <TextView
-                                android:id="@+id/tv_create_acc"
-                                android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.8"
+                            android:gravity="center|start"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:id="@+id/lv_create_account"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:background="@drawable/rounded_btn_dark_gray"
                                 android:gravity="center"
-                                android:includeFontPadding="false"
-                                android:padding="@dimen/padding2"
-                                android:text="@string/createaccount"
-                                android:textColor="@color/black"
-                                android:textSize="@dimen/text_16" />
+                                android:padding="@dimen/padding10">
+
+                                <TextView
+                                    android:id="@+id/tv_create_acc"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:includeFontPadding="false"
+                                    android:padding="@dimen/padding2"
+                                    android:text="@string/createaccount"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/text_16" />
+
+                            </LinearLayout>
 
                         </LinearLayout>
 
-                    </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1.4">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.4">
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.8"
-                        android:gravity="end|center"
-                        android:orientation="vertical">
+                        </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/lv_sign_in"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/rounded_blacl"
-                            android:gravity="center"
-                            android:padding="@dimen/padding10">
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.8"
+                            android:gravity="end|center"
+                            android:orientation="vertical">
 
-                            <TextView
-                                android:id="@+id/tv_sihnin"
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:id="@+id/lv_sign_in"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:background="@drawable/rounded_blacl"
                                 android:gravity="center"
-                                android:includeFontPadding="false"
-                                android:padding="@dimen/padding2"
-                                android:text="@string/signin"
-                                android:textColor="@color/white"
-                                android:textSize="@dimen/text_16" />
+                                android:padding="@dimen/padding10">
+
+                                <TextView
+                                    android:id="@+id/tv_sihnin"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:includeFontPadding="false"
+                                    android:padding="@dimen/padding2"
+                                    android:text="@string/signin"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/text_16" />
+
+                            </LinearLayout>
 
                         </LinearLayout>
 
@@ -176,18 +185,18 @@
 
                 </LinearLayout>
 
-
-
-
                 <LinearLayout
+                    android:id="@+id/lv_with_login"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:layout_marginTop="@dimen/padding20"
+                    android:visibility="gone">
+
                     <TextView
                         android:id="@+id/tv_my_account_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="40dp"
                         android:text="@string/account"
                         android:textColor="@color/grey"
                         android:textSize="18dp"
@@ -550,6 +559,29 @@
                     </LinearLayout>
 
                 </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lv_logut"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_blacl"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:layout_marginTop="@dimen/padding30"
+                    android:padding="@dimen/padding10">
+
+                    <TextView
+                        android:id="@+id/tv_create_logout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:padding="@dimen/padding2"
+                        android:text="@string/logout"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_16" />
 
                 </LinearLayout>
             </LinearLayout>

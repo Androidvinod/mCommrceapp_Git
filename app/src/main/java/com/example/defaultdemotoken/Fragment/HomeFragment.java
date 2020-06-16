@@ -2,12 +2,9 @@ package com.example.defaultdemotoken.Fragment;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,11 +16,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -31,18 +26,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSmoothScroller;
-import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SnapHelper;
-import androidx.viewpager.widget.ViewPager;
 
 import com.example.defaultdemotoken.Activity.NavigationActivity;
 import com.example.defaultdemotoken.Activity.SplashActivity;
 import com.example.defaultdemotoken.Adapter.BestSellingAdapter;
-import com.example.defaultdemotoken.Adapter.GooglemapAdapter;
 import com.example.defaultdemotoken.Adapter.HomeCategoryAdapter;
-import com.example.defaultdemotoken.Adapter.HomeTopSliderAdapter;
 import com.example.defaultdemotoken.Adapter.ViewPagerAdapter;
 import com.example.defaultdemotoken.EnhancedWrapContentViewPager;
 import com.example.defaultdemotoken.Model.HomebannerModel;
@@ -50,16 +39,13 @@ import com.example.defaultdemotoken.R;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import me.relex.circleindicator.CircleIndicator;
-import me.relex.circleindicator.CircleIndicator2;
 
 import static com.example.defaultdemotoken.Activity.NavigationActivity.bottom_navigation;
 import static com.example.defaultdemotoken.Activity.NavigationActivity.drawer;
-
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
     public static Toolbar toolbar_home;
@@ -97,7 +83,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         if(getActivity()!=null)
         {
             Log.e("debu_home","=");
-
             ((NavigationActivity) getActivity()).setSupportActionBar(toolbar_home);
             ((NavigationActivity) getActivity()).getSupportActionBar()
                     .setDisplayHomeAsUpEnabled(true);
@@ -138,15 +123,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             HomebannerModelList.add(new HomebannerModel(" "));
             HomebannerModelList1.add(new HomebannerModel(" "));
         }
-     ;
-
         lv_see_all_categories.setOnClickListener(this);
-
-
         return v;
     }
     private class SliderTimer extends TimerTask {
-
         @Override
         public void run() {
             if(getActivity()!=null)
@@ -162,9 +142,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     }
                 }
             });
-
             }
-
         }
     }
     private void setFontFamily() {

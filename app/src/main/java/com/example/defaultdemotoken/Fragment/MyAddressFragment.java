@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.example.defaultdemotoken.Activity.NavigationActivity;
 import com.example.defaultdemotoken.Activity.SplashActivity;
+import com.example.defaultdemotoken.Login_preference;
 import com.example.defaultdemotoken.R;
 
 import java.io.Serializable;
@@ -57,6 +58,11 @@ public class MyAddressFragment extends Fragment implements View.OnClickListener 
 
         lv_edit_user_info.setOnClickListener(this);
         lv_edit_address.setOnClickListener(this);
+
+        tv_username.setText(Login_preference.getfirstname(getActivity()) +" "+ Login_preference.getlastname(getActivity()));
+        tv_fullname.setText(Login_preference.getfirstname(getActivity()) +" "+ Login_preference.getlastname(getActivity()));
+        tv_email_main.setText(Login_preference.getemail(getActivity()));
+        tv_email.setText(Login_preference.getemail(getActivity()));
 
         return v;
     }

@@ -7,6 +7,18 @@ import android.preference.PreferenceManager;
 public class Login_preference {
     public static SharedPreferences mPrefs;
     public static SharedPreferences.Editor prefsEditor;
+    public static void setCustomertoken(Context context, String value)
+    {
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefsEditor = mPrefs.edit();
+        prefsEditor.putString("customertoken", value);
+        prefsEditor.commit();
+    }
+    public static String getCustomertoken(Context context)
+    {
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return mPrefs.getString("customertoken", "");
+    }
 
     public static void settoken(Context context, String value) {
         mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
