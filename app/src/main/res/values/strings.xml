@@ -130,4 +130,6 @@
     <string name="no">No</string>
 
     <string name="logout_message">Logged out successfully</string>
+    <string name="send">SEND</string>
+    <string name="forgetpswww">Forget Password</string>
 </resources>

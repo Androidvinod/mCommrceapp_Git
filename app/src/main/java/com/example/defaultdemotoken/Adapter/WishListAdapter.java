@@ -27,6 +27,7 @@ import com.example.defaultdemotoken.Retrofit.ApiInterface;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
@@ -65,8 +66,6 @@ public class WishListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-
-
             getwish = ApiClient.getClient().create(ApiInterface.class);
             final WishlistModel product = productList.get(position);
 
@@ -103,7 +102,6 @@ public class WishListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             }
 
-
             RequestOptions requestOptions = new RequestOptions();
             requestOptions.placeholder(R.drawable.dr);
             requestOptions.error(R.drawable.dr);
@@ -138,7 +136,14 @@ public class WishListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
             });*/
 
-
+            myViewHolder.lv_add_to_cart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String  sku= String.valueOf(productList.get(position).getSku());
+                    Log.e("debg","="+sku);
+                    CallAddtoCartApi(sku);
+                }
+            });
             ((MyViewHolder) holder).lv_delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -156,13 +161,96 @@ public class WishListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
 
+    private void CallAddtoCartApi(String sku) {
+        ApiInterface api  = ApiClient.getClient().create(ApiInterface.class);
+        lvnodata_wishlistlist.setVisibility(View.GONE);
+        lv_progress_wishist.setVisibility(View.VISIBLE);
+        recv_wishlist.setVisibility(View.VISIBLE);
+
+        String url="http://dkbraende.demoproject.info/rest/V1/carts/mine/items?cartItem[quoteId]="+ Login_preference.getquote_id(context)+"&cartItem[qty]=1"+"&cartItem[sku]="+sku;
+        Log.e("skuu","="+sku);
+        Log.e("customertokensss","="+Login_preference.getCustomertoken(context));
+        Log.e("customertokensss","="+url);
+        Call<ResponseBody> addtocart = api.getaddtocartapi("Bearer "+Login_preference.getCustomertoken(context), url);
+        addtocart.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.e("res_addtocart",""+response.toString());
+                Log.e("resquotaddtocart",""+response.body());
+
+
+                if(response.isSuccessful() || response.code()==200)
+                {
+                    JSONObject jsonObject = null;
+                    try {
+                        try {
+                            lvnodata_wishlistlist.setVisibility(View.GONE);
+                            lv_progress_wishist.setVisibility(View.GONE);
+                            recv_wishlist.setVisibility(View.VISIBLE);
+
+                            jsonObject = new JSONObject(response.body().string());
+                            String name=jsonObject.getString("name");
+                            String price=jsonObject.getString("price");
+                            String product_type=jsonObject.getString("product_type");
+                            String quote_id=jsonObject.getString("quote_id");
+                            String sku=jsonObject.getString("sku");
+                            String item_id=jsonObject.getString("item_id");
+                            String qty=jsonObject.getString("qty");
+
+                            Toast.makeText(context, "Add to cart SuccessFully", Toast.LENGTH_SHORT).show();
+                            Log.e("jsonObjectss","="+jsonObject);
+                            Log.e("names","="+name);
+                            Log.e("prices","="+price);
+                            Log.e("product_types","="+product_type);
+                            Log.e("quote_ids","="+quote_id);
+                            Log.e("skus","="+sku);
+                            Log.e("item_ids","="+item_id);
+                            Log.e("qtys","="+qty);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }else {
+                    // "message": "The product that was requested doesn't exist. Verify the product and try again."
+                    lvnodata_wishlistlist.setVisibility(View.GONE);
+                    lv_progress_wishist.setVisibility(View.GONE);
+                    recv_wishlist.setVisibility(View.VISIBLE);
+
+                    Toast.makeText(context,
+                            "The product you are trying to add is not available", Toast.LENGTH_SHORT).show();/*
+                    try {
+                        Log.e("jsonObject_errorf","="+response.errorBody().string());
+                        JSONObject jsonObject = new JSONObject(response.errorBody().string());
+                        Log.e("jsonObject_error","="+jsonObject);
+                        String msg=jsonObject.getString("message");
+
+                        Toast.makeText(context,
+                                "The product you are trying to add is not available", Toast.LENGTH_SHORT).show();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }*/
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+                t.printStackTrace();
+            }
+        });
+    }
 
 
 
-        private void callRemoveFromCartApi(String itemid, int position, final View v) {
-
+    private void callRemoveFromCartApi(String itemid, int position, final View v) {
             lvnodata_wishlistlist.setVisibility(View.GONE);
-
             lv_progress_wishist.setVisibility(View.VISIBLE);
             recv_wishlist.setVisibility(View.VISIBLE);
 
@@ -204,11 +292,6 @@ public class WishListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                     }
 
-
-
-
-
-
                 }
                 @Override
                 public void onFailure(Call<Boolean> call, Throwable t) {
@@ -233,7 +316,7 @@ public class WishListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             return api.removeitemfromWishlistt("Bearer "+ Login_preference.getCustomertoken(context),url);
         }
 
-    private void callWishlistCountApi() {
+        private void callWishlistCountApi() {
         Log.e("response201tokenff",""+Login_preference.getCustomertoken(context));
         ApiInterface api = ApiClient.getClient().create(ApiInterface.class);
         Call<ResponseBody> customertoken = api.defaultWishlistCount("Bearer "+Login_preference.getCustomertoken(context));
@@ -284,11 +367,12 @@ public class WishListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             ImageView iv_wishlist_product;
             TextView tv_wishlist_product_name, tv_wishlist_msrp_title, tv_wishlist_msrp, tv_wishlist_special_price;
-            LinearLayout lv_special, lv_productwish_click,lv_delete;
+            LinearLayout lv_special, lv_productwish_click,lv_delete,lv_add_to_cart;
 
             public MyViewHolder(@NonNull View view) {
                 super(view);
 
+                lv_add_to_cart = view.findViewById(R.id.lv_add_to_cart);
                 lv_delete = view.findViewById(R.id.lv_delete);
                 lv_productwish_click = view.findViewById(R.id.lv_productwish_click);
                 lv_special = view.findViewById(R.id.lv_special);

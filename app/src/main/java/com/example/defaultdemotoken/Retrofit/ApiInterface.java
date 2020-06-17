@@ -10,6 +10,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Query;
 import retrofit2.http.Url;
 
@@ -91,6 +92,25 @@ public interface ApiInterface {
     @DELETE()
     Call<String> removeFromCart(@Header("Authorization") String token,
                                 @Url String url);
+
+
+    //add to cart
+//http://app.demoproject.info/rest/V1/carts/mine/items?cartItem[quoteId]=2&cartItem[qty]=1&cartItem[sku]=CHECKED PINAFORE DRESS
+    @POST()
+    Call<ResponseBody> getaddtocartapi(@Header("Authorization") String authHeader,
+                                       @Url String url);
+
+    //get quote id
+//http://dkbraende.demoproject.info/rest/V1/carts/mine/?customerId=12466
+    @POST()
+    Call<Integer> getQuoteid(@Header("Authorization") String authHeader,
+                             @Url String customer_id);
+
+    //http://dkbraende.demoproject.info/rest/V1/customers/password?email=info@gmail.com&template=email_reset
+//forget passwprd
+    @PUT()
+    Call<Boolean> forgetpassword(@Header("Authorization") String authHeader, @Url String url);
+
     /*
      Payment Methods
 	/V1/carts/{cartId}/payment-methods

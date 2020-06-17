@@ -35,6 +35,7 @@ import com.example.defaultdemotoken.RoundRectCornerImageView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -86,7 +87,12 @@ public class ProductListAdater extends RecyclerView.Adapter<ProductListAdater.My
                     .setDefaultRequestOptions(requestOptions)
                     .load("http://dkbraende.demoproject.info/pub/media/catalog/product"+item.getMediaGalleryEntries().get(0).getFile()).into(holder.iv_product_img);
 
-
+            holder.lv_addtocart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    callAddtoCartApi(item.getSku(),holder.lv_product_main, holder.lv_pb_prod);
+                }
+            });
             holder.lv_product_clickk.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -140,6 +146,72 @@ public class ProductListAdater extends RecyclerView.Adapter<ProductListAdater.My
             ItemList.add(r);
             notifyItemInserted(ItemList.size() - 1);
         }
+
+    private void callAddtoCartApi(String sku, final LinearLayout lv_product_main, final LinearLayout lv_pb_prod) {
+        lv_product_main.setVisibility(View.GONE);
+        lv_pb_prod.setVisibility(View.VISIBLE);
+        ApiInterface api = ApiClient.getClient().create(ApiInterface.class);
+        Log.e("product_sku_pass", "" + sku);
+        final Call<ResponseBody> productDetails = api.addtocart("Bearer " + Login_preference.getCustomertoken(context), "http://dkbraende.demoproject.info/rest/V1/carts/mine/items?cartItem[quoteId]=192001&cartItem[qty]=1&cartItem[sku]=" + sku);
+        productDetails.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                lv_product_main.setVisibility(View.VISIBLE);
+                lv_pb_prod.setVisibility(View.GONE);
+                /*AddToCartListModel model = response.body();*/
+                /*Log.e("response_add_to_cart",""+model);*/
+
+                Log.e("response_add_to_cartt", "" + response);
+
+                if (response.isSuccessful()) {
+                    JSONObject jsonObject = null;
+                    try {
+                        jsonObject = new JSONObject(response.body().string());
+
+                        String name = jsonObject.getString("name");
+                        Log.e("cart_prod_name", "" + name);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Toast.makeText(context, "product has been successfully in you cart", Toast.LENGTH_SHORT).show();
+                } else if (response.code() == Integer.parseInt("200")) {
+                    JSONObject jsonObject = null;
+                    try {
+
+                        jsonObject = new JSONObject(response.body().string());
+
+                        String name = jsonObject.getString("name");
+                        Log.e("cart_prod_name", "" + name);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Toast.makeText(context, "product has been successfully in you cart", Toast.LENGTH_SHORT).show();
+                } else if (response.code() == Integer.parseInt("401")) {
+                    lv_product_main.setVisibility(View.VISIBLE);
+                    lv_pb_prod.setVisibility(View.GONE);
+                    Toast.makeText(context, "Response NULL", Toast.LENGTH_SHORT).show();
+                } else if (response.code() == Integer.parseInt("400")) {
+                    lv_product_main.setVisibility(View.VISIBLE);
+                    lv_pb_prod.setVisibility(View.GONE);
+                    Toast.makeText(context, "Bad Response", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+// lv_product_progress.setVisibility(View.GONE);
+// coordinator_product_main.setVisibility(View.VISIBLE);
+                Toast.makeText(context, context.getResources().getString(R.string.wentwrong), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     private void callWishlistCountApi() {
         Log.e("response201tokenff",""+Login_preference.getCustomertoken(context));
@@ -240,7 +312,7 @@ public class ProductListAdater extends RecyclerView.Adapter<ProductListAdater.My
             TextView tv_product_price,tv_product_name,tv_product_new;
             ImageView iv_wishlist,iv_pluss,iv_wishlist_remove;
             RoundRectCornerImageView iv_product_img;
-            LinearLayout lv_product_clickk;
+            LinearLayout lv_product_clickk,lv_addtocart,lv_pb_prod,lv_product_main;
             RatingBar ratingbar_gourment;
             public MyViewHolder(@NonNull View view) {
                 super(view);
@@ -253,6 +325,9 @@ public class ProductListAdater extends RecyclerView.Adapter<ProductListAdater.My
                 lv_product_clickk = view.findViewById(R.id.lv_product_clickk);
                 iv_pluss = view.findViewById(R.id.iv_pluss);
                 iv_product_img = view.findViewById(R.id.iv_product_img);
+                lv_addtocart = view.findViewById(R.id.lv_addtocart);
+                lv_pb_prod = view.findViewById(R.id.lv_pb_prod);
+                lv_product_main = view.findViewById(R.id.lv_product_main);
             }
         }
     }

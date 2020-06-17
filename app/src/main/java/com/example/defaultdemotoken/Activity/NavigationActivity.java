@@ -173,7 +173,7 @@ public class NavigationActivity extends AppCompatActivity {
                 Log.e("response200",""+response.toString());
                 Log.e("response201",""+response.body());
                 Login_preference.setCustomertoken(NavigationActivity.this,response.body());
-               // get_Customer_QuoteId();
+                get_Customer_QuoteId();
 
                 callWishlistCountApi();
             }
@@ -184,6 +184,26 @@ public class NavigationActivity extends AppCompatActivity {
             }
         });
     }
+    private void get_Customer_QuoteId() {
+        Log.e("customertoken",""+Login_preference.getCustomertoken(NavigationActivity.this));
+        Call<Integer> customertoken = api.getQuoteid("Bearer "+Login_preference.getCustomertoken(NavigationActivity.this),"http://dkbraende.demoproject.info/rest/V1/carts/mine/?customerId=12466");
+        customertoken.enqueue(new Callback<Integer>() {
+            @Override
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                Log.e("res_quoteid",""+response.toString());
+                Log.e("resquoteiddd",""+response.body());
+                Login_preference.setquote_id(NavigationActivity.this, String.valueOf(response.body()));
+
+            }
+            @Override
+            public void onFailure(Call<Integer> call, Throwable t) {
+                Toast.makeText(NavigationActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                t.printStackTrace();
+            }
+        });
+    }
+
+
     private void callWishlistCountApi() {
         Log.e("response201tokenff",""+Login_preference.gettoken(NavigationActivity.this));
         Call<ResponseBody> customertoken = api.defaultWishlistCount("Bearer "+Login_preference.getCustomertoken(NavigationActivity.this));
