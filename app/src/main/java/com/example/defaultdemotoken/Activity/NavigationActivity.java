@@ -152,7 +152,14 @@ public class NavigationActivity extends AppCompatActivity {
         //calling api of categiry list for side menu
         if (CheckNetwork.isNetworkAvailable(NavigationActivity.this)) {
             getCategoryList();
-            get_Customer_tokenapi();
+           // get_Customer_tokenapi();
+
+            if(Login_preference.getLogin_flag(NavigationActivity.this).equalsIgnoreCase("1"))
+            {
+                get_Customer_QuoteId();
+
+                callWishlistCountApi();
+            }
         } else {
             //    noInternetDialog(NavigationActivity.this);
             Toast.makeText(NavigationActivity.this, getResources().getString(R.string.nointernet), Toast.LENGTH_SHORT).show();
@@ -218,10 +225,14 @@ public class NavigationActivity extends AppCompatActivity {
                         JSONArray jsonObject = new JSONArray(response.body().string());
 
                         String count= jsonObject.getJSONObject(0).getString("total_items");
-                        tv_wishlist_count.setText(count);
-                        Login_preference.set_wishlist_count(NavigationActivity.this,count);
-
-                        tv_wishlist_count.setText(Login_preference.get_wishlist_count(NavigationActivity.this));
+                        if (count.equalsIgnoreCase("null") || count.equals("") || count.equals("0")) {
+                            tv_wishlist_count.setVisibility(View.GONE);
+                        } else {
+                            tv_wishlist_count.setVisibility(View.VISIBLE);
+                            tv_wishlist_count.setText(count);
+                            Login_preference.set_wishlist_count(NavigationActivity.this,count);
+                            Log.e("wishcount",""+count);
+                        }
 
                         Log.e("wishcount",""+count);
                     } catch (JSONException e) {
@@ -350,25 +361,30 @@ public class NavigationActivity extends AppCompatActivity {
         //cartitem_count = Login_preference.getCart_item_count(NavigationActivity.this);
      //   BottomNavigationMenuView menuView = (BottomNavigationMenuView) bottom_navigation.getChildAt(0);
 
+        if (Login_preference.getLogin_flag(NavigationActivity.this).equalsIgnoreCase("1"))
+        {
+            //wishlist count show
+            wishlist_count = Login_preference.get_wishlist_count(NavigationActivity.this);
+            BottomNavigationMenuView menuView1 = (BottomNavigationMenuView) bottom_navigation.getChildAt(0);
+
+            BottomNavigationItemView itemView_wishlist = (BottomNavigationItemView) menuView1.getChildAt(1);
+            View  wishlist_badge = LayoutInflater.from(this).inflate(R.layout.wishlist_count, menuView1, false);
+            tv_wishlist_count = (TextView) wishlist_badge.findViewById(R.id.badge_wishlist);
+            Log.e("debug_309","fg"+Login_preference.get_wishlist_count(NavigationActivity.this));
 
 
-        //wishlist count show
-        wishlist_count = Login_preference.get_wishlist_count(NavigationActivity.this);
-        BottomNavigationMenuView menuView1 = (BottomNavigationMenuView) bottom_navigation.getChildAt(0);
-
-        BottomNavigationItemView itemView_wishlist = (BottomNavigationItemView) menuView1.getChildAt(1);
-      View  wishlist_badge = LayoutInflater.from(this).inflate(R.layout.wishlist_count, menuView1, false);
-        tv_wishlist_count = (TextView) wishlist_badge.findViewById(R.id.badge_wishlist);
-        Log.e("debug_309","fg"+Login_preference.get_wishlist_count(NavigationActivity.this));
-
-        if (wishlist_count.equalsIgnoreCase("null") || wishlist_count.equals("") || wishlist_count.equals("0")) {
+             if (wishlist_count.equalsIgnoreCase("null") || wishlist_count.equals("") || wishlist_count.equals("0")) {
             tv_wishlist_count.setVisibility(View.GONE);
-        } else {
+            } else {
             tv_wishlist_count.setVisibility(View.VISIBLE);
             tv_wishlist_count.setText(wishlist_count);
+            }
+
+            itemView_wishlist.addView(wishlist_badge);
+
         }
 
-        itemView_wishlist.addView(wishlist_badge);
+
 
     }
 
@@ -399,7 +415,21 @@ public class NavigationActivity extends AppCompatActivity {
                  break;
 
             case R.id.bottom_wishlist:
-                pushFragment(new WishlistFragment(), "wishlist");
+                if (Login_preference.getLogin_flag(this).equalsIgnoreCase("1"))
+                {
+                    pushFragment(new WishlistFragment(), "wishlist");
+                }else {
+                    //  pushFragment(new LoginFragment(), "login");
+                    Bundle b = new Bundle();
+                    b.putString("screen","wishlist");
+                    LoginFragment myFragment = new LoginFragment();
+                    myFragment.setArguments(b);
+                    getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in,
+                            0, 0, R.anim.fade_out).setCustomAnimations(R.anim.fade_in,
+                            0, 0, R.anim.fade_out).replace(R.id.framlayout, myFragment).addToBackStack("login").commit();
+
+                }
+
                 break;
 
             case R.id.bottom_home:
@@ -422,7 +452,21 @@ public class NavigationActivity extends AppCompatActivity {
                 break;
 
             case R.id.bottom_cart:
-                pushFragment(new CartListFragment(), "cart");
+
+                if (Login_preference.getLogin_flag(this).equalsIgnoreCase("1"))
+                {
+                    pushFragment(new CartListFragment(), "cart");
+                }else {
+                    //  pushFragment(new LoginFragment(), "login");
+                    Bundle b = new Bundle();
+                    b.putString("screen","wishlist");
+                    LoginFragment myFragment = new LoginFragment();
+                    myFragment.setArguments(b);
+                    getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in,
+                            0, 0, R.anim.fade_out).setCustomAnimations(R.anim.fade_in,
+                            0, 0, R.anim.fade_out).replace(R.id.framlayout, myFragment).addToBackStack("login").commit();
+
+                }
                 break;
 
             case R.id.bottom_account:
@@ -488,14 +532,6 @@ public class NavigationActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
-
-
-
-
-
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {

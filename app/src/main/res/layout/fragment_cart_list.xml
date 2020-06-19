@@ -24,14 +24,43 @@
             android:gravity="center"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
-            <ImageView
-                android:id="@+id/iv_navtoolbar_logo"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="15dp"
-                android:gravity="center"
-                android:src="@drawable/ic_launcher_background"
-                android:textColor="@color/white" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:weightSum="6">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2.6" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.4"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="18sp"
+                        android:textColor="@color/black"
+                        android:text="CartList"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="center|end">
+
+
+                </LinearLayout>
+
+            </LinearLayout>
 
         </androidx.appcompat.widget.Toolbar>
 
@@ -50,12 +79,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
-
-    <LinearLayout
-        android:id="@+id/lv_cart_Main"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/lv_cartlist_progress"
@@ -76,9 +99,9 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <ScrollView
+            <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginBottom="?attr/actionBarSize"
                 android:fillViewport="true"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -86,9 +109,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="?attr/actionBarSize"
                     android:orientation="vertical"
                     android:paddingLeft="@dimen/padding5"
+                    android:layout_marginBottom="?attr/actionBarSize"
                     android:paddingTop="@dimen/padding5"
                     android:paddingRight="@dimen/padding5">
 
@@ -96,13 +119,12 @@
                         android:id="@+id/recv_cart"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="?attr/actionBarSize"
                         android:layoutAnimation="@anim/layout_animation_fall_down"
                         android:visibility="visible" />
 
                 </LinearLayout>
 
-            </ScrollView>
+            </androidx.core.widget.NestedScrollView>
 
             <LinearLayout
                 android:id="@+id/lv_subtotal_layout"
@@ -223,6 +245,6 @@
             </LinearLayout>
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    </LinearLayout>
+
 
 </LinearLayout>

@@ -49,8 +49,7 @@
             android:orientation="vertical"
             android:focusableInTouchMode="true"
             android:layout_marginTop="@dimen/padding10"
-            android:padding="@dimen/padding15"
-            >
+            android:padding="@dimen/padding15">
 
             <LinearLayout
                 android:gravity="center|start"

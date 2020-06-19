@@ -31,9 +31,12 @@ import com.example.defaultdemotoken.Login_preference;
 import com.example.defaultdemotoken.R;
 import com.example.defaultdemotoken.Retrofit.ApiClient;
 import com.example.defaultdemotoken.Retrofit.ApiInterface;
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -45,6 +48,9 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.example.defaultdemotoken.Activity.NavigationActivity.bottom_navigation;
+import static com.example.defaultdemotoken.Activity.NavigationActivity.tv_wishlist_count;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,7 +64,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     TextInputEditText et_login_email,et_login_password;
     LinearLayout lv_sign_in,lv_fb_login,lv_google_login,lv_login_main,lv_progress_login;
     NestedScrollView nestedscrol_login;
-    ApiInterface api,customeapi;
+    ApiInterface customeapi;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -183,22 +189,19 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
        String password = et_login_password.getText().toString();
 
         if (et_login_email.getText().length() == 0) {
-
-            et_login_email.setError(getActivity().getResources().getString(R.string.enteremailaddress));
+            Toast.makeText(getContext(), "" + getResources().getString(R.string.enteremailaddress), Toast.LENGTH_SHORT).show();
             et_login_email.requestFocus();
 
         }else if(isValidEmailAddress(et_login_email.getText().toString())==false)
         {
-            et_login_email.setError(getActivity().getResources().getString(R.string.validemail));
+            Toast.makeText(getContext(), "" + getResources().getString(R.string.validemail), Toast.LENGTH_SHORT).show();
             et_login_email.requestFocus();
         } else if (et_login_password.getText().length() == 0) {
-
-            et_login_password.setError(getActivity().getResources().getString(R.string.enterpw));
+            Toast.makeText(getContext(), "" + getResources().getString(R.string.enterpw), Toast.LENGTH_SHORT).show();
             et_login_password.requestFocus();
 
         } else if (isValidPassword(et_login_password.getText().toString()) == false) {
             et_login_password.requestFocus();
-
             Toast.makeText(getContext(), "" + getResources().getString(R.string.validpassword_validate), Toast.LENGTH_SHORT).show();
 
         }else {
@@ -230,8 +233,22 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             public void onResponse(Call<String> call, Response<String> response) {
                 Log.e("response20066",""+response.toString());
                 Log.e("response20166",""+response.body());
-                Login_preference.setCustomertoken(getActivity(),response.body());
-                CallCustomerData();
+
+                if (response.code()==200 || response.isSuccessful())
+                {
+                    Login_preference.setCustomertoken(getActivity(),response.body());
+                    CallCustomerData();
+                    get_Customer_QuoteId();
+
+                    callWishlistCountApi();
+                }else {
+
+                    Toast.makeText(getActivity(), "account not regisered", Toast.LENGTH_SHORT).show();
+                    nestedscrol_login.setVisibility(View.VISIBLE);
+                    lv_progress_login.setVisibility(View.GONE);
+
+                }
+
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
@@ -300,6 +317,101 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             }
         });
     }
+
+    private void get_Customer_QuoteId() {
+        Log.e("customertoken",""+Login_preference.getCustomertoken(getActivity()));
+        Call<Integer> customertoken = customeapi.getQuoteid("Bearer "+Login_preference.getCustomertoken(getActivity()),"http://dkbraende.demoproject.info/rest/V1/carts/mine/?customerId=12466");
+        customertoken.enqueue(new Callback<Integer>() {
+            @Override
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                Log.e("res_quoteid",""+response.toString());
+                Log.e("resquoteiddd",""+response.body());
+                if(response.isSuccessful() || response.code()==200)
+                {
+                    if(getActivity()!=null) {
+                        Login_preference.setquote_id(getActivity(), String.valueOf(response.body()));
+                    }
+
+                }else {
+
+                }
+
+            }
+            @Override
+            public void onFailure(Call<Integer> call, Throwable t) {
+                Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                t.printStackTrace();
+            }
+        });
+    }
+
+
+    private void callWishlistCountApi() {
+        Log.e("response201tokenff",""+Login_preference.gettoken(getActivity()));
+        Call<ResponseBody> customertoken = customeapi.defaultWishlistCount("Bearer "+Login_preference.getCustomertoken(getActivity()));
+        customertoken.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.e("response200gffgdf",""+response.toString());
+                Log.e("response201fgd",""+response.body());
+                if(response.code()==200 || response.isSuccessful())
+                {
+                    try {
+                        JSONArray jsonObject = new JSONArray(response.body().string());
+
+
+
+
+                        String count= jsonObject.getJSONObject(0).getString("total_items");
+
+                        if(getActivity()!=null)
+                        {
+                            BottomNavigationMenuView menuView1 = (BottomNavigationMenuView) bottom_navigation.getChildAt(0);
+
+                            BottomNavigationItemView itemView_wishlist = (BottomNavigationItemView) menuView1.getChildAt(1);
+                            View  wishlist_badge = LayoutInflater.from(getActivity()).inflate(R.layout.wishlist_count, menuView1, false);
+                            tv_wishlist_count = (TextView) wishlist_badge.findViewById(R.id.badge_wishlist);
+                            Log.e("debug_309","fg"+Login_preference.get_wishlist_count(getActivity()));
+                            if (count.equalsIgnoreCase("null") || count.equals("") || count.equals("0")) {
+                                tv_wishlist_count.setVisibility(View.GONE);
+                            } else {
+                                tv_wishlist_count.setVisibility(View.VISIBLE);
+                                tv_wishlist_count.setText(count);
+
+                                tv_wishlist_count.setText(count);
+                                Login_preference.set_wishlist_count(getActivity(),count);
+
+
+                            }
+
+                            itemView_wishlist.addView(wishlist_badge);
+
+                        }
+
+
+
+
+
+
+                        Log.e("wishcount",""+count);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }else {
+
+                }
+
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                t.printStackTrace();
+            }
+        });
+    }
+
 
 
     public boolean isValidPassword(final String password) {

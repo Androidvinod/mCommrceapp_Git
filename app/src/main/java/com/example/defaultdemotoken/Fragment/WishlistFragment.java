@@ -156,31 +156,21 @@ public class WishlistFragment extends Fragment  {
 
                                 try {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                    Log.e("price", "=" + jsonObject.getJSONObject("product").getString("price"));
-                                    Log.e("name", "=" + jsonObject.getJSONObject("product").getString("name"));
-                                    Log.e("special_price", "=" + jsonObject.getJSONObject("product").getString("special_price"));
-                                    Log.e("thumbnail", "=" + jsonObject.getJSONObject("product").getString("thumbnail"));
+                                    Log.e("price", "=" + jsonObject.getJSONObject("product").optString("price"));
+                                    Log.e("name", "=" + jsonObject.getJSONObject("product").optString("name"));
+                                    Log.e("special_price", "=" + jsonObject.getJSONObject("product").optString("special_price"));
+                                    Log.e("thumbnail", "=" + jsonObject.getJSONObject("product").optString("thumbnail"));
                                     favouriteproductlist.add(new WishlistModel
                                             (jsonObject.getString("wishlist_item_id"),
                                                     jsonObject.getString("wishlist_id"),
                                                     jsonObject.getString("product_id"),
-                                                    jsonObject.getJSONObject("product").getString("sku"),
-                                                    jsonObject.getJSONObject("product").getString("price"),
-                                                    jsonObject.getJSONObject("product").getString("special_price"),
-                                                    jsonObject.getJSONObject("product").getString("name"),
-                                                    jsonObject.getJSONObject("product").getString("thumbnail")));
+                                                    jsonObject.getJSONObject("product").optString("sku"),
+                                                    jsonObject.getJSONObject("product").optString("price"),
+                                                    jsonObject.getJSONObject("product").optString("special_price"),
+                                                    jsonObject.getJSONObject("product").optString("name"),
+                                                    jsonObject.getJSONObject("product").optString("thumbnail")));
                                 } catch (Exception e) {
-                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     Log.e("exception22", "=" + e.getLocalizedMessage());
-                                    favouriteproductlist.add(new WishlistModel
-                                            (jsonObject.getString("wishlist_item_id"),
-                                                    jsonObject.getString("wishlist_id"),
-                                                    jsonObject.getString("product_id"),
-                                                    jsonObject.getJSONObject("product").getString("sku"),
-                                                    jsonObject.getJSONObject("product").getString("price"),
-                                                    jsonObject.getJSONObject("product").getString("null"),
-                                                    jsonObject.getJSONObject("product").getString("name"),
-                                                    jsonObject.getJSONObject("product").getString("thumbnail")));
                                 }
 
 
@@ -250,9 +240,17 @@ public class WishlistFragment extends Fragment  {
                         JSONArray jsonObject = new JSONArray(response.body().string());
 
                         String count= jsonObject.getJSONObject(0).getString("total_items");
-                        tv_wishlist_count.setText(count);
-                        Login_preference.set_wishlist_count(getActivity(),count);
-                        Log.e("wishcount",""+count);
+
+                        if (count.equalsIgnoreCase("null") || count.equals("") || count.equals("0")) {
+                            tv_wishlist_count.setVisibility(View.GONE);
+                        } else {
+                            tv_wishlist_count.setVisibility(View.VISIBLE);
+                            tv_wishlist_count.setText(count);
+
+                            Login_preference.set_wishlist_count(getActivity(),count);
+                            Log.e("wishcount",""+count);
+                        }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     } catch (IOException e) {

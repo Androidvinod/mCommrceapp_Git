@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.defaultdemotoken.Activity.NavigationActivity;
+import com.example.defaultdemotoken.CheckNetwork;
+import com.example.defaultdemotoken.Fragment.LoginFragment;
 import com.example.defaultdemotoken.Fragment.WishlistFragment;
 import com.example.defaultdemotoken.Login_preference;
 import com.example.defaultdemotoken.Model.WishlistModel;
@@ -139,17 +141,48 @@ public class WishListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             myViewHolder.lv_add_to_cart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String  sku= String.valueOf(productList.get(position).getSku());
-                    Log.e("debg","="+sku);
-                    CallAddtoCartApi(sku);
+
+                    if (Login_preference.getLogin_flag(context).equalsIgnoreCase("1"))
+                    {
+                        if (CheckNetwork.isNetworkAvailable(context)) {
+                            String  sku= String.valueOf(productList.get(position).getSku());
+                            Log.e("debg","="+sku);
+                            CallAddtoCartApi(sku);
+                        } else {
+                            Toast.makeText(context, context.getString(R.string.internet), Toast.LENGTH_SHORT).show();
+                        }
+                    }else {
+                        AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                        LoginFragment myFragment = new LoginFragment();
+                        activity.getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in,
+                                0, 0, R.anim.fade_out).setCustomAnimations(R.anim.fade_in,
+                                0, 0, R.anim.fade_out).replace(R.id.framlayout, myFragment).addToBackStack(null).commit();
+                    }
+
+
+
                 }
             });
             ((MyViewHolder) holder).lv_delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String  itemid= String.valueOf(productList.get(position).getWishlist_item_id());
-                    Log.e("debg","="+itemid);
-                    callRemoveFromCartApi(itemid,position,v);
+                    if (Login_preference.getLogin_flag(context).equalsIgnoreCase("1"))
+                    {
+                        if (CheckNetwork.isNetworkAvailable(context)) {
+                            String  itemid= String.valueOf(productList.get(position).getWishlist_item_id());
+                            Log.e("debg","="+itemid);
+                            callRemoveFromCartApi(itemid,position,v);
+
+                        } else {
+                            Toast.makeText(context, context.getString(R.string.internet), Toast.LENGTH_SHORT).show();
+                        }
+                    }else {
+                        AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                        LoginFragment myFragment = new LoginFragment();
+                        activity.getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in,
+                                0, 0, R.anim.fade_out).setCustomAnimations(R.anim.fade_in,
+                                0, 0, R.anim.fade_out).replace(R.id.framlayout, myFragment).addToBackStack(null).commit();
+                    }
                 }
             });
 

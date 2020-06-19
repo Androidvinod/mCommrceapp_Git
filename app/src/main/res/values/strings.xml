@@ -10,6 +10,8 @@
     <string name="action_settings">Settings</string>
 
     <string name="back">Please press back again to exit</string>
+    <string name="quantity_messge">Please enter a number greater than 0</string>
+    <string name="quantity">Please enter quantity</string>
 
     <string name="nointernet">Please connect to internet and try again</string>
     <string name="menu_tools">Tools</string>
@@ -132,4 +134,11 @@
     <string name="logout_message">Logged out successfully</string>
     <string name="send">SEND</string>
     <string name="forgetpswww">Forget Password</string>
+
+
+    <string name="entercurrentpw">Enter current password</string>
+    <string name="enternewpw">Enter New password</string>
+    <string name="enterconfirmpw">Enter confirm password</string>
+    <string name="pwmatch">New Password and Confirm Password should be Match..</string>
+
 </resources>

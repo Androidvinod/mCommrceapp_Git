@@ -86,7 +86,7 @@ public class ProductListFragment extends Fragment {
         ((NavigationActivity) getActivity()).setSupportActionBar(toolbar_product);
         ((NavigationActivity) getActivity()).getSupportActionBar()
                 .setDisplayHomeAsUpEnabled(true);
-        ((NavigationActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.left);
+        ((NavigationActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_chevron_left_black_24dp);
 
         /*toolbar_product.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,14 +17,30 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.defaultdemotoken.Activity.NavigationActivity;
 import com.example.defaultdemotoken.Activity.SplashActivity;
+import com.example.defaultdemotoken.CheckNetwork;
 import com.example.defaultdemotoken.Login_preference;
 import com.example.defaultdemotoken.R;
+import com.example.defaultdemotoken.Retrofit.ApiClient;
+import com.example.defaultdemotoken.Retrofit.ApiInterface;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.example.defaultdemotoken.Activity.NavigationActivity.drawer;
 
@@ -34,10 +51,10 @@ public class MyAddressFragment extends Fragment implements View.OnClickListener 
     View v;
 
     Toolbar toolbar_account_info;
-    LinearLayout lv_edit_user_info,lv_edit_address;
+    LinearLayout lv_edit_user_info,lv_edit_address,lv_progress_myadd;
 
-    TextView tv_username,tv_email_main,tv_titleinfo,tv_full,tv_fullname,tv_emailll,tv_email,tv_phone,tv_number,tv_myadressess,tv_kwaitaddree,tv_address;
-
+    TextView tv_nodata,tv_username,tv_email_main,tv_titleinfo,tv_full,tv_fullname,tv_emailll,tv_email,tv_phone,tv_number,tv_myadressess,tv_kwaitaddree,tv_address;
+    ScrollView scroll_myadd;
     public MyAddressFragment() {
         // Required empty public constructor
     }
@@ -63,12 +80,94 @@ public class MyAddressFragment extends Fragment implements View.OnClickListener 
         tv_fullname.setText(Login_preference.getfirstname(getActivity()) +" "+ Login_preference.getlastname(getActivity()));
         tv_email_main.setText(Login_preference.getemail(getActivity()));
         tv_email.setText(Login_preference.getemail(getActivity()));
+        if (CheckNetwork.isNetworkAvailable(getActivity())) {
+            //CallGetWishlistApi(page_no);
+            CallAddressApi();
+
+        } else {
+            Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.nointernet), Toast.LENGTH_SHORT).show();
+        }
 
         return v;
     }
 
+    private void CallAddressApi() {
+        lv_progress_myadd.setVisibility(View.VISIBLE);
+        scroll_myadd.setVisibility(View.GONE);
+        calladdressgapi().enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.e("response",""+response.body());
+                Log.e("response_77",""+response);
+                Log.e("status",""+response.body());
+
+                if (response.code()==200) {
+
+                    lv_progress_myadd.setVisibility(View.GONE);
+                    scroll_myadd.setVisibility(View.VISIBLE);
+                    Log.e("response_77", "" + response);
+                    Log.e("status", "=" + response.body());
+
+
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+
+                        Log.e("debug_jsonobj", "=" + jsonObject);
+                        JSONArray jsonArray =jsonObject.getJSONArray("addresses");
+
+                        if(jsonArray.length()==0)
+                        {
+                            tv_nodata.setVisibility(View.VISIBLE);
+                            tv_address.setVisibility(View.GONE);
+                            lv_edit_address.setVisibility(View.GONE);
+
+                        }else {
+                            tv_nodata.setVisibility(View.GONE);
+                            tv_address.setVisibility(View.VISIBLE);
+                            lv_edit_address.setVisibility(View.VISIBLE);
+
+                            for(int i=0;i<jsonArray.length();i++)
+                            {
+                                JSONObject object=jsonArray.getJSONObject(0);
+                                tv_address.setText(object.optString("firstname")+" "+
+                                        object.optString("lastname")+"\n"
+                                        + object.optString("city")+","+object.optString("postcode")+"\n"+object.optString("fax")+"\n"+"T :"+object.optString("telephone"));
+                            }
+                        }
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }else {
+                    lv_progress_myadd.setVisibility(View.GONE);
+                    scroll_myadd.setVisibility(View.VISIBLE);
+
+                }
+
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getActivity(), ""+t, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    private Call<ResponseBody> calladdressgapi() {
+        ApiInterface apiinterface = ApiClient.getClient().create(ApiInterface.class);
+        Log.e("debug_111",""+Login_preference.getcustomer_id(getActivity()));
+        String url="http://dkbraende.demoproject.info/rest//V1/customers/"+Login_preference.getcustomer_id(getActivity());
+        return apiinterface.getAddress("Bearer "+Login_preference.gettoken(getActivity()),url);
+    }
     private void AllocateMemory() {
+        tv_nodata=v.findViewById(R.id.tv_nodata);
+        scroll_myadd=v.findViewById(R.id.scroll_myadd);
         toolbar_account_info=v.findViewById(R.id.toolbar_account_info);
+        lv_progress_myadd=v.findViewById(R.id.lv_progress_myadd);
         lv_edit_user_info=v.findViewById(R.id.lv_edit_user_info);
         lv_edit_address=v.findViewById(R.id.lv_edit_address);
         tv_username=v.findViewById(R.id.tv_username);

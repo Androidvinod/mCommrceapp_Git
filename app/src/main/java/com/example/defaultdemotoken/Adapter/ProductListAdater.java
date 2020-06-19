@@ -23,6 +23,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.defaultdemotoken.Activity.SplashActivity;
 import com.example.defaultdemotoken.CheckNetwork;
+import com.example.defaultdemotoken.Fragment.CartListFragment;
+import com.example.defaultdemotoken.Fragment.LoginFragment;
 import com.example.defaultdemotoken.Fragment.MyBounceInterpolator;
 import com.example.defaultdemotoken.Fragment.SubCategoryFragment;
 import com.example.defaultdemotoken.Login_preference;
@@ -90,7 +92,20 @@ public class ProductListAdater extends RecyclerView.Adapter<ProductListAdater.My
             holder.lv_addtocart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    callAddtoCartApi(item.getSku(),holder.lv_product_main, holder.lv_pb_prod);
+                    if (Login_preference.getLogin_flag(context).equalsIgnoreCase("1"))
+                    {
+                        if (CheckNetwork.isNetworkAvailable(context)) {
+                            callAddtoCartApi(item.getSku(),holder.lv_product_main, holder.lv_pb_prod);
+                        } else {
+                            Toast.makeText(context, context.getString(R.string.internet), Toast.LENGTH_SHORT).show();
+                        }
+                    }else {
+                        AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                        LoginFragment myFragment = new LoginFragment();
+                        activity.getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in,
+                                0, 0, R.anim.fade_out).setCustomAnimations(R.anim.fade_in,
+                                0, 0, R.anim.fade_out).replace(R.id.framlayout, myFragment).addToBackStack(null).commit();
+                    }
                 }
             });
             holder.lv_product_clickk.setOnClickListener(new View.OnClickListener() {
@@ -121,13 +136,19 @@ public class ProductListAdater extends RecyclerView.Adapter<ProductListAdater.My
                 public void onClick(View v) {
 
                     String prod_id = String.valueOf(ItemList.get(position).getId());
-                    ///  Log.e("prod_idddd_wish",""+prod_id);
-
-                    /*if (Login_preference.getLogin_flag(context).matches("1")) {*/
-                    if (CheckNetwork.isNetworkAvailable(context)) {
-                        CallAddtoWishlistApi_list(holder, prod_id, position);
-                    } else {
-                        Toast.makeText(context, context.getString(R.string.internet), Toast.LENGTH_SHORT).show();
+                    if (Login_preference.getLogin_flag(context).equalsIgnoreCase("1"))
+                    {
+                        if (CheckNetwork.isNetworkAvailable(context)) {
+                            CallAddtoWishlistApi_list(holder, prod_id, position);
+                        } else {
+                            Toast.makeText(context, context.getString(R.string.internet), Toast.LENGTH_SHORT).show();
+                        }
+                    }else {
+                        AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                        LoginFragment myFragment = new LoginFragment();
+                        activity.getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in,
+                                0, 0, R.anim.fade_out).setCustomAnimations(R.anim.fade_in,
+                                0, 0, R.anim.fade_out).replace(R.id.framlayout, myFragment).addToBackStack(null).commit();
                     }
                 }
             });
@@ -152,7 +173,9 @@ public class ProductListAdater extends RecyclerView.Adapter<ProductListAdater.My
         lv_pb_prod.setVisibility(View.VISIBLE);
         ApiInterface api = ApiClient.getClient().create(ApiInterface.class);
         Log.e("product_sku_pass", "" + sku);
-        final Call<ResponseBody> productDetails = api.addtocart("Bearer " + Login_preference.getCustomertoken(context), "http://dkbraende.demoproject.info/rest/V1/carts/mine/items?cartItem[quoteId]=192001&cartItem[qty]=1&cartItem[sku]=" + sku);
+        String url="http://dkbraende.demoproject.info/rest/V1/carts/mine/items?cartItem[quoteId]="+ Login_preference.getquote_id(context)+"&cartItem[qty]=1"+"&cartItem[sku]="+sku;
+
+        final Call<ResponseBody> productDetails = api.addtocart("Bearer " + Login_preference.getCustomertoken(context), url);
         productDetails.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -176,7 +199,7 @@ public class ProductListAdater extends RecyclerView.Adapter<ProductListAdater.My
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    Toast.makeText(context, "product has been successfully in you cart", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Add to cart SuccessFully", Toast.LENGTH_SHORT).show();
                 } else if (response.code() == Integer.parseInt("200")) {
                     JSONObject jsonObject = null;
                     try {
@@ -191,7 +214,7 @@ public class ProductListAdater extends RecyclerView.Adapter<ProductListAdater.My
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    Toast.makeText(context, "product has been successfully in you cart", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Add to cart SuccessFully", Toast.LENGTH_SHORT).show();
                 } else if (response.code() == Integer.parseInt("401")) {
                     lv_product_main.setVisibility(View.VISIBLE);
                     lv_pb_prod.setVisibility(View.GONE);
@@ -206,7 +229,7 @@ public class ProductListAdater extends RecyclerView.Adapter<ProductListAdater.My
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-// lv_product_progress.setVisibility(View.GONE);
+ // lv_product_progress.setVisibility(View.GONE);
 // coordinator_product_main.setVisibility(View.VISIBLE);
                 Toast.makeText(context, context.getResources().getString(R.string.wentwrong), Toast.LENGTH_SHORT).show();
             }
@@ -228,9 +251,17 @@ public class ProductListAdater extends RecyclerView.Adapter<ProductListAdater.My
                         JSONArray jsonObject = new JSONArray(response.body().string());
 
                         String count= jsonObject.getJSONObject(0).getString("total_items");
-                        tv_wishlist_count.setText(count);
-                        Login_preference.set_wishlist_count(context,count);
-                        Log.e("wishcount",""+count);
+
+                        if (count.equalsIgnoreCase("null") || count.equals("") || count.equals("0")) {
+                            tv_wishlist_count.setVisibility(View.GONE);
+                        } else {
+                            tv_wishlist_count.setVisibility(View.VISIBLE);
+                            tv_wishlist_count.setText(count);
+                            Login_preference.set_wishlist_count(context,count);
+                            Log.e("wishcount",""+count);
+                        }
+
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     } catch (IOException e) {

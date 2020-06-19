@@ -74,10 +74,10 @@ public class CartListFragment extends Fragment {
     public static Call<ResponseBody> cartlistt = null;
     public static List<CartListModel> cart_models = new ArrayList<CartListModel>();
     NavigationActivity parent;
-    public static LinearLayout lv_cartlist_progress;
+    public static LinearLayout lv_cartlist_progress,lv_cart_checkout;
     public static CoordinatorLayout cordinator_cart;
     public static Context context;
-    static LinearLayout lv_nodata_cart,lv_cart_Main;
+    static LinearLayout lv_nodata_cart;
 
     public CartListFragment() {
         // Required empty public constructor
@@ -93,6 +93,8 @@ public class CartListFragment extends Fragment {
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
         context = getActivity();
         AllocateMemory(v);
+        cart_models.clear();
+
         url = "http://dkbraende.demoproject.info/rest/V1/carts/mine/items";
         ((NavigationActivity) getActivity()).setSupportActionBar(toolbar_cart);
         ((NavigationActivity) getActivity()).getSupportActionBar()
@@ -112,12 +114,27 @@ public class CartListFragment extends Fragment {
         //initSwipe();
 
         if (CheckNetwork.isNetworkAvailable(getActivity())) {
-            cart_models.clear();
             CallCartlistApi();
         } else {
             Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.internet), Toast.LENGTH_SHORT).show();
         }
 
+
+
+        lv_cart_checkout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v == lv_cart_checkout) {
+                    Log.e("check_flag",""+CartlistAdapter_new.flag);
+                    if (CartlistAdapter_new.flag == false) {
+                        Toast.makeText(context, context.getString(R.string.quantity_messge), Toast.LENGTH_SHORT).show();
+                    } else {
+                       // pushFragment(new CheckoutFragment(), "Checkout");
+                    }
+
+                }
+            }
+        });
         return v;
 
     }
@@ -214,12 +231,6 @@ public class CartListFragment extends Fragment {
 
     public static void CallCartlistApi() {
 
-        /*for (int i = 0; i < 10; i++) {
-            cartList.add(new CartModel("", "",
-                    "", "", "", "", ""));
-        }
-
-        cartlistAdapter.notifyDataSetChanged();*/
 
         cart_models.clear();
         cordinator_cart.setVisibility(View.GONE);
@@ -239,11 +250,12 @@ public class CartListFragment extends Fragment {
 
                     if (itemArray.equals("[]")||itemArray.length()==0){
                         lv_nodata_cart.setVisibility(View.VISIBLE);
-                        lv_cart_Main.setVisibility(View.GONE);
+                        cordinator_cart.setVisibility(View.GONE);
+                        lv_cartlist_progress.setVisibility(View.GONE);
                     }else {
                         lv_nodata_cart.setVisibility(View.GONE);
-                        lv_cart_Main.setVisibility(View.VISIBLE);
-
+                        cordinator_cart.setVisibility(View.VISIBLE);
+                        lv_cartlist_progress.setVisibility(View.GONE);
                         for (int i = 0; i < itemArray.length(); i++) {
                             try {
                                 JSONObject vals = itemArray.getJSONObject(i);
@@ -289,6 +301,7 @@ public class CartListFragment extends Fragment {
     }*/
 
     public static Call<ResponseBody> callcartlistapi() {
+        Log.e("debugcustomertoen","="+Login_preference.getCustomertoken(context));
         return apiInterface.getcartlist("Bearer " + Login_preference.getCustomertoken(context));
     }
 
@@ -313,12 +326,13 @@ public class CartListFragment extends Fragment {
     }
 
     private void AllocateMemory(View v) {
+        lv_cart_checkout = v.findViewById(R.id.lv_cart_checkout);
         toolbar_cart = v.findViewById(R.id.toolbar_cart);
         recv_cart = v.findViewById(R.id.recv_cart);
         lv_cartlist_progress = v.findViewById(R.id.lv_cartlist_progress);
         cordinator_cart = v.findViewById(R.id.cordinator_cart);
         lv_nodata_cart = v.findViewById(R.id.lv_nodata_cart);
-        lv_cart_Main = v.findViewById(R.id.lv_cart_Main);
+      //  lv_cart_Main = v.findViewById(R.id.lv_cart_Main);
     }
 
     @Override

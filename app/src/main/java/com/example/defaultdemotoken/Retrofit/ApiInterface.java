@@ -7,6 +7,8 @@ import com.example.defaultdemotoken.Model.ProductModel.ProductModel;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.DELETE;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
@@ -90,7 +92,7 @@ public interface ApiInterface {
     Call<ResponseBody> getcartlist(@Header("Authorization") String token);
 
     @DELETE()
-    Call<String> removeFromCart(@Header("Authorization") String token,
+    Call<Boolean> removeFromCart(@Header("Authorization") String token,
                                 @Url String url);
 
 
@@ -110,6 +112,32 @@ public interface ApiInterface {
 //forget passwprd
     @PUT()
     Call<Boolean> forgetpassword(@Header("Authorization") String authHeader, @Url String url);
+
+    //http://dkbraende.demoproject.info/rest/V1/carts/:cartId/items
+    //update cart
+    @POST()
+    Call<ResponseBody> udatecarttt(@Header("Authorization") String authHeader,
+                                @Url String url);
+
+
+    //http://dkbraende.demoproject.info/rest//V1/customers/12497
+    //getAddress
+    //pass auth token
+    //customerid
+    @GET()
+    Call<ResponseBody> getAddress(@Header("Authorization") String authHeader,
+                                   @Url String url);
+
+
+
+    //change password
+    //http://dkbraende.demoproject.info/rest/V1/customers/me/password?currentPassword=vinod@203&newPassword=vinod@123
+    //pass customer token
+    //@put
+    //http://dkbraende.demoproject.info/rest/V1/customers/me/password?currentPassword=Admin@123&newPassword=Admin@1234
+    @PUT()
+    Call<Boolean> changePassword(@Header("Authorization") String authHeader, @Url String url);
+
 
     /*
      Payment Methods
