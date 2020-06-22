@@ -140,5 +140,10 @@
     <string name="enternewpw">Enter New password</string>
     <string name="enterconfirmpw">Enter confirm password</string>
     <string name="pwmatch">New Password and Confirm Password should be Match..</string>
+    <string name="createadd">Add New Address</string>
+    <string name="entercity">Please Enter City</string>
+    <string name="entercountry">Please Enter Country</string>
+    <string name="enterpostalcode">Please Enter PodtalCode</string>
+    <string name="entervalidmobileno">Please enter valid mobile no</string>
 
 </resources>

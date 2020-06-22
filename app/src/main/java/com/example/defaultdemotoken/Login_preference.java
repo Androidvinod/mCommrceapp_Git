@@ -127,6 +127,18 @@ public class Login_preference {
         return mPrefs.getString("lastname", "");
     }
 
+    public static void setphone(Context context, String value) {
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefsEditor = mPrefs.edit();
+        prefsEditor.putString("setphone", value);
+        prefsEditor.commit();
+    }
+
+    public static String getphone(Context context) {
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return mPrefs.getString("setphone", "");
+    }
+
     public static void setquote_id(Context context, String value)
     {
         mPrefs = PreferenceManager.getDefaultSharedPreferences(context);

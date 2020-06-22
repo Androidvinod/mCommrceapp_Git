@@ -198,7 +198,7 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
                                 Login_preference.prefsEditor.remove("customer_id").apply();
                                 Login_preference.prefsEditor.remove("email").apply();
                                 Login_preference.prefsEditor.remove("fullname").apply();
-                                ///   Login_preference.prefsEditor.remove("items_qty").apply();
+                                ///     Login_preference.prefsEditor.remove("items_qty").apply();
                                 //Login_preference.prefsEditor.remove("login_flag").apply();
                                 Login_preference.prefsEditor.remove("wishlist_count").apply();
 
@@ -213,6 +213,7 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
                                 dialog.dismiss();
                             }
                         })
+
                         .build().show();
             } else {
                 LoginFragment myFragment = new LoginFragment();

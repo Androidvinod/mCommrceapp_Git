@@ -49,7 +49,6 @@
         android:background="@color/white"
         android:fitsSystemWindows="true"
         app:itemIconTint="@color/trans"
-        android:visibility="gone"
         app:itemTextColor="@color/colorPrimary">
 
         <LinearLayout

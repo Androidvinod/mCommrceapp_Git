@@ -135,7 +135,6 @@
                     android:id="@+id/lv_see_all_categories"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/rounded_layout_blue"
                     android:layout_gravity="end"
                     android:gravity="center|end"
                     android:layout_weight="3">
@@ -147,7 +146,6 @@
                         android:text="@string/seeall"
                         android:textStyle="bold"
                         android:padding="@dimen/padding8"
-                        android:textColor="@color/black"
                         android:textSize="@dimen/text_14"
                         />
                 </LinearLayout>
@@ -255,8 +253,7 @@
                         android:textStyle="bold"
                         android:padding="@dimen/padding8"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/text_14"
-                        />
+                        android:textSize="@dimen/text_14" />
                 </LinearLayout>
 
             </LinearLayout>

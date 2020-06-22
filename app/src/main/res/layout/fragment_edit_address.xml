@@ -70,7 +70,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
-        android:id="@+id/lv_progress_changepsw"
+        android:id="@+id/lv_progress_edittead"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/padding10"
@@ -83,11 +83,11 @@
             android:indeterminateDrawable="@drawable/progressbar_ui" />
     </LinearLayout>
 
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:id="@+id/scroll_edit">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -208,8 +208,6 @@
                             android:drawablePadding="@dimen/padding20"
                             android:hint="@string/phonenumber"
                             android:inputType="phone"
-                            android:ems="10"
-                            android:maxLength="12"
                             android:textColor="@color/black"
                             android:textColorHint="@color/black"
                             android:textSize="16sp" />

@@ -384,8 +384,6 @@ public class NavigationActivity extends AppCompatActivity {
 
         }
 
-
-
     }
 
     private void pushFragment(Fragment fragment, String add_to_backstack) {

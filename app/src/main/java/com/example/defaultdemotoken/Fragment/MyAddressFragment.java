@@ -28,6 +28,7 @@ import com.example.defaultdemotoken.Login_preference;
 import com.example.defaultdemotoken.R;
 import com.example.defaultdemotoken.Retrofit.ApiClient;
 import com.example.defaultdemotoken.Retrofit.ApiInterface;
+import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,6 +36,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -51,10 +53,11 @@ public class MyAddressFragment extends Fragment implements View.OnClickListener 
     View v;
 
     Toolbar toolbar_account_info;
-    LinearLayout lv_edit_user_info,lv_edit_address,lv_progress_myadd;
+    LinearLayout lv_edit_user_info,lv_edit_address,lv_progress_myadd,lv_add_new_address,lv_address,lv_addresssss,lv_delete_add;
 
-    TextView tv_nodata,tv_username,tv_email_main,tv_titleinfo,tv_full,tv_fullname,tv_emailll,tv_email,tv_phone,tv_number,tv_myadressess,tv_kwaitaddree,tv_address;
+    TextView tv_add_new_add,tv_nodata,tv_username,tv_email_main,tv_titleinfo,tv_full,tv_fullname,tv_emailll,tv_email,tv_phone,tv_number,tv_myadressess,tv_kwaitaddree,tv_address;
     ScrollView scroll_myadd;
+    String add_id;
     public MyAddressFragment() {
         // Required empty public constructor
     }
@@ -75,11 +78,15 @@ public class MyAddressFragment extends Fragment implements View.OnClickListener 
 
         lv_edit_user_info.setOnClickListener(this);
         lv_edit_address.setOnClickListener(this);
+        lv_add_new_address.setOnClickListener(this);
+        lv_delete_add.setOnClickListener(this);
 
-        tv_username.setText(Login_preference.getfirstname(getActivity()) +" "+ Login_preference.getlastname(getActivity()));
-        tv_fullname.setText(Login_preference.getfirstname(getActivity()) +" "+ Login_preference.getlastname(getActivity()));
+        tv_username.setText(Login_preference.getfirstname(getActivity()) +" "+Login_preference.getlastname(getActivity()));
+        tv_fullname.setText(Login_preference.getfirstname(getActivity()) +" "+Login_preference.getlastname(getActivity()));
         tv_email_main.setText(Login_preference.getemail(getActivity()));
         tv_email.setText(Login_preference.getemail(getActivity()));
+        tv_number.setText(Login_preference.getphone(getActivity()));
+
         if (CheckNetwork.isNetworkAvailable(getActivity())) {
             //CallGetWishlistApi(page_no);
             CallAddressApi();
@@ -87,6 +94,8 @@ public class MyAddressFragment extends Fragment implements View.OnClickListener 
         } else {
             Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.nointernet), Toast.LENGTH_SHORT).show();
         }
+
+
 
         return v;
     }
@@ -117,24 +126,45 @@ public class MyAddressFragment extends Fragment implements View.OnClickListener 
 
                         if(jsonArray.length()==0)
                         {
-                            tv_nodata.setVisibility(View.VISIBLE);
+                        //    tv_nodata.setVisibility(View.VISIBLE);
+                            lv_addresssss.setVisibility(View.GONE);
                             tv_address.setVisibility(View.GONE);
                             lv_edit_address.setVisibility(View.GONE);
+                            lv_add_new_address.setVisibility(View.VISIBLE);
 
                         }else {
-                            tv_nodata.setVisibility(View.GONE);
+                          //  tv_nodata.setVisibility(View.GONE);
                             tv_address.setVisibility(View.VISIBLE);
+                            lv_addresssss.setVisibility(View.VISIBLE);
                             lv_edit_address.setVisibility(View.VISIBLE);
+                            lv_add_new_address.setVisibility(View.GONE);
 
                             for(int i=0;i<jsonArray.length();i++)
                             {
+
                                 JSONObject object=jsonArray.getJSONObject(0);
+
+                                tv_username.setText(object.optString("firstname") +" "+object.optString("lastname"));
+                                tv_fullname.setText(object.optString("firstname") +" "+object.optString("lastname"));
+                                tv_number.setText(object.optString("telephone"));
+                                tv_email_main.setText(Login_preference.getemail(getActivity()));
+                                tv_email.setText(Login_preference.getemail(getActivity()));
+
+                                Login_preference.setfirstname(getActivity(),object.optString("firstname"));
+                                Login_preference.setlastname(getActivity(),object.optString("lastname"));
+                                Login_preference.setphone(getActivity(),object.optString("telephone"));
+                                add_id=object.optString("id");
+
+                                Log.e("debuaddid","="+add_id);
+                               JSONArray streetarray=object.getJSONArray("street");
+
+                               String street= String.valueOf(streetarray.get(0));
+                               Log.e("debuh_street=","="+street);
                                 tv_address.setText(object.optString("firstname")+" "+
-                                        object.optString("lastname")+"\n"
-                                        + object.optString("city")+","+object.optString("postcode")+"\n"+object.optString("fax")+"\n"+"T :"+object.optString("telephone"));
+                                        object.optString("lastname")+"\n"+street+" , "
+                                        + object.optString("city")+", "+object.optString("postcode")+"\n"+"T :"+object.optString("telephone"));
                             }
                         }
-
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -163,7 +193,13 @@ public class MyAddressFragment extends Fragment implements View.OnClickListener 
         String url="http://dkbraende.demoproject.info/rest//V1/customers/"+Login_preference.getcustomer_id(getActivity());
         return apiinterface.getAddress("Bearer "+Login_preference.gettoken(getActivity()),url);
     }
+
     private void AllocateMemory() {
+        lv_delete_add=v.findViewById(R.id.lv_delete_add);
+        lv_addresssss=v.findViewById(R.id.lv_addresssss);
+        lv_address=v.findViewById(R.id.lv_address);
+        lv_add_new_address=v.findViewById(R.id.lv_add_new_address);
+        tv_add_new_add=v.findViewById(R.id.tv_add_new_add);
         tv_nodata=v.findViewById(R.id.tv_nodata);
         scroll_myadd=v.findViewById(R.id.scroll_myadd);
         toolbar_account_info=v.findViewById(R.id.toolbar_account_info);
@@ -186,6 +222,7 @@ public class MyAddressFragment extends Fragment implements View.OnClickListener 
 
         tv_username.setTypeface(SplashActivity.montserrat_regular);
         tv_email_main.setTypeface(SplashActivity.montserrat_regular);
+        tv_add_new_add.setTypeface(SplashActivity.montserrat_semibold);
         tv_titleinfo.setTypeface(SplashActivity.montserrat_semibold);
         tv_address.setTypeface(SplashActivity.montserrat_regular);
         tv_kwaitaddree.setTypeface(SplashActivity.montserrat_medium);
@@ -256,12 +293,82 @@ public class MyAddressFragment extends Fragment implements View.OnClickListener 
             Bundle b=new Bundle();
             AppCompatActivity activity = (AppCompatActivity) v.getContext();
             b.putString("screen","edit address");
+            b.putString("address","edit");
+            b.putString("address_id",add_id);
 
             EditAddressFragment myFragment = new EditAddressFragment();
             myFragment.setArguments(b);
             activity.getSupportFragmentManager().beginTransaction()
                     .addToBackStack(null).replace(R.id.framlayout, myFragment)
                     .commit();
+        }else if(v==lv_add_new_address)
+        {
+            Bundle b=new Bundle();
+            AppCompatActivity activity = (AppCompatActivity) v.getContext();
+            b.putString("screen","edit address");
+            b.putString("address","create");
+
+            EditAddressFragment myFragment = new EditAddressFragment();
+            myFragment.setArguments(b);
+            activity.getSupportFragmentManager().beginTransaction()
+                    .addToBackStack(null).replace(R.id.framlayout, myFragment)
+                    .commit();
+        }else if(v==lv_delete_add)
+        {
+            Log.e("debuaddid55","="+add_id);
+            if (CheckNetwork.isNetworkAvailable(getActivity())) {
+                DelerteAddressApi(add_id);
+            } else {
+                Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.internet), Toast.LENGTH_SHORT).show();
+            }
         }
     }
+
+    private Call<Boolean> delerteAddressApi(String add_id) {
+        ApiInterface  customeapi = ApiClient.getClient().create(ApiInterface.class);
+
+        String url="http://dkbraende.demoproject.info/rest/V1/addresses/"+add_id;
+        Log.e("debug_url","="+url);
+        Log.e("token","="+Login_preference.gettoken(getActivity()));
+
+        return customeapi.deleteaddress("Bearer "+Login_preference.gettoken(getActivity()),url);
+    }
+
+
+    private void DelerteAddressApi(String add_id) {
+        lv_progress_myadd.setVisibility(View.VISIBLE);
+        scroll_myadd.setVisibility(View.GONE);
+        delerteAddressApi(add_id).enqueue(new Callback<Boolean>() {
+            @Override
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+
+                lv_progress_myadd.setVisibility(View.GONE);
+                scroll_myadd.setVisibility(View.VISIBLE);
+
+                Log.e("debug1111",""+ response.body());
+                Log.e("debug1111dsgdf",""+ response);
+
+                if(response.code()==200 || response.isSuccessful())
+                {
+                    if(response.body()==true)
+                    {
+                        Toast.makeText(getActivity(), "Address Deleted Successfully", Toast.LENGTH_SHORT).show();
+                        pushFragment(new MyAddressFragment() ,"account");
+                    }
+                }else {
+                 //   Toast.makeText(getActivity(), "The password doesn't match this account. Verify the password and try again.", Toast.LENGTH_SHORT).show();
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Boolean> call, Throwable t) {
+                lv_progress_myadd.setVisibility(View.GONE);
+                scroll_myadd.setVisibility(View.VISIBLE);
+                Toast.makeText(getActivity(), ""+getActivity().getResources().getString(R.string.wentwrong), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 }

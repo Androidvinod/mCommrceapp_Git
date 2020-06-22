@@ -2,6 +2,8 @@ package com.example.defaultdemotoken.Fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
@@ -124,8 +126,37 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             HomebannerModelList1.add(new HomebannerModel(" "));
         }
         lv_see_all_categories.setOnClickListener(this);
+
+
+       // setDynamicbackgroundButton();
+        makeRoundCorner(getActivity().getResources().getColor(R.color.greylight),15,lv_see_all_categories,1,getActivity().getResources().getColor(R.color.greylight));
+
         return v;
     }
+    public  void makeRoundCorner(int bgcolor,int radius,View v,int strokeWidth,int strokeColor)
+    {
+        GradientDrawable gdDefault = new GradientDrawable();
+        gdDefault.setColor(bgcolor);
+        gdDefault.setCornerRadius(radius);
+        gdDefault.setStroke(strokeWidth, strokeColor);
+        v.setBackgroundDrawable(gdDefault);
+
+        tv_seeall_browse.setTextColor(getActivity().getResources().getColor(R.color.black));
+        tv_seeall_browse.setTypeface(SplashActivity.montserrat_medium);
+
+    }
+    private void setDynamicbackgroundButton() {
+
+        GradientDrawable shape = new GradientDrawable();
+        shape.setShape(GradientDrawable.RECTANGLE);
+        shape.setColor(getActivity().getResources().getColor(R.color.greylight));
+        shape.setStroke(3, getActivity().getResources().getColor(R.color.greylight));
+        shape.setCornerRadius(15);
+        shape.setCornerRadii(new float[] { 12, 12, 12, 12, 12, 12, 12, 12 });
+        lv_see_all_categories.setBackgroundDrawable(shape);
+
+    }
+
     private class SliderTimer extends TimerTask {
         @Override
         public void run() {
@@ -135,7 +166,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 @Override
                 public void run() {
                     if (viewPager.getCurrentItem() < imagslider.size() - 1) {
-
                         viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
                     } else {
                         viewPager.setCurrentItem(0);
@@ -170,7 +200,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         }
     }
     private void AttachRecyclerview() {
-           homeCategoryAdapter = new HomeCategoryAdapter(getActivity(),HomebannerModelList);
+        homeCategoryAdapter = new HomeCategoryAdapter(getActivity(),HomebannerModelList);
         recv_categories.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
         recv_categories.setAdapter(homeCategoryAdapter);
 

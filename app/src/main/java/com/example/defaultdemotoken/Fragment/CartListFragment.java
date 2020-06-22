@@ -243,49 +243,55 @@ public class CartListFragment extends Fragment {
                 lv_cartlist_progress.setVisibility(View.GONE);
                 Log.e("cartlist_response", "" + response.body());
 
-                JSONArray itemArray = null;
-                try {
-                    itemArray = new JSONArray(response.body().string());
-                    Log.e("cartresponseeeee", "" + itemArray);
+                if(response.isSuccessful() || response.code()==200)
+                {
+                    JSONArray itemArray = null;
+                    try {
+                        itemArray = new JSONArray(response.body().string());
+                        Log.e("cartresponseeeee", "" + itemArray);
 
-                    if (itemArray.equals("[]")||itemArray.length()==0){
-                        lv_nodata_cart.setVisibility(View.VISIBLE);
-                        cordinator_cart.setVisibility(View.GONE);
-                        lv_cartlist_progress.setVisibility(View.GONE);
-                    }else {
-                        lv_nodata_cart.setVisibility(View.GONE);
-                        cordinator_cart.setVisibility(View.VISIBLE);
-                        lv_cartlist_progress.setVisibility(View.GONE);
-                        for (int i = 0; i < itemArray.length(); i++) {
-                            try {
-                                JSONObject vals = itemArray.getJSONObject(i);
-                                Log.e("cartarrvals", "" + vals);
-                                String valsmain = vals.getString("name");
-                                Log.e("nameeeecartprod", "" + valsmain);
+                        if (itemArray.length() == 0 || itemArray.equals("[]")){
+                            lv_nodata_cart.setVisibility(View.VISIBLE);
+                            cordinator_cart.setVisibility(View.GONE);
+                            lv_cartlist_progress.setVisibility(View.GONE);
+                        }else {
+                            lv_nodata_cart.setVisibility(View.GONE);
+                            cordinator_cart.setVisibility(View.VISIBLE);
+                            lv_cartlist_progress.setVisibility(View.GONE);
+                            for (int i = 0; i < itemArray.length(); i++) {
+                                try {
+                                    JSONObject vals = itemArray.getJSONObject(i);
+                                    Log.e("cartarrvals", "" + vals);
+                                    String valsmain = vals.getString("name");
+                                    Log.e("nameeeecartprod", "" + valsmain);
 
-                                String extension_attributes = vals.getString("extension_attributes");
+                                    String extension_attributes = vals.getString("extension_attributes");
 
-                                JSONObject image = new JSONObject(extension_attributes);
+                                    JSONObject image = new JSONObject(extension_attributes);
 
-                                String imageurl = image.getString("image_url");
+                                    String imageurl = image.getString("image_url");
 
-                                Log.e("cart_image_url", "" + imageurl);
+                                    Log.e("cart_image_url", "" + imageurl);
 
-                                cart_models.add(new CartListModel(vals.getString("item_id"), vals.getString("sku"), vals.getString("qty"), vals.getString("name"),
-                                        vals.getInt("price"), vals.getString("product_type"), vals.getString("quote_id"), imageurl));
+                                    cart_models.add(new CartListModel(vals.getString("item_id"), vals.getString("sku"), vals.getString("qty"), vals.getString("name"),
+                                            vals.getInt("price"), vals.getString("product_type"), vals.getString("quote_id"), imageurl));
 
-                            } catch (Exception e) {
-                                Log.e("Exception", "" + e);
-                            } finally {
-                                cartlistAdapter.notifyItemChanged(i);
+                                } catch (Exception e) {
+                                    Log.e("Exception", "" + e);
+                                } finally {
+                                    cartlistAdapter.notifyItemChanged(i);
+                                }
+
                             }
-
                         }
-                    }
 
-                } catch (JSONException | IOException e) {
-                    e.printStackTrace();
+                    } catch (JSONException | IOException e) {
+                        e.printStackTrace();
+                    }
+                }else {
+
                 }
+
             }
 
             @Override
