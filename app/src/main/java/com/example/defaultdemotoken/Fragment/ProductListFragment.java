@@ -326,6 +326,7 @@ public class ProductListFragment extends Fragment {
                                     isWishliste="true";
                                     productlist.add(new Item(isWishliste,imagge,results.get(i).getId(),results.get(i).getSku(),results.get(i).getName(),results.get(i).getPrice()));
                                 }else {
+                                //jbhj
                                     isWishliste="false";
                                     productlist.add(new Item(isWishliste,imagge,results.get(i).getId(),results.get(i).getSku(),results.get(i).getName(),results.get(i).getPrice()));
                                 }
