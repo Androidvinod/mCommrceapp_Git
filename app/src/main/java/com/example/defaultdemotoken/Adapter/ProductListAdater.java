@@ -58,9 +58,9 @@ public class ProductListAdater extends RecyclerView.Adapter<ProductListAdater.My
         Context context;
         private List<Item> ItemList;
 
-        public ProductListAdater(Context context) {
+        public ProductListAdater(Context context,List<Item> ItemList) {
             this.context = context;
-            ItemList = new ArrayList<>();
+            this.ItemList =ItemList;
         }
 
         @NonNull
@@ -81,13 +81,33 @@ public class ProductListAdater extends RecyclerView.Adapter<ProductListAdater.My
             holder.tv_product_name.setTypeface(SplashActivity.montserrat_medium);
             holder.tv_product_price.setTypeface(SplashActivity.montserrat_semibold);
 
-            Log.e("debug_48","fg"+item.getMediaGalleryEntries().get(0).getFile());
+
             final RequestOptions requestOptions = new RequestOptions();
             requestOptions.placeholder(R.drawable.image);
             requestOptions.error(R.drawable.image);
             Glide.with(context)
                     .setDefaultRequestOptions(requestOptions)
-                    .load("http://dkbraende.demoproject.info/pub/media/catalog/product"+item.getMediaGalleryEntries().get(0).getFile()).into(holder.iv_product_img);
+                    .load("http://dkbraende.demoproject.info/pub/media/catalog/product"+item.getImage()).into(holder.iv_product_img);
+
+            Log.e("debug_48","fg"+item.getWishlisted());
+
+            if(ItemList.get(position).getWishlisted()==null || ItemList.get(position).getWishlisted().equalsIgnoreCase(null) || ItemList.get(position).getWishlisted().equalsIgnoreCase("null"))
+            {
+                holder.iv_wishlist_remove.setVisibility(View.GONE);
+                holder.iv_wishlist.setVisibility(View.VISIBLE);
+
+            }else {
+                if (ItemList.get(position).getWishlisted().equalsIgnoreCase("true")==true){
+                    holder.iv_wishlist.setVisibility(View.GONE);
+                    holder.iv_wishlist_remove.setVisibility(View.VISIBLE);
+                }else if(ItemList.get(position).getWishlisted().equalsIgnoreCase("false")){
+                    holder.iv_wishlist_remove.setVisibility(View.GONE);
+                    holder.iv_wishlist.setVisibility(View.VISIBLE);
+                }
+            }
+
+
+
 
             holder.lv_addtocart.setOnClickListener(new View.OnClickListener() {
                 @Override

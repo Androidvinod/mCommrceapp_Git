@@ -145,5 +145,6 @@
     <string name="entercountry">Please Enter Country</string>
     <string name="enterpostalcode">Please Enter PodtalCode</string>
     <string name="entervalidmobileno">Please enter valid mobile no</string>
-
+    <string name="selectcountry">Select Country</string>
+    <string name="selectecountry">Select Country</string>
 </resources>

@@ -37,7 +37,7 @@ public class ProductListActivity extends AppCompatActivity {
         recv_productlist=findViewById(R.id.recv_productlist);
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
-        productListAdater = new ProductListAdater(ProductListActivity.this);
+      //  productListAdater = new ProductListAdater(ProductListActivity.this);
         recv_productlist.setLayoutManager(new GridLayoutManager(ProductListActivity.this, 2));
         recv_productlist.setAdapter(productListAdater);
 

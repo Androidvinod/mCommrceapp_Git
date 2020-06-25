@@ -1,6 +1,9 @@
 package com.example.defaultdemotoken.Retrofit;
 
 
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -12,12 +15,15 @@ public class ApiClient {
     public static final String MAIN_URLL = "http://dkbraende.demoproject.info/rest/V1/";
 
     private static Retrofit retrofit = null;
-
+    public static OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(100, TimeUnit.SECONDS)
+            .readTimeout(100,TimeUnit.SECONDS).build();
     public static Retrofit getClient() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(MAIN_URLL)
                     .addConverterFactory(GsonConverterFactory.create())
+                    .client(client)
                     .build();
         }
 

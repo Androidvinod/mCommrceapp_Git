@@ -10,6 +10,8 @@ import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,11 +29,14 @@ import android.widget.Toast;
 
 import com.example.defaultdemotoken.Activity.NavigationActivity;
 import com.example.defaultdemotoken.Activity.SplashActivity;
+import com.example.defaultdemotoken.Adapter.CountryAdapter;
 import com.example.defaultdemotoken.CheckNetwork;
 import com.example.defaultdemotoken.Login_preference;
+import com.example.defaultdemotoken.Model.Country;
 import com.example.defaultdemotoken.R;
 import com.example.defaultdemotoken.Retrofit.ApiClient;
 import com.example.defaultdemotoken.Retrofit.ApiInterface;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONArray;
@@ -39,6 +44,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,15 +65,24 @@ public class EditAddressFragment extends Fragment {
     View v;
     Toolbar toolbar_edit;
     TextView tv_mydetails,tv_save;
-    LinearLayout lv_edit_detail,lv_main_edit,lv_progress_edittead;
+    LinearLayout lv_edit_detail,lv_main_edit,lv_progress_edittead,lv_main_countryyy;
 
-    TextInputLayout layout_details_email,layout_details_address,layout_details_city,layout_details_country,layout_details_postalcode,layout_details_phoneno,layout_detail_fullname,layout_detail_lastname;
+    TextInputLayout layout_details_email,layout_details_address,layout_details_city,layout_details_postalcode,layout_details_phoneno,layout_detail_fullname,layout_detail_lastname;
 
-    EditText et_deails_phoneno,et_deails_email,et_deails_postal,et_deails_country,et_deails_city,et_deails_address,et_details_fullname,et_details_lastname;
+    EditText et_deails_phoneno,et_deails_email,et_deails_postal,et_deails_city,et_deails_address,et_details_fullname,et_details_lastname;
 
+   public static TextView tv_choose_country;
     Bundle b;
     String screen,address,address_id;
-
+    RecyclerView rv_country;
+    CountryAdapter countryAdapter;
+    public static BottomSheetDialog dialog;
+    public static String countryId;
+    LinearLayout lv_country_close,lv_progress_country;
+    ApiInterface apiInterface;
+    private List<Country> countryModelList=new ArrayList<>();
+    private List<String> countryidlist=new ArrayList<>();
+    private List<String> countryLablelist=new ArrayList<>();
     public EditAddressFragment() {
         // Required empty public constructor
     }
@@ -79,9 +95,9 @@ public class EditAddressFragment extends Fragment {
         v= inflater.inflate(R.layout.fragment_edit_address, container, false);
         AllocateMemory(v);
         setupUI(lv_main_edit);
-
+        apiInterface = ApiClient.getClient().create(ApiInterface.class);
         setHasOptionsMenu(true);
-
+        countryId="";
 
         b=this.getArguments();
         if(b!=null)
@@ -102,7 +118,9 @@ public class EditAddressFragment extends Fragment {
         if(address_id != null)
         {
             if (CheckNetwork.isNetworkAvailable(getActivity())) {
+                CallCountrylistApi("main");
                 CallAddressApi();
+
             }else {
                 Toast.makeText(getContext(), getActivity().getResources().getString(R.string.internet), Toast.LENGTH_SHORT).show();
             }
@@ -115,43 +133,108 @@ public class EditAddressFragment extends Fragment {
         {
             if(address.equalsIgnoreCase("create"))
             {
+                et_deails_email.setEnabled(false);
+                et_deails_email.setActivated(false);
+                et_deails_email.setText(Login_preference.getemail(getActivity()));
+
                 tv_mydetails.setText("Generate Address");
             }else {
                 tv_mydetails.setText(getActivity().getResources().getString(R.string.editadd));
+                et_details_fullname.setText(Login_preference.getfirstname(getActivity()));
+                et_details_lastname.setText(Login_preference.getlastname(getActivity()));
+                et_deails_email.setText(Login_preference.getemail(getActivity()));
+                //layout_details_email.setVisibility(View.GONE);
+                et_deails_email.setEnabled(false);
+                et_deails_email.setActivated(false);
+
             }
 
-            et_details_fullname.setText(Login_preference.getfirstname(getActivity()));
-            et_details_lastname.setText(Login_preference.getlastname(getActivity()));
-            et_deails_email.setText(Login_preference.getemail(getActivity()));
 
             layout_details_address.setVisibility(View.VISIBLE);
             layout_details_city.setVisibility(View.VISIBLE);
-            layout_details_country.setVisibility(View.VISIBLE);
+            lv_main_countryyy.setVisibility(View.VISIBLE);
             layout_details_postalcode.setVisibility(View.VISIBLE);
 
         }else if(screen.equalsIgnoreCase("edit detail"))
         {
-            et_details_fullname.setText(Login_preference.getfirstname(getActivity()));
-            et_details_lastname.setText(Login_preference.getlastname(getActivity()));
+
+            if(Login_preference.getfirstname(getActivity()) == null  || Login_preference.getfirstname(getActivity()).equalsIgnoreCase("null"))
+            {
+
+            }else {
+                et_details_fullname.setText(Login_preference.getfirstname(getActivity()));
+                et_details_lastname.setText(Login_preference.getlastname(getActivity()));
+
+            }
+
             et_deails_email.setText(Login_preference.getemail(getActivity()));
+            et_deails_email.setEnabled(true);
+            et_deails_email.setActivated(true);
 
             tv_mydetails.setText(getActivity().getResources().getString(R.string.editdetails));
             layout_details_address.setVisibility(View.GONE);
             layout_details_city.setVisibility(View.GONE);
-            layout_details_country.setVisibility(View.GONE);
+            lv_main_countryyy.setVisibility(View.GONE);
             layout_details_postalcode.setVisibility(View.GONE);
+            layout_details_phoneno.setVisibility(View.GONE);
         }
 
 
         lv_edit_detail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                validateDate();
+                if(screen.equalsIgnoreCase("edit address"))
+                {
+                    validateDate();
+                }else if(screen.equalsIgnoreCase("edit detail")){
+                    validateUserInfoDetail();
+                }
+            }
+        });
+
+        lv_main_countryyy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CountryDialog();
             }
         });
 
 
         return v;
+    }
+
+    private void validateUserInfoDetail() {
+        if (et_details_fullname.getText().length() == 0) {
+            Toast.makeText(getContext(), "" + getResources().getString(R.string.enterfirstname), Toast.LENGTH_SHORT).show();
+            et_details_fullname.requestFocus();
+        }
+        else if (et_details_lastname.getText().length() == 0) {
+            Toast.makeText(getContext(), "" + getResources().getString(R.string.enterlastname), Toast.LENGTH_SHORT).show();
+            et_details_lastname.requestFocus();
+        }
+        else  if (et_deails_email.getText().length() == 0) {
+            Toast.makeText(getContext(), "" + getResources().getString(R.string.enteremailaddress), Toast.LENGTH_SHORT).show();
+            et_deails_email.requestFocus();
+
+        }else if(isValidEmailAddress(et_deails_email.getText().toString())==false)
+        {
+            Toast.makeText(getContext(), "" + getResources().getString(R.string.validemail), Toast.LENGTH_SHORT).show();
+            et_deails_email.requestFocus();
+        }else {
+            String email,firstname,lastname,postalcode=null,phoneno = null,street=null,city=null,country;
+
+            firstname=et_details_fullname.getText().toString();
+            lastname=et_details_lastname.getText().toString();
+            email=et_deails_email.getText().toString();
+
+
+            if (CheckNetwork.isNetworkAvailable(getActivity())) {
+                callCreateAddressApi(firstname,lastname,email,phoneno,street,city,countryId,postalcode);
+                //Loginapi(email, password);
+            } else {
+                Toast.makeText(getContext(), getActivity().getResources().getString(R.string.internet), Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
 
@@ -190,11 +273,32 @@ public class EditAddressFragment extends Fragment {
                                 et_deails_address.setText(street);
                                 et_deails_city.setText(object.optString("city"));
                                 et_deails_postal.setText(object.optString("postcode"));
-                                et_deails_country.setText(object.optString("country_id"));
+                                countryId=object.optString("country_id");
+                                Log.e("debug_222=","="+countryidlist.size());
+                                Log.e("debug_278=","="+countryLablelist.size());
 
-                                Login_preference.setfirstname(getActivity(),object.optString("firstname"));
-                                Login_preference.setlastname(getActivity(),object.optString("lastname"));
+                                int pos = 0;
+                                if(countryidlist.size()>0)
+                                {
+                                     pos= countryidlist.indexOf(countryId);
+                                }
+
+                                if(countryLablelist.size()>0)
+                                {
+                                    String countryname=countryLablelist.get(pos);
+                                    tv_choose_country.setText(countryname);
+                                    tv_choose_country.setTextColor(getResources().getColor(R.color.black));
+                                    Log.e("pos=","="+pos);
+                                    Log.e("countryname=","="+countryname);
+
+                                }
+
+
+
+                           /*     Login_preference.setfirstname(getActivity(),jsonObject.optString("firstname"));
+                                Login_preference.setlastname(getActivity(),jsonObject.optString("lastname"));
                                 Login_preference.setphone(getActivity(),object.optString("telephone"));
+                  */
                             }
 
                     } catch (JSONException e) {
@@ -257,9 +361,8 @@ public class EditAddressFragment extends Fragment {
             Toast.makeText(getContext(), "" + getResources().getString(R.string.entercity), Toast.LENGTH_SHORT).show();
             et_deails_city.requestFocus();
         }
-        else if (et_deails_country.getText().length() == 0) {
-            Toast.makeText(getContext(), "" + getResources().getString(R.string.entercountry), Toast.LENGTH_SHORT).show();
-            et_deails_country.requestFocus();
+        else if(countryId==null || countryId=="") {
+            Toast.makeText(getContext(), ""+getActivity().getResources().getString(R.string.selectecountry), Toast.LENGTH_SHORT).show();
         }
         else if (et_deails_postal.getText().length() == 0) {
             Toast.makeText(getContext(), "" + getResources().getString(R.string.enterpostalcode), Toast.LENGTH_SHORT).show();
@@ -275,12 +378,12 @@ public class EditAddressFragment extends Fragment {
             phoneno=et_deails_phoneno.getText().toString();
             street=et_deails_address.getText().toString();
             city=et_deails_city.getText().toString();
-            country=et_deails_country.getText().toString();
+            country=countryId;
             postalcode=et_deails_postal.getText().toString();
 
 
             if (CheckNetwork.isNetworkAvailable(getActivity())) {
-                callCreateAddressApi(firstname,lastname,email,phoneno,street,city,country,postalcode);
+                callCreateAddressApi(firstname,lastname,email,phoneno,street,city,countryId,postalcode);
                 //Loginapi(email, password);
             } else {
                 Toast.makeText(getContext(), getActivity().getResources().getString(R.string.internet), Toast.LENGTH_SHORT).show();
@@ -308,6 +411,15 @@ public class EditAddressFragment extends Fragment {
                     try {
                         JSONObject jsonObject=new JSONObject(response.body().string());
                         Log.e("idd==",""+jsonObject.optString("id"));
+
+                       if(screen.equalsIgnoreCase("edit detail"))
+                        {
+
+                            Login_preference.setfirstname(getActivity(),jsonObject.optString("firstname"));
+                            Login_preference.setlastname(getActivity(),jsonObject.optString("lastname"));
+                            Login_preference.setemail(getActivity(),jsonObject.optString("email"));
+
+                        }
                         pushFragment(new MyAddressFragment() ,"Address");
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -335,36 +447,44 @@ public class EditAddressFragment extends Fragment {
 
     private Call<ResponseBody> calladdressgapi(String firstname,String lasname,String email, String telephone,String street
                                               ,String city,String countryid,String postcode) {
-        ApiInterface apiinterface = ApiClient.getClient().create(ApiInterface.class);
+
         Log.e("debug_111","="+Login_preference.getcustomer_id(getActivity()));
         Log.e("debugtoken","="+Login_preference.gettoken(getActivity()));
 
         String customerid=Login_preference.getcustomer_id(getActivity());
-        String url;
+        String url = null;
         //http://dkbraende.demoproject.info/rest/V1/customers/12497/?customer[addresses][0][customer_id]=12497&customer[addresses][0][countryId]=DK&customer[addresses][0][street][0]=sdsds&customer[addresses][0][firstname]=info&customer[addresses][0][lastname]=info&customer[addresses][0][company]=dolphin_test&customer[addresses][0][telephone]=123456789&customer[addresses][0][city]=test&customer[addresses][0][postcode]=382348&customer[email]=info@gmail.com&customer[id]=12497&customer[websiteId]=1
+        if(screen.equalsIgnoreCase("edit detail")) {
+            //http://dkbraende.demoproject.info/rest/V1/customers/12503?customer[id]=12502&customer[email]=infodolphin@gmail.com&customer[firstname]=vinod_dolphin&customer[lastname]=prjapatigjhgj&customer[storeId]=1&customer[websiteId]=1
+            url="http://dkbraende.demoproject.info/rest/V1/customers/"+Login_preference.getcustomer_id(getActivity())+"?customer[id]="+Login_preference.getcustomer_id(getActivity())
+                    +"&customer[email]="+email+"&customer[firstname]="+firstname+"&customer[lastname]="+lasname+"&customer[storeId]=1&customer[websiteId]=1";
+        }
+        else if(screen.equalsIgnoreCase("edit address")){
+            if(address_id==null)
+            {
+                url="http://dkbraende.demoproject.info/rest/V1/customers/"+Login_preference.getcustomer_id(getActivity())+"/?customer[addresses][0][customer_id]="+customerid+"&customer[addresses][0][countryId]="+countryid+
+                        "&customer[addresses][0][street][0]="+street+"&customer[addresses][0][firstname]="+firstname+"&customer[addresses][0][lastname]="+lasname
+                        +"&customer[addresses][0][telephone]="+telephone+"&customer[addresses][0][city]="+city
+                        +"&customer[addresses][0][postcode]="+postcode+"&customer[id]="+customerid+"&customer[websiteId]=1"+"&customer[email]="+email;
 
-        if(address_id==null)
-        {
-             url="http://dkbraende.demoproject.info/rest/V1/customers/"+Login_preference.getcustomer_id(getActivity())+"/?customer[addresses][0][customer_id]="+customerid+"&customer[addresses][0][countryId]="+countryid+
-                    "&customer[addresses][0][street][0]="+street+"&customer[addresses][0][firstname]="+firstname+"&customer[addresses][0][lastname]="+lasname
-                    +"&customer[addresses][0][telephone]="+telephone+"&customer[addresses][0][city]="+city
-                    +"&customer[addresses][0][postcode]="+postcode+"&customer[email]="+email+"&customer[id]="+customerid+"&customer[websiteId]=1";
+            }else {
+                url="http://dkbraende.demoproject.info/rest/V1/customers/"+Login_preference.getcustomer_id(getActivity())+"/?customer[addresses][0][customer_id]="+customerid+"&customer[addresses][0][countryId]="+countryid+
+                        "&customer[addresses][0][street][0]="+street+"&customer[addresses][0][firstname]="+firstname+"&customer[addresses][0][lastname]="+lasname
+                        +"&customer[addresses][0][telephone]="+telephone+"&customer[addresses][0][city]="+city
+                        +"&customer[addresses][0][postcode]="+postcode+"&customer[id]="+customerid+"&customer[websiteId]=1"+"&customer[addresses][0][id]="+address_id+"&customer[email]="+email;
 
-        }else {
-             url="http://dkbraende.demoproject.info/rest/V1/customers/"+Login_preference.getcustomer_id(getActivity())+"/?customer[addresses][0][customer_id]="+customerid+"&customer[addresses][0][countryId]="+countryid+
-                    "&customer[addresses][0][street][0]="+street+"&customer[addresses][0][firstname]="+firstname+"&customer[addresses][0][lastname]="+lasname
-                    +"&customer[addresses][0][telephone]="+telephone+"&customer[addresses][0][city]="+city
-                    +"&customer[addresses][0][postcode]="+postcode+"&customer[email]="+email+"&customer[id]="+customerid+"&customer[websiteId]=1"+"&customer[addresses][0][id]="+address_id;
-
+            }
         }
 
         Log.e("url","="+url);
 
-        return apiinterface.createAddreess("Bearer "+Login_preference.gettoken(getActivity()),url);
+        return apiInterface.createAddreess("Bearer "+Login_preference.gettoken(getActivity()),url);
     }
 
     private void AllocateMemory(View v) {
 
+        tv_choose_country=v.findViewById(R.id.tv_choose_country);
+        lv_main_countryyy=v.findViewById(R.id.lv_main_countryyy);
         scroll_edit=v.findViewById(R.id.scroll_edit);
         lv_progress_edittead=v.findViewById(R.id.lv_progress_edittead);
         et_deails_phoneno=v.findViewById(R.id.et_deails_phoneno);
@@ -384,10 +504,7 @@ public class EditAddressFragment extends Fragment {
         tv_save=v.findViewById(R.id.tv_save);
         layout_details_address=v.findViewById(R.id.layout_details_address);
         layout_details_city=v.findViewById(R.id.layout_details_city);
-        layout_details_country=v.findViewById(R.id.layout_details_country);
         et_deails_postal=v.findViewById(R.id.et_deails_postal);
-        et_deails_country=v.findViewById(R.id.et_deails_country);
-        layout_details_country=v.findViewById(R.id.layout_details_country);
         et_deails_address=v.findViewById(R.id.et_deails_address);
 
 
@@ -395,13 +512,13 @@ public class EditAddressFragment extends Fragment {
         tv_save.setTypeface(SplashActivity.montserrat_semibold);
         tv_mydetails.setTypeface(SplashActivity.montserrat_semibold);
         et_deails_address.setTypeface(SplashActivity.montserrat_medium);
-        et_deails_country.setTypeface(SplashActivity.montserrat_medium);
         et_deails_postal.setTypeface(SplashActivity.montserrat_medium);
 
         et_deails_city.setTypeface(SplashActivity.montserrat_medium);
         et_details_fullname.setTypeface(SplashActivity.montserrat_medium);
         et_details_lastname.setTypeface(SplashActivity.montserrat_medium);
         et_deails_email.setTypeface(SplashActivity.montserrat_medium);
+        tv_choose_country.setTypeface(SplashActivity.montserrat_medium);
     }
 
 
@@ -446,6 +563,7 @@ public class EditAddressFragment extends Fragment {
 
 
     @Override
+
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         //    inflater.inflate(R.menu.menu_cart, menu);
@@ -485,4 +603,126 @@ public class EditAddressFragment extends Fragment {
     }
 
 
+
+    private void CountryDialog() {
+        countryModelList.clear();
+        dialog = new BottomSheetDialog(getActivity());
+        dialog.setContentView(R.layout.choose_country);
+        dialog.show();
+        rv_country = dialog.findViewById(R.id.rv_country);
+        lv_country_close = dialog.findViewById(R.id.lv_country_close);
+        lv_progress_country = dialog.findViewById(R.id.lv_progress_country);
+        lv_country_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        countryAdapter = new CountryAdapter(getActivity(),countryModelList);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        rv_country.setLayoutManager(layoutManager);
+        rv_country.setAdapter(countryAdapter);
+        if (CheckNetwork.isNetworkAvailable(getActivity())) {
+            CallCountrylistApi("button click");
+        } else {
+            Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.internet), Toast.LENGTH_SHORT).show();
+        }
+        Log.e("debug_country","f"+countryId);
+    }
+
+
+
+    //call country list api
+    private void CallCountrylistApi(final String main) {
+        countryModelList.clear();
+        countryidlist.clear();
+        countryLablelist.clear();
+
+        if(main.equalsIgnoreCase("main"))
+        { lv_progress_edittead.setVisibility(View.VISIBLE);
+            scroll_edit.setVisibility(View.GONE);
+
+
+        }else if(main.equalsIgnoreCase("button click")){
+            lv_progress_country.setVisibility(View.VISIBLE);
+            rv_country.setVisibility(View.GONE);
+        }
+
+
+        callcountrylistapi().enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                ResponseBody cartlist = response.body();
+                Log.e("debug_res", "" + response.body());
+                Log.e("debug_11954", "=" + response);
+                if (response.code()==200 || response.isSuccessful()) {
+                    if(main.equalsIgnoreCase("main"))
+                    {
+                        lv_progress_edittead.setVisibility(View.GONE);
+                        scroll_edit.setVisibility(View.VISIBLE);
+
+                    }else if(main.equalsIgnoreCase("button click")){
+                        lv_progress_country.setVisibility(View.GONE);
+                        rv_country.setVisibility(View.VISIBLE);
+                    }
+
+                    try {
+                        JSONArray jsonArray=new JSONArray(response.body().string());
+
+                        for (int i=0; i<jsonArray.length();i++)
+                        {
+                            JSONObject jsonObject=jsonArray.getJSONObject(i);
+                            countryModelList.add(new Country(jsonObject.optString("full_name_english"),jsonObject.optString("id")));
+                            countryidlist.add(jsonObject.optString("id"));
+                            countryLablelist.add(jsonObject.optString("full_name_english"));
+                        }
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                     if(main.equalsIgnoreCase("main"))
+                    {
+                        lv_progress_edittead.setVisibility(View.GONE);
+                        scroll_edit.setVisibility(View.VISIBLE);
+
+                    }else if(main.equalsIgnoreCase("button click")){
+
+                         lv_progress_country.setVisibility(View.VISIBLE);
+                         rv_country.setVisibility(View.GONE);
+
+                     }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getActivity(), "" + getActivity().getResources().getString(R.string.wentwrong), Toast.LENGTH_SHORT).show();
+                Log.e("debug_175125", "pages: " + t);
+                lv_progress_country.setVisibility(View.VISIBLE);
+                rv_country.setVisibility(View.GONE);
+                if(main.equalsIgnoreCase("main"))
+                {
+                    lv_progress_edittead.setVisibility(View.GONE);
+                    scroll_edit.setVisibility(View.VISIBLE);
+
+                }else if(main.equalsIgnoreCase("button click")){
+
+                    lv_progress_country.setVisibility(View.VISIBLE);
+                    rv_country.setVisibility(View.GONE);
+
+                }
+
+            }
+        });
+
+    }
+
+    public Call<ResponseBody> callcountrylistapi() {
+        return apiInterface.getCountryList("Bearer "+Login_preference.gettoken(getActivity()));
+    }
 }

@@ -256,28 +256,10 @@
                                      android:textSize="16sp" />
                              </com.google.android.material.textfield.TextInputLayout>
 
-                             <com.google.android.material.textfield.TextInputLayout
-                                 android:id="@+id/layout_details_country"
-                                 android:layout_width="match_parent"
-                                 android:layout_height="wrap_content"
-                                 android:layout_marginTop="10dp"
-                                 android:textColorHint="@color/greey"
-                                 android:tooltipText="text"
-                                 app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout">
 
-                                 <EditText
-                                     android:id="@+id/et_deails_country"
-                                     android:layout_width="match_parent"
-                                     android:layout_height="wrap_content"
-                                     android:layout_marginTop="10dp"
-                                     android:drawablePadding="@dimen/padding20"
-                                     android:hint="@string/country"
-                                     android:inputType="text"
-                                     android:textColor="@color/black"
-                                     android:textColorHint="@color/black"
-                                     android:textSize="16sp" />
-                             </com.google.android.material.textfield.TextInputLayout>
-                             <com.google.android.material.textfield.TextInputLayout
+
+
+                                   <com.google.android.material.textfield.TextInputLayout
                                  android:id="@+id/layout_details_postalcode"
                                  android:layout_width="match_parent"
                                  android:layout_height="wrap_content"
@@ -299,7 +281,81 @@
                                      android:textSize="16sp" />
                              </com.google.android.material.textfield.TextInputLayout>
 
+                             <LinearLayout
+                                 android:id="@+id/lv_main_countryyy"
+                                 android:layout_width="match_parent"
+                                 android:layout_height="match_parent"
+                                 android:layout_marginTop="@dimen/padding10"
+                                 android:background="@color/white"
+                                 android:orientation="vertical"
+                                 android:layout_marginBottom="@dimen/padding10"
+                                 android:paddingTop="@dimen/margin10">
+                                 <TextView
+                                     android:id="@+id/tv_country_title"
+                                     android:layout_width="wrap_content"
+                                     android:layout_height="wrap_content"
+                                     android:text="@string/country"
+                                     android:paddingLeft="@dimen/padding5"
+                                     android:paddingRight="@dimen/padding5"
+                                     android:includeFontPadding="false"
+                                     android:textColor="@color/greey"
+                                     android:textSize="@dimen/text_14"
+                                     android:textStyle="bold" />
+                                 <LinearLayout
+                                     android:id="@+id/lv_country"
+                                     android:layout_width="match_parent"
+                                     android:layout_height="match_parent"
+                                     android:layout_marginTop="@dimen/margin10"
+                                     android:background="@color/white"
+                                     android:orientation="horizontal"
+                                     android:paddingTop="@dimen/padding5"
+                                     android:weightSum="2">
 
+                                     <LinearLayout
+                                         android:layout_width="match_parent"
+                                         android:layout_height="wrap_content"
+                                         android:layout_weight="0.3"
+                                         android:gravity="center|start">
+
+                                         <TextView
+                                             android:id="@+id/tv_choose_country"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             android:text="@string/choosecountry"
+                                             android:paddingLeft="@dimen/padding5"
+                                             android:paddingRight="@dimen/padding5"
+                                             android:textColor="@color/greey"
+                                             android:textSize="@dimen/text_14" />
+
+                                     </LinearLayout>
+
+                                     <LinearLayout
+                                         android:layout_width="match_parent"
+                                         android:layout_height="wrap_content"
+                                         android:layout_marginTop="@dimen/padding5"
+                                         android:layout_weight="1.7"
+                                         android:layout_marginRight="@dimen/padding5"
+                                         android:layout_marginLeft="@dimen/padding5"
+                                         android:gravity="center|end">
+
+                                         <ImageView
+                                             android:layout_width="wrap_content"
+                                             android:layout_height="match_parent"
+                                             android:src="@drawable/ic_keyboard_arrow_down_black_24dp" />
+
+                                     </LinearLayout>
+
+                                 </LinearLayout>
+
+                                 <View
+                                     android:layout_marginTop="@dimen/padding5"
+                                     android:layout_width="match_parent"
+                                     android:layout_height="0.8dp"
+                                     android:layout_marginLeft="@dimen/padding5"
+                                     android:layout_marginRight="@dimen/padding5"
+                                     android:background="@color/black"/>
+
+                             </LinearLayout>
                 </LinearLayout>
 
             <LinearLayout

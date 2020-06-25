@@ -152,6 +152,8 @@ public interface ApiInterface {
  */
 
 
+    //edit userinfo
+    //        //http://dkbraende.demoproject.info/rest/V1/customers/12497/?customer[addresses][0][customer_id]=12497&customer[addresses][0][countryId]=DK&customer[addresses][0][street][0]=sdsds&customer[addresses][0][firstname]=info&customer[addresses][0][lastname]=info&customer[addresses][0][company]=dolphin_test&customer[addresses][0][telephone]=123456789&customer[addresses][0][city]=test&customer[addresses][0][postcode]=382348&customer[email]=info@gmail.com&customer[id]=12497&customer[websiteId]=1
 
     //creat address api
     //pass auth token
@@ -166,6 +168,12 @@ public interface ApiInterface {
     //pass auth token
     @DELETE()
     Call<Boolean> deleteaddress(@Header("Authorization") String authHeader, @Url String url);
+
+
+    //country list
+    //http://dkbraende.demoproject.info/rest/V1/directory/countries
+    @GET("directory/countries")
+    Call<ResponseBody> getCountryList(@Header("Authorization") String authHeader);
 
 
 }

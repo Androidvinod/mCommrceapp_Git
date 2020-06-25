@@ -53,7 +53,7 @@ public class MyAddressFragment extends Fragment implements View.OnClickListener 
     View v;
 
     Toolbar toolbar_account_info;
-    LinearLayout lv_edit_user_info,lv_edit_address,lv_progress_myadd,lv_add_new_address,lv_address,lv_addresssss,lv_delete_add;
+    LinearLayout lv_edit_user_info,lv_edit_address,lv_progress_myadd,lv_add_new_address,lv_address,lv_addresssss,lv_delete_add,lv_main_fullname;
 
     TextView tv_add_new_add,tv_nodata,tv_username,tv_email_main,tv_titleinfo,tv_full,tv_fullname,tv_emailll,tv_email,tv_phone,tv_number,tv_myadressess,tv_kwaitaddree,tv_address;
     ScrollView scroll_myadd;
@@ -81,9 +81,20 @@ public class MyAddressFragment extends Fragment implements View.OnClickListener 
         lv_add_new_address.setOnClickListener(this);
         lv_delete_add.setOnClickListener(this);
 
-        tv_username.setText(Login_preference.getfirstname(getActivity()) +" "+Login_preference.getlastname(getActivity()));
-        tv_fullname.setText(Login_preference.getfirstname(getActivity()) +" "+Login_preference.getlastname(getActivity()));
-        tv_email_main.setText(Login_preference.getemail(getActivity()));
+
+        if(Login_preference.getfirstname(getActivity()) == null  || Login_preference.getfirstname(getActivity()).equalsIgnoreCase("null"))
+        {
+            tv_username.setText("");
+            tv_fullname.setText("");
+            tv_full.setVisibility(View.GONE);
+            tv_fullname.setVisibility(View.GONE);
+            lv_main_fullname.setVisibility(View.GONE);
+        }else {
+            tv_username.setText(Login_preference.getfirstname(getActivity()) +" "+Login_preference.getlastname(getActivity()));
+            tv_fullname.setText(Login_preference.getfirstname(getActivity()) +" "+Login_preference.getlastname(getActivity()));
+
+        }
+         tv_email_main.setText(Login_preference.getemail(getActivity()));
         tv_email.setText(Login_preference.getemail(getActivity()));
         tv_number.setText(Login_preference.getphone(getActivity()));
 
@@ -144,16 +155,31 @@ public class MyAddressFragment extends Fragment implements View.OnClickListener 
 
                                 JSONObject object=jsonArray.getJSONObject(0);
 
-                                tv_username.setText(object.optString("firstname") +" "+object.optString("lastname"));
-                                tv_fullname.setText(object.optString("firstname") +" "+object.optString("lastname"));
-                                tv_number.setText(object.optString("telephone"));
-                                tv_email_main.setText(Login_preference.getemail(getActivity()));
-                                tv_email.setText(Login_preference.getemail(getActivity()));
+                                if(getActivity()!=null)
+                                {
+                                  /*  if(jsonObject.optString("firstname") == null  || jsonObject.optString("firstname").equalsIgnoreCase("null"))
+                                    {
+                                        tv_username.setText("");
+                                        tv_fullname.setText("");
+                                        tv_full.setVisibility(View.GONE);
+                                        tv_fullname.setVisibility(View.GONE);
+                                        lv_main_fullname.setVisibility(View.GONE);
+                                    }else {
+                                        tv_username.setText(jsonObject.optString("firstname") +" "+jsonObject.optString("lastname"));
+                                        tv_fullname.setText(jsonObject.optString("firstname") +" "+jsonObject.optString("lastname"));
+                                        Login_preference.setfirstname(getActivity(),jsonObject.optString("firstname"));
+                                        Login_preference.setlastname(getActivity(),jsonObject.optString("lastname"));
 
-                                Login_preference.setfirstname(getActivity(),object.optString("firstname"));
-                                Login_preference.setlastname(getActivity(),object.optString("lastname"));
-                                Login_preference.setphone(getActivity(),object.optString("telephone"));
-                                add_id=object.optString("id");
+                                    }*/
+                                    tv_number.setText(object.optString("telephone"));
+                                    tv_email_main.setText(Login_preference.getemail(getActivity()));
+                                    tv_email.setText(Login_preference.getemail(getActivity()));
+
+                                         Login_preference.setphone(getActivity(),object.optString("telephone"));
+                                    Login_preference.setemail(getActivity(),jsonObject.optString("email"));
+                                    add_id=object.optString("id");
+
+                                }
 
                                 Log.e("debuaddid","="+add_id);
                                JSONArray streetarray=object.getJSONArray("street");
@@ -195,6 +221,7 @@ public class MyAddressFragment extends Fragment implements View.OnClickListener 
     }
 
     private void AllocateMemory() {
+        lv_main_fullname=v.findViewById(R.id.lv_main_fullname);
         lv_delete_add=v.findViewById(R.id.lv_delete_add);
         lv_addresssss=v.findViewById(R.id.lv_addresssss);
         lv_address=v.findViewById(R.id.lv_address);
