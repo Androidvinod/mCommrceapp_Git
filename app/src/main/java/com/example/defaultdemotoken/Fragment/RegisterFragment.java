@@ -2,12 +2,16 @@ package com.example.defaultdemotoken.Fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,13 +34,33 @@ import com.example.defaultdemotoken.Login_preference;
 import com.example.defaultdemotoken.R;
 import com.example.defaultdemotoken.Retrofit.ApiClient;
 import com.example.defaultdemotoken.Retrofit.ApiInterface;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.Profile;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,29 +68,43 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RegisterFragment extends Fragment {
+
+public class RegisterFragment extends Fragment implements GoogleApiClient.OnConnectionFailedListener {
     View v;
     TextInputEditText et_register_firstname,et_register_email,et_register_password,et_register_lastname;
     TextView tv_register,tv_sign_up,tv_create_acc_register;
     Toolbar toolbar_register;
-    LinearLayout lv_register_main,lv_sign_up,lv_progress_register;
+    LinearLayout lv_register_main,lv_sign_up,lv_progress_register,lv_sign_up_with_facebook,lv_sign_up_with_google;
     TextInputLayout layout_register_firstname,layout_register_email,layout_register_password,layout_register_lastname;
     NestedScrollView nested_scroll_register;
+
+    public static GoogleApiClient googleApiClient;
+    public static final int SIGN_IN_CODE = 777;
+    CallbackManager callbackManager;
+    LoginButton login_button_register;
+    private static final String EMAIL = "email";
+
     public RegisterFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v= inflater.inflate(R.layout.fragment_register, container, false);
+
         allocateMemory(v);
+
+        callbackManager = CallbackManager.Factory.create();
 
         setHasOptionsMenu(true);
         setupUI(lv_register_main);
@@ -75,14 +113,96 @@ public class RegisterFragment extends Fragment {
                 .setDisplayHomeAsUpEnabled(true);
         ((NavigationActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_chevron_left_black_24dp);
 
+        GOOGLE_LOGIN();
+
         lv_sign_up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
                 validateData();
             }
         });
+        login_button_register.setFragment(this);
+        login_button_register.setReadPermissions(Arrays.asList(EMAIL));
+
+        login_button_register.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Toast.makeText(getActivity(), "FB successfully login", Toast.LENGTH_SHORT).show();
+                Log.e("fb_success",""+loginResult.toString());
+
+                AccessToken accessToken = loginResult.getAccessToken();
+                Profile profile = Profile.getCurrentProfile();
+
+                GraphRequest request = GraphRequest.newMeRequest(
+                        loginResult.getAccessToken(),
+                        new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(
+                                    JSONObject object,
+                                    GraphResponse response) {
+                                Log.v("LoginActivity Response ", response.toString());
+
+                                try {
+
+                                    String Name = object.getString("name");
+                                    String FEmail = object.getString("email");
+                                    String FEid = object.getString("id");
+                                    String fbpp = "http://graph.facebook.com/" + FEid + "/picture?type=square";
+
+                                    Log.e("fbemail = ", " " + FEmail);
+                                    Log.e("fbid = ", " " + FEid);
+                                    Log.e("fbpp = ", " " + fbpp);
+                                    Toast.makeText(getApplicationContext(), Name, Toast.LENGTH_LONG).show();
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,name,email,gender, birthday");
+                request.setParameters(parameters);
+                request.executeAsync();
+
+            }
+
+            @Override
+            public void onCancel() {
+                Toast.makeText(getActivity(), "FB cancel", Toast.LENGTH_SHORT).show();
+                Log.e("fb_cancel","cancellll");
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
+                Log.e("fb_error",""+error.toString());
+            }
+        });
+
+
         return v;
+    }
+
+    private void GOOGLE_LOGIN() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        googleApiClient = new GoogleApiClient.Builder(getActivity())
+                .enableAutoManage(getActivity(), this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        lv_sign_up_with_google = v.findViewById(R.id.lv_sign_up_with_google);
+        lv_sign_up_with_google.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+                startActivityForResult(intent, SIGN_IN_CODE);
+            }
+        });
+
     }
 
     private void validateData() {
@@ -120,13 +240,11 @@ public class RegisterFragment extends Fragment {
         }
         else {
             if (CheckNetwork.isNetworkAvailable(getActivity())) {
-                String firstname,lastname,email,passowrd,psw;
+                String firstname,lastname,email,passowrd;
                 firstname=et_register_firstname.getText().toString();
                 lastname=et_register_lastname.getText().toString();
                 email=et_register_email.getText().toString();
                 passowrd=et_register_password.getText().toString();
-
-
                 register(firstname, lastname,email,passowrd);
 
             } else {
@@ -203,6 +321,7 @@ public class RegisterFragment extends Fragment {
                     Log.e("response","="+ response);
                     try {
                         Log.e("responseeeeee","="+ response.errorBody().string());
+
                        /* JSONObject    jsonObject = new JSONObject(response.errorBody().string());
                         Log.e("jsonObject","="+jsonObject);
 
@@ -221,6 +340,7 @@ public class RegisterFragment extends Fragment {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
                    /* try {
 
                         Log.e("codedddddddddddddd","="+ response.code());
@@ -228,16 +348,19 @@ public class RegisterFragment extends Fragment {
                         Log.e("response","="+ response);
                         Log.e("response","="+ response.errorBody().string());
                       //  Log.e("coded==","="+ response.body().string());
-                       *//* JSONObject    jsonObject = new JSONObject(response.body().string());
+                       */
+                   /* JSONObject    jsonObject = new JSONObject(response.body().string());
                         Log.e("jsonObject","="+ jsonObject);
                         Log.e("jsonObject","="+ response);
                         String msg=jsonObject.getString("message");
                         Log.e("codedmessage","="+ msg);
-                   *//*     Toast.makeText(parent, ""+response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                   */
+                   /*     Toast.makeText(parent, ""+response.errorBody().string(), Toast.LENGTH_SHORT).show();
 
                     } catch (JSONException | IOException e) {
                         e.printStackTrace();
                     }*/
+
                 }
             }
             @Override
@@ -305,6 +428,7 @@ public class RegisterFragment extends Fragment {
     }
 
     private void allocateMemory(View v) {
+        login_button_register = v.findViewById(R.id.login_button_register);
         lv_progress_register=v.findViewById(R.id.lv_progress_register);
         nested_scroll_register=v.findViewById(R.id.nested_scroll_register);
         et_register_lastname=v.findViewById(R.id.et_register_lastname);
@@ -313,6 +437,7 @@ public class RegisterFragment extends Fragment {
         tv_sign_up=v.findViewById(R.id.tv_sign_up);
         toolbar_register=v.findViewById(R.id.toolbar_register);
         tv_register=v.findViewById(R.id.tv_register);
+        //lv_sign_up_with_google=v.findViewById(R.id.lv_sign_up_with_google);
         lv_register_main=v.findViewById(R.id.lv_register_main);
         layout_register_firstname=v.findViewById(R.id.layout_register_firstname);
         et_register_firstname=v.findViewById(R.id.et_register_firstname);
@@ -321,7 +446,8 @@ public class RegisterFragment extends Fragment {
         layout_register_password=v.findViewById(R.id.layout_register_password);
         et_register_password=v.findViewById(R.id.et_register_password);
         lv_sign_up=v.findViewById(R.id.lv_sign_up);
-
+        //lv_sign_up_with_facebook=v.findViewById(R.id.lv_sign_up_with_facebook);
+        //fb_login = v.findViewById(R.id.fb_login);
         layout_register_lastname.setTypeface(SplashActivity.montserrat_regular);
         et_register_lastname.setTypeface(SplashActivity.montserrat_regular);
         layout_register_email.setTypeface(SplashActivity.montserrat_regular);
@@ -356,4 +482,61 @@ public class RegisterFragment extends Fragment {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Toast.makeText(getActivity(), "There are some problem to connect with google", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == SIGN_IN_CODE) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result);
+            Log.e("resultofgoogle", "" + result);
+        }
+
+    }
+
+    private void handleSignInResult(GoogleSignInResult result) {
+        if (result.isSuccess()) {
+
+            GoogleSignInAccount account = result.getSignInAccount();
+
+            String gname = account.getDisplayName();
+            Log.e("gimgl", "" + gname);
+            Log.e("gnamel", "" + account.getDisplayName());
+            Log.e("gemaill", "" + account.getEmail());
+            Log.e("gidl", "" + account.getId());
+            Log.e("gtokenidl", "" + account.getIdToken());
+
+            Toast.makeText(getActivity(), account.getDisplayName(), Toast.LENGTH_SHORT).show();
+
+        } else {
+            Toast.makeText(getActivity(), "Can not get data...", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (googleApiClient != null) {
+            googleApiClient.connect();
+        }
+
+    }
+
+    @Override
+    public void onStop() {
+        if (googleApiClient != null && googleApiClient.isConnected()) {
+            googleApiClient.stopAutoManage((FragmentActivity) getContext());
+            googleApiClient.disconnect();
+        }
+        super.onStop();
+    }
+
 }

@@ -176,4 +176,32 @@ public class Login_preference {
         mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         return mPrefs.getString("wishlist_count", "");
     }
+
+
+
+
+    public static void settokenemail(Context context, String value)
+    {
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefsEditor = mPrefs.edit();
+        prefsEditor.putString("customeremail", value);
+        prefsEditor.commit();
+    }
+    public static String gettokenemail(Context context)
+    {
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return mPrefs.getString("customeremail", "");
+    }
+    public static void settokenepassword(Context context, String value)
+    {
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefsEditor = mPrefs.edit();
+        prefsEditor.putString("customerpassword", value);
+        prefsEditor.commit();
+    }
+    public static String gettokenpassword(Context context)
+    {
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return mPrefs.getString("customerpassword", "");
+    }
 }

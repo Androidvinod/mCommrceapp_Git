@@ -171,7 +171,7 @@ public class WishListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         if (CheckNetwork.isNetworkAvailable(context)) {
                             String  itemid= String.valueOf(productList.get(position).getWishlist_item_id());
                             Log.e("debg","="+itemid);
-                            callRemoveFromCartApi(itemid,position,v);
+                            callRemoveFromWishlistApi(itemid,position,v);
 
                         } else {
                             Toast.makeText(context, context.getString(R.string.internet), Toast.LENGTH_SHORT).show();
@@ -282,12 +282,12 @@ public class WishListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
 
-    private void callRemoveFromCartApi(String itemid, int position, final View v) {
+    private void callRemoveFromWishlistApi(String itemid, int position, final View v) {
             lvnodata_wishlistlist.setVisibility(View.GONE);
             lv_progress_wishist.setVisibility(View.VISIBLE);
             recv_wishlist.setVisibility(View.VISIBLE);
 
-            callRemovecartapi(itemid).enqueue(new Callback<Boolean>() {
+        callRemovewishlistapi(itemid).enqueue(new Callback<Boolean>() {
                 @Override
                 public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                     Boolean paymentMehtodModel = response.body();
@@ -337,7 +337,7 @@ public class WishListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
 
-        private Call<Boolean> callRemovecartapi(String itemid) {
+        private Call<Boolean> callRemovewishlistapi(String itemid) {
 
             ApiInterface api = ApiClient.getClient().create(ApiInterface.class);
             Log.e("debug_11","=="+itemid);

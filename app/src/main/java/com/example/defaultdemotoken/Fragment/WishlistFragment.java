@@ -53,8 +53,8 @@ public class WishlistFragment extends Fragment  {
     View v;
     WishListAdapter wishListAdapter;
     Toolbar toolbar_wislist;
-  public static   LinearLayout lvnodata_wishlistlist,lv_progress_wishist;
-  public static   RecyclerView recv_wishlist;
+    public static   LinearLayout lvnodata_wishlistlist,lv_progress_wishist;
+    public static   RecyclerView recv_wishlist;
     List<GoogleMapModel> googleMapModelList=new ArrayList<>();
 
     public WishlistFragment() {
@@ -108,13 +108,10 @@ public class WishlistFragment extends Fragment  {
     }
 
     private void callWishistApi() {
-
-
         lvnodata_wishlistlist.setVisibility(View.GONE);
         favouriteproductlist.clear();
         lv_progress_wishist.setVisibility(View.VISIBLE);
         recv_wishlist.setVisibility(View.VISIBLE);
-
 
         getwishlistdata().enqueue(new Callback<ResponseBody>() {
             @Override
@@ -122,12 +119,9 @@ public class WishlistFragment extends Fragment  {
                 Log.e("response_favourite", "" + response.body());
                 Log.e("response_favourite", "" + response);
                 ResponseBody getFavouriteslist = response.body();
-
-
                 lv_progress_wishist.setVisibility(View.GONE);
                 lvnodata_wishlistlist.setVisibility(View.GONE);
                 recv_wishlist.setVisibility(View.VISIBLE);
-
 
                 if(response.isSuccessful() || response.code()==200)
                 {
@@ -150,10 +144,7 @@ public class WishlistFragment extends Fragment  {
                             lv_progress_wishist.setVisibility(View.GONE);
                             lvnodata_wishlistlist.setVisibility(View.GONE);
                             recv_wishlist.setVisibility(View.VISIBLE);
-
                             for (int i = 0; i < jsonArray.length(); i++) {
-
-
                                 try {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     Log.e("price", "=" + jsonObject.getJSONObject("product").optString("price"));
@@ -172,8 +163,6 @@ public class WishlistFragment extends Fragment  {
                                 } catch (Exception e) {
                                     Log.e("exception22", "=" + e.getLocalizedMessage());
                                 }
-
-
                             }
                             wishListAdapter.notifyDataSetChanged();
                         }
@@ -188,12 +177,22 @@ public class WishlistFragment extends Fragment  {
 
                 }else {
 
+                    Log.e("response_code", "=" + response.code());
+                    try {
+                        Log.e("errorbodyhh", "=" + response.errorBody().string());
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
                     lv_progress_wishist.setVisibility(View.VISIBLE);
                     lvnodata_wishlistlist.setVisibility(View.GONE);
                     recv_wishlist.setVisibility(View.GONE);
 
                     // Toast.makeText(parent, ""+getFavouriteslist.getMessage(), Toast.LENGTH_SHORT).show();
+
+                    NavigationActivity.get_Customer_tokenapi();
+                    callWishistApi();
                 }
 
             }

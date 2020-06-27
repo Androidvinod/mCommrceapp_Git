@@ -57,7 +57,7 @@ public class ProductListFragment extends Fragment {
     ProductListAdater productListAdater;
     RecyclerView recv_productlist,recv_categories_products;
     ApiInterface apiInterface;
-    String catid,catname;
+   public static String catid,catname;
     View v;
     Bundle b;
     LinearLayout lv_progress_product,lvnodata_productlist,lv_main_productlist,lv_filter_clickk;
@@ -66,7 +66,8 @@ public class ProductListFragment extends Fragment {
     ProductCategoryAdapter productCategoryAdapter;
     private List<HomebannerModel> categorylist=new ArrayList<>();
     private List<Integer> wishlitProductidList=new ArrayList<>();
-    private List<Item> productlist=new ArrayList<>();
+    private List<Integer> wishlitItemId=new ArrayList<>();
+
     public ProductListFragment() {
         // Required empty public constructor
     }
@@ -77,31 +78,31 @@ public class ProductListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v= inflater.inflate(R.layout.fragment_product_list, container, false);
+        allocateMemory();
+        attachrecyclerview();
+        setHasOptionsMenu(true);
+
+
         b=this.getArguments();
         if(b!=null)
         {
             catid=b.getString("categoryid");
             catname=b.getString("categoryname");
+            tv_product_title.setText(catname);
+
         }
         Log.e("debugeee","e=="+catid);
         Log.e("debugeee","e=="+catname);
 
-        allocateMemory();
-        attachrecyclerview();
-        setHasOptionsMenu(true);
-         apiInterface = ApiClient.getClient().create(ApiInterface.class);
+
+        apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
         ((NavigationActivity) getActivity()).setSupportActionBar(toolbar_product);
         ((NavigationActivity) getActivity()).getSupportActionBar()
                 .setDisplayHomeAsUpEnabled(true);
         ((NavigationActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_chevron_left_black_24dp);
 
-        /*toolbar_product.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawer.openDrawer(GravityCompat.START);
-            }
-        });*/
+
         attachrecyclerview();
         toolbar_product.setTitle(catname);
         toolbar_product.setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark));
@@ -113,15 +114,10 @@ public class ProductListFragment extends Fragment {
         attachrecyclerview();
 
         if (CheckNetwork.isNetworkAvailable(getActivity())) {
-
-
             if(Login_preference.getLogin_flag(getActivity()).equalsIgnoreCase("1"))
             {
                 callWishistApi();
-            }else {
-
-            }
-
+            }else { }
             CALL_productlist_Api();
         } else {
             Toast.makeText(getContext(), getResources().getString(R.string.nointernet), Toast.LENGTH_SHORT).show();
@@ -154,15 +150,15 @@ public class ProductListFragment extends Fragment {
                         //  Log.e("jsonarray66ss", "=" +jsonArray.getJSONObject(0).getJSONObject("product"));
 
                         if(jsonArray.length()==0)
-                        {
-
-                        }else {
+                        { }
+                        else {
 
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     try {
                                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     Log.e("product_id", "=" +jsonObject.getString("product_id"));
-                                    wishlitProductidList.add(jsonObject.getInt("product_id"));
+                                        wishlitProductidList.add(jsonObject.getInt("product_id"));
+                                        wishlitItemId.add(jsonObject.getInt("wishlist_item_id"));
                                     Log.e("price", "=" + jsonObject.getJSONObject("product").optString("price"));
                                     Log.e("name", "=" + jsonObject.getJSONObject("product").optString("name"));
                                     Log.e("special_price", "=" + jsonObject.getJSONObject("product").optString("special_price"));
@@ -185,16 +181,15 @@ public class ProductListFragment extends Fragment {
                            // wishListAdapter.notifyDataSetChanged();
                         }
 
-                          /*  Log.e("size", "=" +favouriteproductlist.size());
-                            wishListAdapter = new NewWishListAdapter(getAct ivity(), favouriteproductlist);
-                            recv_favourites.setLayoutManager( new LinearLayoutManager(parent, LinearLayoutManager.VERTICAL, false));
-                            recv_favourites.setAdapter(wishListAdapter)*/;
+
                     } catch (IOException | JSONException e) {
                         e.printStackTrace();
                     }
 
                 }else {
 
+                    NavigationActivity.get_Customer_tokenapi();
+                    callWishistApi();
 
                       // Toast.makeText(parent, ""+getFavouriteslist.getMessage(), Toast.LENGTH_SHORT).show();
                 }
@@ -203,7 +198,7 @@ public class ProductListFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                t.printStackTrace();
+                  t.printStackTrace();
                   Toast.makeText(getActivity(), "" + getActivity().getResources().getString(R.string.wentwrong), Toast.LENGTH_SHORT).show();
 
             }
@@ -211,10 +206,8 @@ public class ProductListFragment extends Fragment {
     }
 
     private Call<ResponseBody> getwishlistdata() {
-
         ApiInterface api = ApiClient.getClient().create(ApiInterface.class);
         Log.e("debug_11token22","=="+ Login_preference.getCustomertoken(getActivity()));
-
         return api.defaultgetWishlistData("Bearer "+Login_preference.getCustomertoken(getActivity()));
     }
 
@@ -238,7 +231,7 @@ public class ProductListFragment extends Fragment {
     }
 
     private void attachrecyclerview() {
-        productListAdater = new ProductListAdater(getActivity(),productlist);
+        productListAdater = new ProductListAdater(getActivity());
         recv_productlist.setLayoutManager(new GridLayoutManager(getContext(), 2));
         recv_productlist.setAdapter(productListAdater);
 
@@ -261,7 +254,6 @@ public class ProductListFragment extends Fragment {
         tv_filter.setTypeface(SplashActivity.montserrat_medium);
         tv_product_title.setTypeface(SplashActivity.montserrat_semibold);
 
-        tv_product_title.setText("Women");
     }
 
     private void CALL_productlist_Api() {
@@ -296,43 +288,35 @@ public class ProductListFragment extends Fragment {
                     } else {
                         List<Item> results = fetchResults(response);
 
-
                         for(int i=0;i<results.size();i++)
                         {
                             Log.e("debug_productid", "=" + results.get(i).getId());
-                            String isWishliste,imagge;
-                            //Boolean isWishlisted, String image, Integer id, String sku, String name, Double price
-                            imagge=results.get(i).getMediaGalleryEntries().get(0).getFile();
-                            if( wishlitProductidList.contains(results.get(i).getId()))
+                            Log.e("wiish_itemid", "=" + wishlitItemId.size());
+                            String isWishliste,imagge,wishlist_item_id = null;
+                                if(wishlitProductidList.contains(results.get(i).getId()))
                             {
                                 Log.e("if", "=" + results.get(i).getId());
+                                Log.e("if_item_id", "=" + wishlitProductidList.indexOf(results.get(i).getId()));
+                                int pos=wishlitProductidList.indexOf(results.get(i).getId());
 
-                                isWishliste="true";
-                                productlist.add(new Item(isWishliste,imagge,results.get(i).getId(),results.get(i).getSku(),
-                                        results.get(i).getName(),results.get(i).getPrice()));
+                                 if(wishlitItemId.size()>0)
+                                 {
+                                     wishlist_item_id= String.valueOf(wishlitItemId.get(pos));
+                                     Log.e("wishlist_item_id_3317", "=" + wishlist_item_id);
+                                 }
 
+                                 isWishliste="true";
+                                    results.get(i).setWishlisted(isWishliste);
+                                    results.get(i).setWishlist_item_id(wishlist_item_id);
                             }else{
+                                wishlist_item_id= "0";
+                                isWishliste="false";
+
+                                results.get(i).setWishlist_item_id(wishlist_item_id);
+                                results.get(i).setWishlisted(isWishliste);
                                 Log.e("else", "=" + results.get(i).getId());
 
-                                isWishliste="false";
-                                productlist.add(new Item(isWishliste,imagge,results.get(i).getId(),results.get(i).getSku(),
-                                        results.get(i).getName(),results.get(i).getPrice()));
-
                             }
-                           /* for (int j=0;j<wishlitProductidList.size();j++)
-                            {
-                                if(results.contains(wishlitProductidList.get(j)))
-                                {
-                                    isWishliste="true";
-                                    productlist.add(new Item(isWishliste,imagge,results.get(i).getId(),results.get(i).getSku(),results.get(i).getName(),results.get(i).getPrice()));
-                                }else {
-                                //jbhj
-                                    isWishliste="false";
-                                    productlist.add(new Item(isWishliste,imagge,results.get(i).getId(),results.get(i).getSku(),results.get(i).getName(),results.get(i).getPrice()));
-                                }
-
-                            }*/
-
                         }
 
                         Log.e("debug_145", "=" + results);

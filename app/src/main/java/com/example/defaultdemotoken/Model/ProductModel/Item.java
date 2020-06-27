@@ -7,32 +7,8 @@ import com.google.gson.annotations.SerializedName;
 
 public class Item {
     private String isWishlisted;
+    private String wishlist_item_id;
     private String image;
-
-    public String getWishlisted() {
-        return isWishlisted;
-    }
-
-    public void setWishlisted(String wishlisted) {
-        isWishlisted = wishlisted;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public Item(String isWishlisted, String image, Integer id, String sku, String name, Double price) {
-        this.isWishlisted = isWishlisted;
-        this.image = image;
-        this.id = id;
-        this.sku = sku;
-        this.name = name;
-        this.price = price;
-    }
 
     @SerializedName("id")
     @Expose
@@ -79,10 +55,40 @@ public class Item {
     @SerializedName("tier_prices")
     @Expose
     private List<Object> tierPrices = null;
+
    /* @SerializedName("custom_attributes")
     @Expose
     private List<CustomAttribute> customAttributes = null;
 */
+
+
+
+
+    public String getWishlisted() {
+        return isWishlisted;
+    }
+
+    public void setWishlisted(String wishlisted) {
+        isWishlisted = wishlisted;
+    }
+
+    public String getWishlist_item_id() {
+        return wishlist_item_id;
+    }
+
+    public void setWishlist_item_id(String wishlist_item_id) {
+        this.wishlist_item_id = wishlist_item_id;
+    }
+
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     public Integer getId() {
         return id;
     }

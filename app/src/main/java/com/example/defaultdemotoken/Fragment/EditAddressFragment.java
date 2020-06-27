@@ -677,8 +677,6 @@ public class EditAddressFragment extends Fragment {
                             countryidlist.add(jsonObject.optString("id"));
                             countryLablelist.add(jsonObject.optString("full_name_english"));
                         }
-
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     } catch (IOException e) {
@@ -689,12 +687,9 @@ public class EditAddressFragment extends Fragment {
                     {
                         lv_progress_edittead.setVisibility(View.GONE);
                         scroll_edit.setVisibility(View.VISIBLE);
-
                     }else if(main.equalsIgnoreCase("button click")){
-
                          lv_progress_country.setVisibility(View.VISIBLE);
                          rv_country.setVisibility(View.GONE);
-
                      }
                 }
             }
@@ -709,14 +704,11 @@ public class EditAddressFragment extends Fragment {
                 {
                     lv_progress_edittead.setVisibility(View.GONE);
                     scroll_edit.setVisibility(View.VISIBLE);
-
                 }else if(main.equalsIgnoreCase("button click")){
 
                     lv_progress_country.setVisibility(View.VISIBLE);
                     rv_country.setVisibility(View.GONE);
-
                 }
-
             }
         });
 

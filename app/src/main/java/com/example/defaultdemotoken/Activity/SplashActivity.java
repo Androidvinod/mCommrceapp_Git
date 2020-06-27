@@ -76,7 +76,6 @@ public class SplashActivity extends AppCompatActivity {
 
                 Log.e("debug_165","168-"+response);
                 Log.e("debug_167","168-"+response.body());
-                Log.e("debug_1688","168-"+response.body().toString());
 
                 Login_preference.settoken(SplashActivity.this,response.body());
 

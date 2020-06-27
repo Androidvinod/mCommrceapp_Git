@@ -84,20 +84,20 @@ public class NavigationActivity extends AppCompatActivity {
     RelativeLayout relative_layout;
     public static BottomNavigationView bottom_navigation;
      boolean doubleBackToExitPressedOnce = false;
-    ApiInterface api;
+    public static ApiInterface api;
     ImageView nav_iv_close;
     ChildDataAdapter categoryAdapter;
     public static TextView tv_bottomcount,tv_wishlist_count;
     LinearLayout lv_nodata_category,lv_home;
     String cartitem_count,wishlist_count;
-
+    public static NavigationActivity parent;
     Toolbar toolbar;
     ActionBarDrawerToggle toggle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
-
+        parent = (NavigationActivity) NavigationActivity.this;
         //setSupportActionBar(toolbar);
           //  changeToolbarFont(toolbar, Navigation_drawer_activity.this);
         AllocateMemory();
@@ -112,28 +112,6 @@ public class NavigationActivity extends AppCompatActivity {
                 drawer.openDrawer(GravityCompat.START);
             }
         });
-
-      /*  mAppBarConfiguration = new AppBarConfiguration.Builder()
-                .setDrawerLayout(drawer)
-                .build();
-        mDrawerToggle = new ActionBarDrawerToggle(this,
-                drawer,
-                toolbar,
-                R.string.navigation_drawer_open,
-                R.string.navigation_drawer_open) {
-
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-              //  getSupportActionBar().setTitle("test");
-            }
-
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-              //  getSupportActionBar().setTitle("drawer title");
-            }
-        };
-        drawer.addDrawerListener(mDrawerToggle);*/
-
 
         api = ApiClient.getClient().create(ApiInterface.class);
         AttachRecyclerView();
@@ -171,26 +149,6 @@ public class NavigationActivity extends AppCompatActivity {
         return drawer;
     }
 
-   private void get_Customer_tokenapi() {
-        Log.e("response201tokenff",""+Login_preference.gettoken(NavigationActivity.this));
-        Call<String> customertoken = api.getcustomerToken(ApiClient.MAIN_URLL+"integration/customer/token?username=vinod@dolphinwebsolution.com&password=vinod@203");
-        customertoken.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                Log.e("response200",""+response.toString());
-                Log.e("response201",""+response.body());
-                Login_preference.setCustomertoken(NavigationActivity.this,response.body());
-                get_Customer_QuoteId();
-
-                callWishlistCountApi();
-            }
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Toast.makeText(NavigationActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-                t.printStackTrace();
-            }
-        });
-    }
     private void get_Customer_QuoteId() {
         Log.e("customertoken",""+Login_preference.getCustomertoken(NavigationActivity.this));
         Call<Integer> customertoken = api.getQuoteid("Bearer "+Login_preference.getCustomertoken(NavigationActivity.this),"http://dkbraende.demoproject.info/rest/V1/carts/mine/?customerId=12466");
@@ -248,6 +206,28 @@ public class NavigationActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(NavigationActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public static void get_Customer_tokenapi() {
+        Log.e("response201tokenff",""+Login_preference.gettoken(parent));
+        String email=Login_preference.gettokenemail(parent);
+        String password=Login_preference.gettokenpassword(parent);
+        String url=ApiClient.MAIN_URLL+"integration/customer/token?username="+email+"&password="+password;
+        Call<String> customertoken = api.getcustomerToken(url);
+        customertoken.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.e("response200",""+response.toString());
+                Log.e("response201",""+response.body());
+                Login_preference.setCustomertoken(parent,response.body());
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.e("failure_messge",""+t);
+                Toast.makeText(parent, t.getMessage(), Toast.LENGTH_SHORT).show();
                 t.printStackTrace();
             }
         });

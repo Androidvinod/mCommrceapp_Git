@@ -230,8 +230,6 @@ public class CartListFragment extends Fragment {
     }
 
     public static void CallCartlistApi() {
-
-
         cart_models.clear();
         cordinator_cart.setVisibility(View.GONE);
         lv_cartlist_progress.setVisibility(View.VISIBLE);
@@ -289,7 +287,8 @@ public class CartListFragment extends Fragment {
                         e.printStackTrace();
                     }
                 }else {
-
+                    NavigationActivity.get_Customer_tokenapi();
+                    CallCartlistApi();
                 }
 
             }

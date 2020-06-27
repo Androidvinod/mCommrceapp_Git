@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,6 +33,21 @@ import com.example.defaultdemotoken.Login_preference;
 import com.example.defaultdemotoken.R;
 import com.example.defaultdemotoken.Retrofit.ApiClient;
 import com.example.defaultdemotoken.Retrofit.ApiInterface;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.Profile;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -41,6 +58,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,11 +69,12 @@ import retrofit2.Response;
 
 import static com.example.defaultdemotoken.Activity.NavigationActivity.bottom_navigation;
 import static com.example.defaultdemotoken.Activity.NavigationActivity.tv_wishlist_count;
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LoginFragment extends Fragment implements View.OnClickListener {
+public class LoginFragment extends Fragment implements View.OnClickListener,GoogleApiClient.OnConnectionFailedListener {
 
     View v;
     Toolbar toolbar_login;
@@ -66,10 +85,15 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     NestedScrollView nestedscrol_login;
     ApiInterface customeapi;
 
+    public static GoogleApiClient googleApiClient;
+    public static final int SIGN_IN_CODE = 777;
+    CallbackManager callbackManager;
+    LoginButton login_button;
+    private static final String EMAIL = "email";
+
     public LoginFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -77,16 +101,100 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         v= inflater.inflate(R.layout.fragment_login, container, false);
         AllocateMemory(v);
+        callbackManager = CallbackManager.Factory.create();
         setHasOptionsMenu(true);
         setupUI(lv_login_main);
         ((NavigationActivity) getActivity()).setSupportActionBar(toolbar_login);
         ((NavigationActivity) getActivity()).getSupportActionBar()
                 .setDisplayHomeAsUpEnabled(true);
         ((NavigationActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_chevron_left_black_24dp);
+        GOOGLE_LOGIN();
         customeapi = ApiClient.getClient().create(ApiInterface.class);
         lv_sign_in.setOnClickListener(this);
+
+        login_button.setFragment(this);
+        login_button.setReadPermissions(Arrays.asList(EMAIL));
+
+        login_button.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Toast.makeText(getActivity(), "FB successfully login", Toast.LENGTH_SHORT).show();
+                Log.e("fb_success",""+loginResult.toString());
+
+                AccessToken accessToken = loginResult.getAccessToken();
+                Profile profile = Profile.getCurrentProfile();
+
+                GraphRequest request = GraphRequest.newMeRequest(
+                        loginResult.getAccessToken(),
+                        new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(
+                                    JSONObject object,
+                                    GraphResponse response) {
+                                Log.v("LoginActivity Response ", response.toString());
+
+                                try {
+
+                                    String Name = object.getString("name");
+                                    String FEmail = object.getString("email");
+                                    String FEid = object.getString("id");
+                                    String fbpp = "http://graph.facebook.com/" + FEid + "/picture?type=square";
+
+                                    Log.e("fbemail = ", " " + FEmail);
+                                    Log.e("fbid = ", " " + FEid);
+                                    Log.e("fbpp = ", " " + fbpp);
+                                    Toast.makeText(getApplicationContext(), Name, Toast.LENGTH_LONG).show();
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,name,email,gender, birthday");
+                request.setParameters(parameters);
+                request.executeAsync();
+
+            }
+
+            @Override
+            public void onCancel() {
+                Toast.makeText(getActivity(), "FB cancel", Toast.LENGTH_SHORT).show();
+                Log.e("fb_cancel","cancellll");
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
+                Log.e("fb_error",""+error.toString());
+            }
+        });
+
         return v;
     }
+
+    private void GOOGLE_LOGIN() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        googleApiClient = new GoogleApiClient.Builder(getActivity())
+                .enableAutoManage(getActivity(), this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        lv_google_login = v.findViewById(R.id.lv_google_login);
+        lv_google_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+                startActivityForResult(intent, SIGN_IN_CODE);
+            }
+        });
+
+    }
+
     public void setupUI(View view) {
 
         // Set up touch listener for non-text box views to hide keyboard.
@@ -122,10 +230,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private void AllocateMemory(View v) {
         nestedscrol_login=v.findViewById(R.id.nestedscrol_login);
         lv_progress_login=v.findViewById(R.id.lv_progress_login);
+        login_button = v.findViewById(R.id.login_button);
         lv_login_main=v.findViewById(R.id.lv_login_main);
         tv_login=v.findViewById(R.id.tv_login);
         tv_google=v.findViewById(R.id.tv_google);
-        lv_fb_login=v.findViewById(R.id.lv_fb_login);
+        //lv_fb_login=v.findViewById(R.id.lv_fb_login);
         toolbar_login=v.findViewById(R.id.toolbar_login);
         tv_welcome=v.findViewById(R.id.tv_welcome);
         tv_continue=v.findViewById(R.id.tv_continue);
@@ -137,7 +246,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         lv_sign_in=v.findViewById(R.id.lv_sign_in);
         tv_sign_in_login=v.findViewById(R.id.tv_sign_in_login);
         tv_or=v.findViewById(R.id.tv_or);
-        tv_fb=v.findViewById(R.id.tv_fb);
+        //tv_fb=v.findViewById(R.id.tv_fb);
         lv_google_login=v.findViewById(R.id.lv_google_login);
 
 
@@ -150,7 +259,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         tv_forgetpsw.setTypeface(SplashActivity.montserrat_regular);
         tv_or.setTypeface(SplashActivity.montserrat_medium);
         tv_google.setTypeface(SplashActivity.montserrat_medium);
-        tv_fb.setTypeface(SplashActivity.montserrat_medium);
+//        tv_fb.setTypeface(SplashActivity.montserrat_medium);
         tv_login.setTypeface(SplashActivity.montserrat_bold);
         tv_sign_in_login.setTypeface(SplashActivity.montserrat_semibold);
     }
@@ -220,7 +329,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         get_Customer_tokenapi(email,password);
     }
 
-    private void get_Customer_tokenapi(String email, String password) {
+    private void get_Customer_tokenapi(final String email, final String password) {
         nestedscrol_login.setVisibility(View.GONE);
         lv_progress_login.setVisibility(View.VISIBLE);
         Log.e("response201tokenff",""+ Login_preference.gettoken(getActivity()));
@@ -241,6 +350,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                     get_Customer_QuoteId();
 
                     callWishlistCountApi();
+
+                    Login_preference.settokenemail(getActivity(),email);
+                    Login_preference.settokenepassword(getActivity(),password);
                 }else {
 
                     Toast.makeText(getActivity(), "account not regisered", Toast.LENGTH_SHORT).show();
@@ -435,4 +547,61 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         Matcher m = p.matcher(toString);
         return m.matches();
     }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Toast.makeText(getActivity(), "There are some problem to connect with google", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == SIGN_IN_CODE) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result);
+            Log.e("resultofgoogle", "" + result);
+        }
+
+    }
+
+    private void handleSignInResult(GoogleSignInResult result) {
+        if (result.isSuccess()) {
+
+            GoogleSignInAccount account = result.getSignInAccount();
+
+            String gname = account.getDisplayName();
+            Log.e("gimgl", "" + gname);
+            Log.e("gnamel", "" + account.getDisplayName());
+            Log.e("gemaill", "" + account.getEmail());
+            Log.e("gidl", "" + account.getId());
+            Log.e("gtokenidl", "" + account.getIdToken());
+
+            Toast.makeText(getActivity(), account.getDisplayName(), Toast.LENGTH_SHORT).show();
+
+        } else {
+            Toast.makeText(getActivity(), "Can not get data...", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (googleApiClient != null) {
+            googleApiClient.connect();
+        }
+
+    }
+
+    @Override
+    public void onStop() {
+        if (googleApiClient != null && googleApiClient.isConnected()) {
+            googleApiClient.stopAutoManage((FragmentActivity) getContext());
+            googleApiClient.disconnect();
+        }
+        super.onStop();
+    }
+
 }

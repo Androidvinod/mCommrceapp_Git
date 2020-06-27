@@ -1,4 +1,7 @@
 <resources>
+    <string name="facebook_app_id">608148720133382</string>
+    <string name="fb_login_protocol_scheme">fb608148720133382</string>
+    <string name="sign_ingoogleaccount">Sign In With Google</string>
     <string name="app_name">mCommerce App</string>
     <string name="price">100</string>
     <string name="title_activity_navigation">NavigationActivity</string>
