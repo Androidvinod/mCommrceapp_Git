@@ -3,6 +3,7 @@
     android:orientation="vertical"
     android:background="@color/white"
     android:layout_width="match_parent"
+    android:layout_marginTop="@dimen/padding10"
     android:id="@+id/lv_filter_click"
     android:layout_height="wrap_content">
 

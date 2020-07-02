@@ -17,6 +17,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -78,7 +80,7 @@ public class CartListFragment extends Fragment {
     public static CoordinatorLayout cordinator_cart;
     public static Context context;
     static LinearLayout lv_nodata_cart;
-
+    TextView tv_cart_subtotal;
     public CartListFragment() {
         // Required empty public constructor
     }
@@ -115,6 +117,7 @@ public class CartListFragment extends Fragment {
 
         if (CheckNetwork.isNetworkAvailable(getActivity())) {
             CallCartlistApi();
+            getallpricedata();
         } else {
             Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.internet), Toast.LENGTH_SHORT).show();
         }
@@ -129,7 +132,7 @@ public class CartListFragment extends Fragment {
                     if (CartlistAdapter_new.flag == false) {
                         Toast.makeText(context, context.getString(R.string.quantity_messge), Toast.LENGTH_SHORT).show();
                     } else {
-                       // pushFragment(new CheckoutFragment(), "Checkout");
+                        pushFragment(new CheckoutFragment(), "Checkout");
                     }
 
                 }
@@ -137,6 +140,62 @@ public class CartListFragment extends Fragment {
         });
         return v;
 
+    }
+
+    private void pushFragment(Fragment fragment, String add_to_backstack) {
+        if (fragment == null)
+            return;
+
+        FragmentManager fragmentManager = getFragmentManager();
+        if (fragmentManager != null) {
+            FragmentTransaction ft = fragmentManager.beginTransaction();
+            if (ft != null) {
+                ft.replace(R.id.framlayout, fragment);
+                ft.addToBackStack(add_to_backstack);
+
+                ft.commit();
+            }
+        }
+
+    }
+
+    private void getallpricedata() {
+        callgetpricedataapi().enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.e("pricelistdata150", "" + response.body());
+                if(response.isSuccessful() || response.code()==200)
+                {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        JSONObject image = new JSONObject(jsonObject.getString("totals"));
+                        Log.e("pricereponse_158", "" + image.getString("grand_total"));
+                        Log.e("pricereponse_158", "" + image.getString("base_currency_code"));
+                        tv_cart_subtotal.setText(image.getString("base_currency_code")+image.getString("grand_total"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }else {
+
+                    Log.e("error_293",""+response.body());
+                    NavigationActivity.get_Customer_tokenapi();
+                    getallpricedata();
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(context, "" + context.getResources().getString(R.string.wentwrong), Toast.LENGTH_SHORT).show();
+                Log.e("debug_175125", "pages: " + t);
+            }
+        });
+    }
+
+    public static Call<ResponseBody> callgetpricedataapi() {
+        Log.e("debugcustomertoen","="+Login_preference.getCustomertoken(context));
+
+        return apiInterface.getpricedata("Bearer " + Login_preference.getCustomertoken(context));
     }
 
     private void initSwipe() {
@@ -264,13 +323,9 @@ public class CartListFragment extends Fragment {
                                     Log.e("nameeeecartprod", "" + valsmain);
 
                                     String extension_attributes = vals.getString("extension_attributes");
-
                                     JSONObject image = new JSONObject(extension_attributes);
-
                                     String imageurl = image.getString("image_url");
-
                                     Log.e("cart_image_url", "" + imageurl);
-
                                     cart_models.add(new CartListModel(vals.getString("item_id"), vals.getString("sku"), vals.getString("qty"), vals.getString("name"),
                                             vals.getInt("price"), vals.getString("product_type"), vals.getString("quote_id"), imageurl));
 
@@ -337,6 +392,7 @@ public class CartListFragment extends Fragment {
         lv_cartlist_progress = v.findViewById(R.id.lv_cartlist_progress);
         cordinator_cart = v.findViewById(R.id.cordinator_cart);
         lv_nodata_cart = v.findViewById(R.id.lv_nodata_cart);
+        tv_cart_subtotal = v.findViewById(R.id.tv_cart_subtotal);
       //  lv_cart_Main = v.findViewById(R.id.lv_cart_Main);
     }
 

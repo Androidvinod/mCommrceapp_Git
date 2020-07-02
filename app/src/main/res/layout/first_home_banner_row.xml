@@ -10,10 +10,10 @@
         android:layout_height="200dp">
 
         <com.example.defaultdemotoken.Rounded
-            android:id="@+id/img"
+            android:id="@+id/home_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
+            android:scaleType="fitXY"
             android:src="@drawable/topbanner" />
 
     </LinearLayout>

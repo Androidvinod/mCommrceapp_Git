@@ -124,14 +124,14 @@
                         android:id="@+id/rv_sort_by"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin10" />
+                        android:layout_marginTop="@dimen/padding5" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/lv_filter"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin20"
+                    android:layout_marginTop="@dimen/padding30"
                     android:orientation="vertical">
 
                     <TextView
@@ -148,7 +148,7 @@
                         android:id="@+id/rv_filter_by"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin10" />
+                        android:layout_marginTop="@dimen/padding5" />
 
                 </LinearLayout>
 

@@ -2,7 +2,6 @@ package com.example.defaultdemotoken.Fragment;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -15,36 +14,60 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.defaultdemotoken.Activity.NavigationActivity;
 import com.example.defaultdemotoken.Activity.SplashActivity;
 import com.example.defaultdemotoken.Adapter.BestSellingAdapter;
+import com.example.defaultdemotoken.Adapter.BrowseCategoryAdapter;
 import com.example.defaultdemotoken.Adapter.HomeCategoryAdapter;
+import com.example.defaultdemotoken.Adapter.NewArrivalsAdapter;
 import com.example.defaultdemotoken.Adapter.ViewPagerAdapter;
+import com.example.defaultdemotoken.CheckNetwork;
 import com.example.defaultdemotoken.EnhancedWrapContentViewPager;
+import com.example.defaultdemotoken.Model.HomeModel.BestSelling;
+import com.example.defaultdemotoken.Model.HomeModel.BrowseCategory;
+import com.example.defaultdemotoken.Model.HomeModel.NewArrrivalsModel;
 import com.example.defaultdemotoken.Model.HomebannerModel;
-import com.example.defaultdemotoken.R;
 
+import com.example.defaultdemotoken.R;
+import com.example.defaultdemotoken.Retrofit.ApiClient;
+import com.example.defaultdemotoken.Retrofit.ApiInterface;
+import com.example.defaultdemotoken.Rounded;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import me.relex.circleindicator.CircleIndicator;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.example.defaultdemotoken.Activity.NavigationActivity.bottom_navigation;
 import static com.example.defaultdemotoken.Activity.NavigationActivity.drawer;
@@ -52,29 +75,36 @@ import static com.example.defaultdemotoken.Activity.NavigationActivity.drawer;
 public class HomeFragment extends Fragment implements View.OnClickListener {
     public static Toolbar toolbar_home;
     SearchView searchView;
-    TextView tv_sale,tv_home_titlee,tv_search_title,tv_browse_cat,tv_seeall_browse,tv_best_selling,tv_best_selling_seeall,tv_new_see_all,tv_new_arrivals,tv_home_off;
-
+    TextView tv_sale, tv_home_titlee, tv_search_title, tv_browse_cat, tv_seeall_browse, tv_best_selling, tv_best_selling_seeall, tv_new_see_all, tv_new_arrivals, tv_home_off;
+    public static ApiInterface apiInterface;
+    public static ApiInterface apiInterface1;
     //HomeTopSliderAdapter homeTopSliderAdapter;
     View v;
-    RecyclerView recv_categories,recv_bestselling,recv_newarrivals;
+    RecyclerView recv_categories, recv_bestselling, recv_newarrivals;
 
-    HomeCategoryAdapter homeCategoryAdapter;
+    BrowseCategoryAdapter browseCategoryAdapter;
     BestSellingAdapter bestSellingAdapter;
-    BestSellingAdapter bestSellingAdapter1;
     ViewPagerAdapter viewPagerAdapter;
-    private List<HomebannerModel> HomebannerModelList=new ArrayList<>();
-    private List<HomebannerModel> HomebannerModelList1=new ArrayList<>();
-    private List<HomebannerModel> imagslider=new ArrayList<>();
-    int scrollCount = 0;
-    LinearLayout lv_see_all_categories;
+    NewArrivalsAdapter newArrivalsAdapter;
+
+    private List<HomebannerModel> imagslidertop = new ArrayList<>();
+    private List<BrowseCategory> browseCategories = new ArrayList<>();
+    private List<BestSelling> bestSellingList = new ArrayList<>();
+    private List<NewArrrivalsModel> newArrrivalsModelArrayList = new ArrayList<>();
+
+    NestedScrollView home_nested;
+    LinearLayout lv_home_progress,lv_see_all_categories;
     EnhancedWrapContentViewPager viewPager;
     CircleIndicator indicatorr;
+    Rounded iv_middle_block,iv_bottom_block;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-         v = inflater.inflate(R.layout.fragment_home, container, false);
+        v = inflater.inflate(R.layout.fragment_home, container, false);
         bottom_navigation.getMenu().getItem(2).setChecked(true);
+        apiInterface = ApiClient.getClient().create(ApiInterface.class);
+        apiInterface1 = ApiClient.getClient().create(ApiInterface.class);
         setHasOptionsMenu(true);
         AllocateMemory(v);
         setFontFamily();
@@ -82,9 +112,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         hideKeyboard(getActivity());
         //SearchView_Focus();
 
-        if(getActivity()!=null)
-        {
-            Log.e("debu_home","=");
+        if (getActivity() != null) {
+            Log.e("debu_home", "=");
             ((NavigationActivity) getActivity()).setSupportActionBar(toolbar_home);
             ((NavigationActivity) getActivity()).getSupportActionBar()
                     .setDisplayHomeAsUpEnabled(true);
@@ -94,7 +123,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 @Override
                 public void onClick(View v) {
 
-                    Log.e("debu_home","=kj");
+                    Log.e("debu_home", "=kj");
                     ((NavigationActivity) getActivity()).getmDrawerLayout().openDrawer(GravityCompat.START);
                     //drawer.openDrawer(GravityCompat.START);
 
@@ -104,7 +133,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             toolbar_home.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.e("debu_home","=kkk");
+                    Log.e("debu_home", "=kkk");
                     ((NavigationActivity) getActivity()).getmDrawerLayout().openDrawer(GravityCompat.START);
 
                 }
@@ -112,29 +141,206 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         }
 
 
-
-        String mystring=new String("USE CODE : FASH20");
+        String mystring = new String("USE CODE : FASH20");
         SpannableString content = new SpannableString(mystring);
         content.setSpan(new UnderlineSpan(), 0, mystring.length(), 0);
         tv_sale.setText(content);
         AttachRecyclerview();
 
 
-        for (int i=0;i<5;i++)
+        if (CheckNetwork.isNetworkAvailable(getActivity())) {
+            CallHommepageApi();
+        } else {
+            Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.internet), Toast.LENGTH_SHORT).show();
+        }
+
+
+        /*for (int i=0;i<5;i++)
         {
             HomebannerModelList.add(new HomebannerModel(" "));
             HomebannerModelList1.add(new HomebannerModel(" "));
-        }
+        }*/
+
+
         lv_see_all_categories.setOnClickListener(this);
 
 
-       // setDynamicbackgroundButton();
-        makeRoundCorner(getActivity().getResources().getColor(R.color.greylight),15,lv_see_all_categories,1,getActivity().getResources().getColor(R.color.greylight));
+        // setDynamicbackgroundButton();
+        makeRoundCorner(getActivity().getResources().getColor(R.color.greylight), 15, lv_see_all_categories, 1, getActivity().getResources().getColor(R.color.greylight));
 
         return v;
     }
-    public  void makeRoundCorner(int bgcolor,int radius,View v,int strokeWidth,int strokeColor)
-    {
+
+    private void CallHommepageApi() {
+        lv_home_progress.setVisibility(View.VISIBLE);
+        home_nested.setVisibility(View.GONE);
+        callhomepagetopbannre().enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                lv_home_progress.setVisibility(View.GONE);
+                home_nested.setVisibility(View.VISIBLE);
+                Log.e("homepage_response", "" + response.body());
+
+                if (response.isSuccessful() || response.code() == 200) {
+                    JSONArray itemArray = null;
+                    try {
+                        itemArray = new JSONArray(response.body().string());
+                        Log.e("homepage_array_response", "" + itemArray);
+
+                        JSONObject jsonObject = itemArray.getJSONObject(0);
+                        Log.e("homepage_obj_response", "" + jsonObject);
+
+                        JSONArray top_block = jsonObject.getJSONArray("topBlock");
+                        Log.e("homepage_top_block", "" + top_block);
+
+                        for (int i = 0; i < top_block.length(); i++) {
+
+                            String value = top_block.getString(i);
+
+                            Log.e("valss", "" + value);
+
+                            imagslidertop.add((new HomebannerModel(value)));
+
+                        }
+
+                        viewPagerAdapter = new ViewPagerAdapter(getActivity(), imagslidertop);
+                        viewPager.setAdapter(viewPagerAdapter);
+                        //indicatorr.createIndicators(5,0);
+                        indicatorr.setViewPager(viewPager);
+                        viewPagerAdapter.registerDataSetObserver(indicatorr.getDataSetObserver());
+                        Timer timer = new Timer();
+                        timer.scheduleAtFixedRate(new SliderTimer(), 2000, 2000);
+
+                        JSONArray category = jsonObject.getJSONArray("category");
+                        Log.e("homepage_category", "" + category);
+
+                        for (int i = 0; i < category.length(); i++) {
+                            try {
+                                JSONObject vals = category.getJSONObject(i);
+
+                                String browse_cat_name = vals.getString("name");
+                                Log.e("browse_cat_home_name", "" + browse_cat_name);
+
+                                browseCategories.add(new BrowseCategory("", vals.getString("name"), vals.getString("image")));
+
+                            } catch (Exception e) {
+                                Log.e("Exception", "" + e);
+                            } finally {
+                                browseCategoryAdapter.notifyItemChanged(i);
+
+                            }
+                        }
+
+                        JSONArray bestSellers = jsonObject.getJSONArray("bestSellers");
+                        Log.e("homepage_bestSellers", "" + bestSellers);
+
+                        for (int i = 0; i < bestSellers.length(); i++) {
+                            try {
+                                JSONObject vals = bestSellers.getJSONObject(i);
+
+                                String bestselling_name = vals.getString("name");
+                                Log.e("_cat_home_name", "" + bestselling_name);
+
+                                bestSellingList.add(new BestSelling(vals.getString("name"), vals.getString("image"),
+                                        vals.getString("sku"), vals.getString("id"), vals.getString("rating_count"), vals.getString("price")));
+
+                            } catch (Exception e) {
+                                Log.e("Exception", "" + e);
+                            } finally {
+                                bestSellingAdapter.notifyItemChanged(i);
+
+                            }
+                        }
+
+                        JSONArray middleBlock = jsonObject.getJSONArray("middleBlock");
+                        Log.e("homepage_middleBlock", "" + middleBlock);
+
+                        for (int i = 0; i < middleBlock.length(); i++) {
+
+                            String value = middleBlock.getString(i);
+
+                            Log.e("valss", "" + value);
+
+                            final RequestOptions requestOptions = new RequestOptions();
+                            requestOptions.placeholder(R.drawable.image);
+                            requestOptions.error(R.drawable.image);
+
+                            Glide.with(getActivity())
+                                    .setDefaultRequestOptions(requestOptions)
+                                    .load(value).into(iv_middle_block);
+
+                        }
+
+                        JSONArray newProducts = jsonObject.getJSONArray("newProducts");
+                        Log.e("homepage_newProducts", "" + newProducts);
+
+                        for (int i = 0; i < newProducts.length(); i++) {
+                            try {
+                                JSONObject vals = newProducts.getJSONObject(i);
+
+                                String bestselling_name = vals.getString("name");
+                                Log.e("nes_cat_home_name", "" + bestselling_name);
+
+                                newArrrivalsModelArrayList.add(new NewArrrivalsModel(vals.getString("name"), vals.getString("image"),
+                                        vals.getString("sku"), vals.getString("id"), vals.getString("rating_count"), vals.getString("price")));
+
+                            } catch (Exception e) {
+                                Log.e("Exception", "" + e);
+                            } finally {
+                                newArrivalsAdapter.notifyItemChanged(i);
+                            }
+                        }
+
+                        JSONArray bottomBlock = jsonObject.getJSONArray("bottomBlock");
+                        Log.e("homepage_bottomBlock", "" + middleBlock);
+
+                        for (int i = 0; i < bottomBlock.length(); i++) {
+
+                            String value = bottomBlock.getString(i);
+
+                            Log.e("valss", "" + value);
+
+                            final RequestOptions requestOptions = new RequestOptions();
+                            requestOptions.placeholder(R.drawable.image);
+                            requestOptions.error(R.drawable.image);
+
+                            Glide.with(getActivity())
+                                    .setDefaultRequestOptions(requestOptions)
+                                    .load(value).into(iv_bottom_block);
+
+                        }
+
+
+                    } catch (JSONException | IOException e) {
+                        e.printStackTrace();
+                        lv_home_progress.setVisibility(View.GONE);
+                        home_nested.setVisibility(View.VISIBLE);
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } else {
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("debug_175125", "pages: " + t);
+            }
+        });
+    }
+
+    /*private List<CartListModel> fetchResults(Response<CartListModel> response) {
+        return (List<CartListModel>) response.body();
+    }*/
+
+    public static Call<ResponseBody> callhomepagetopbannre() {
+        return apiInterface1.homepagetopbanner("http://app.demoproject.info/rest/V1/homepage");
+    }
+
+    public void makeRoundCorner(int bgcolor, int radius, View v, int strokeWidth, int strokeColor) {
         GradientDrawable gdDefault = new GradientDrawable();
         gdDefault.setColor(bgcolor);
         gdDefault.setCornerRadius(radius);
@@ -145,6 +351,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         tv_seeall_browse.setTypeface(SplashActivity.montserrat_medium);
 
     }
+
     private void setDynamicbackgroundButton() {
 
         GradientDrawable shape = new GradientDrawable();
@@ -152,7 +359,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         shape.setColor(getActivity().getResources().getColor(R.color.greylight));
         shape.setStroke(3, getActivity().getResources().getColor(R.color.greylight));
         shape.setCornerRadius(15);
-        shape.setCornerRadii(new float[] { 12, 12, 12, 12, 12, 12, 12, 12 });
+        shape.setCornerRadii(new float[]{12, 12, 12, 12, 12, 12, 12, 12});
         lv_see_all_categories.setBackgroundDrawable(shape);
 
     }
@@ -160,21 +367,21 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private class SliderTimer extends TimerTask {
         @Override
         public void run() {
-            if(getActivity()!=null)
-            {
+            if (getActivity() != null) {
                 getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (viewPager.getCurrentItem() < imagslider.size() - 1) {
-                        viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
-                    } else {
-                        viewPager.setCurrentItem(0);
+                    @Override
+                    public void run() {
+                        if (viewPager.getCurrentItem() < imagslidertop.size() - 1) {
+                            viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+                        } else {
+                            viewPager.setCurrentItem(0);
+                        }
                     }
-                }
-            });
+                });
             }
         }
     }
+
     private void setFontFamily() {
         tv_home_off.setTypeface(SplashActivity.montserrat_bold);
         tv_new_arrivals.setTypeface(SplashActivity.montserrat_bold);
@@ -199,29 +406,32 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             inputManager.hideSoftInputFromWindow(currentFocusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
-    private void AttachRecyclerview() {
-        homeCategoryAdapter = new HomeCategoryAdapter(getActivity(),HomebannerModelList);
-        recv_categories.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
-        recv_categories.setAdapter(homeCategoryAdapter);
 
-        bestSellingAdapter = new BestSellingAdapter(getActivity(),HomebannerModelList);
-        recv_bestselling.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+    private void AttachRecyclerview() {
+        browseCategoryAdapter = new BrowseCategoryAdapter(getActivity(), browseCategories);
+        recv_categories.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        recv_categories.setAdapter(browseCategoryAdapter);
+
+        bestSellingAdapter = new BestSellingAdapter(getActivity(), bestSellingList);
+        recv_bestselling.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         recv_bestselling.setAdapter(bestSellingAdapter);
 
-        bestSellingAdapter1 = new BestSellingAdapter(getActivity(),HomebannerModelList1);
+        newArrivalsAdapter = new NewArrivalsAdapter(getActivity(), newArrrivalsModelArrayList);
+        recv_newarrivals.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        recv_newarrivals.setAdapter(newArrivalsAdapter);
+
+        /*bestSellingAdapter = new BestSellingAdapter(getActivity(),bestSellingList);
         recv_newarrivals.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
-        recv_newarrivals.setAdapter(bestSellingAdapter1);
-
-
+        recv_newarrivals.setAdapter(bestSellingAdapter1);*/
 
 
         //set image slider data
-        for (int i=0;i<5;i++)
+        /*for (int i=0;i<5;i++)
         {
             imagslider.add((new HomebannerModel("")));
-        }
+        }*/
 
-        viewPagerAdapter = new ViewPagerAdapter(getActivity(),imagslider);
+        viewPagerAdapter = new ViewPagerAdapter(getActivity(), imagslidertop);
         viewPager.setAdapter(viewPagerAdapter);
         //indicatorr.createIndicators(5,0);
         indicatorr.setViewPager(viewPager);
@@ -235,6 +445,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     /**
      * Autoscroll detected from here, where counter, time and runnable is declared.
      */
+
    /* public void autoScrollAnother() {
 
 
@@ -287,6 +498,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         handler.postDelayed(runnable,speedScroll);
     }
 */
+
     private void SearchView_Focus() {
         searchView.setIconifiedByDefault(false);
         searchView.setFocusable(true);
@@ -295,8 +507,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         searchView.setIconified(true);
 
     }
+
     private void AllocateMemory(View v) {
-        viewPager=v.findViewById(R.id.viewPager);
+        viewPager = v.findViewById(R.id.viewPager);
 
         indicatorr = v.findViewById(R.id.indicatorr);
         lv_see_all_categories = v.findViewById(R.id.lv_see_all_categories);
@@ -313,8 +526,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         recv_newarrivals = v.findViewById(R.id.recv_newarrivals);
         recv_bestselling = v.findViewById(R.id.recv_bestselling);
         recv_categories = v.findViewById(R.id.recv_categories);
-         searchView = v.findViewById(R.id.search);
+        searchView = v.findViewById(R.id.search);
         toolbar_home = v.findViewById(R.id.toolbar_home);
+        iv_middle_block = v.findViewById(R.id.iv_middle_block);
+        iv_bottom_block = v.findViewById(R.id.iv_bottom_block);
+        home_nested = v.findViewById(R.id.home_nested);
+        lv_home_progress = v.findViewById(R.id.lv_home_progress);
     }
 
     @Override
@@ -343,12 +560,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if(v==lv_see_all_categories)
-        {
-            Bundle b=new Bundle();
+        if (v == lv_see_all_categories) {
+            Bundle b = new Bundle();
             AppCompatActivity activity = (AppCompatActivity) v.getContext();
-           b.putString("categoryid",String.valueOf(91));
-          b.putString("categoryname","1/2 Palle Træpiller ");
+            b.putString("categoryid", String.valueOf(91));
+            b.putString("categoryname", "1/2 Palle Træpiller ");
             ProductListFragment myFragment = new ProductListFragment();
             myFragment.setArguments(b);
             activity.getSupportFragmentManager().beginTransaction()

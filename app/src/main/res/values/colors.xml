@@ -39,4 +39,11 @@
     <color name="togelbutton">#777777</color>
     <color name="greeen">#00c569</color>
     <color name="cart_bg">#fafafa</color>
+    <color name="grey_black">#6e6e6e</color>
+    <color name="darkgrey">#bbbbbb</color>
+    <color name="greeey">#7d7d7d</color>
+    <color name="light_green">#ccffe7</color>
+    <color name="border_edittext">#d9d9d9</color>
+    <color name="view_bg">#eaeaea</color>
+
 </resources>

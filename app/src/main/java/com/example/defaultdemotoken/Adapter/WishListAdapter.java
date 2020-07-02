@@ -2,6 +2,8 @@ package com.example.defaultdemotoken.Adapter;
 
 import android.content.Context;
 import android.graphics.Paint;
+import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.defaultdemotoken.Activity.NavigationActivity;
 import com.example.defaultdemotoken.CheckNetwork;
 import com.example.defaultdemotoken.Fragment.LoginFragment;
+import com.example.defaultdemotoken.Fragment.ProductDetailFragment;
 import com.example.defaultdemotoken.Fragment.WishlistFragment;
 import com.example.defaultdemotoken.Login_preference;
 import com.example.defaultdemotoken.Model.WishlistModel;
@@ -39,6 +42,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.defaultdemotoken.Activity.NavigationActivity.drawer;
 import static com.example.defaultdemotoken.Activity.NavigationActivity.tv_wishlist_count;
 import static com.example.defaultdemotoken.Fragment.WishlistFragment.lv_progress_wishist;
 import static com.example.defaultdemotoken.Fragment.WishlistFragment.lvnodata_wishlistlist;
@@ -113,30 +117,27 @@ public class WishListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     .load("http://dkbraende.demoproject.info/pub/media/catalog/product"+product.getThumbnail()).into(myViewHolder.iv_wishlist_product);
 
             myViewHolder.lv_productwish_click.setEnabled(true);
-           /* myViewHolder.lv_productwish_click.setOnClickListener(new View.OnClickListener() {
+            myViewHolder.lv_productwish_click.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
                     final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        public void run() {
-                            //  myViewHolder.lv_productwish_click.setEnabled(false);
-                            Bundle b = new Bundle();
-                            b.putString("product_id", product.getWishlist_item_id());
-                            b.putString("wishlist", product.getWishlist_item_id());
+                    AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                    Bundle b = new Bundle();
+                    b.putString("product_id", String.valueOf(productList.get(position).getProduct_id()));
+                    b.putString("product_name", String.valueOf(productList.get(position).getName()));
+                    ProductDetailFragment myFragment = new ProductDetailFragment();
+                    myFragment.setArguments(b);
+                    activity.getSupportFragmentManager()
+                            .beginTransaction()
+                            .setCustomAnimations(R.anim.fade_in,
+                                    0, 0, R.anim.fade_out)
+                            .setCustomAnimations(R.anim.fade_in,
+                                    0, 0, R.anim.fade_out)
+                            .add(R.id.framlayout, myFragment)
+                            .addToBackStack(null).commit();
 
-                            AppCompatActivity activity = (AppCompatActivity) v.getContext();
-                            ProductDetailFragment myFragment = new ProductDetailFragment();
-                            myFragment.setArguments(b);
-                            activity.getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in,
-                                    0, 0, R.anim.fade_out).setCustomAnimations(R.anim.fade_in,
-                                    0, 0, R.anim.fade_out).addToBackStack(null).replace(R.id.framlayout, myFragment).addToBackStack(null).commit();
-                            if (drawer.isDrawerOpen(GravityCompat.START)) {
-                                drawer.closeDrawer(GravityCompat.START);
-                            }
-                        }
-                    }, 100);
                 }
-            });*/
+            });
 
             myViewHolder.lv_add_to_cart.setOnClickListener(new View.OnClickListener() {
                 @Override

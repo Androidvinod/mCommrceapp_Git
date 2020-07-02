@@ -1,6 +1,7 @@
 package com.example.defaultdemotoken.Adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,8 @@ import android.widget.ImageView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.defaultdemotoken.Model.HomebannerModel;
 import com.example.defaultdemotoken.R;
 import com.example.defaultdemotoken.Rounded;
@@ -41,9 +44,19 @@ public class ViewPagerAdapter extends PagerAdapter {
 
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(R.layout.first_home_banner_row, null);
-        Rounded imageView = (Rounded) view.findViewById(R.id.img);
+        Rounded imageView = (Rounded) view.findViewById(R.id.home_image);
         //imageView.setImageResource(images[position]);
-      //  imageView.setImageResource(homebannerModelList.get(position).getIma());
+       //imageView.setImageResource(Integer.parseInt(homebannerModelList.get(position).getIma()));
+
+        final RequestOptions requestOptions = new RequestOptions();
+        requestOptions.placeholder(R.drawable.image);
+        requestOptions.error(R.drawable.image);
+
+        Log.e("vp_ada",""+homebannerModelList.get(position).getIma());
+
+        Glide.with(context)
+                .setDefaultRequestOptions(requestOptions)
+                .load(homebannerModelList.get(position).getIma()).into(imageView);
 
         ViewPager vp = (ViewPager) container;
         vp.addView(view, 0);

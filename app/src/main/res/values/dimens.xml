@@ -31,4 +31,5 @@
     <dimen name="text_18">18sp</dimen>
     <dimen name="padding15">15dp</dimen>
     <dimen name="text_10">10sp</dimen>
+    <dimen name="padding13">13dp</dimen>
 </resources>

@@ -68,6 +68,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.example.defaultdemotoken.Activity.NavigationActivity.bottom_navigation;
+import static com.example.defaultdemotoken.Activity.NavigationActivity.parent;
 import static com.example.defaultdemotoken.Activity.NavigationActivity.tv_wishlist_count;
 import static com.facebook.FacebookSdk.getApplicationContext;
 
@@ -432,7 +433,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener,Goog
 
     private void get_Customer_QuoteId() {
         Log.e("customertoken",""+Login_preference.getCustomertoken(getActivity()));
-        Call<Integer> customertoken = customeapi.getQuoteid("Bearer "+Login_preference.getCustomertoken(getActivity()),"http://dkbraende.demoproject.info/rest/V1/carts/mine/?customerId=12466");
+        Call<Integer> customertoken = customeapi.getQuoteid("Bearer "+Login_preference.getCustomertoken(getActivity()),
+                "http://dkbraende.demoproject.info/rest/V1/carts/mine/?customerId="+Login_preference.getcustomer_id(parent));
         customertoken.enqueue(new Callback<Integer>() {
             @Override
             public void onResponse(Call<Integer> call, Response<Integer> response) {

@@ -15,7 +15,7 @@
             android:layout_height="250dp">
 
             <com.example.defaultdemotoken.RoundRectCornerImageView
-                android:id="@+id/iv_product_img"
+                android:id="@+id/iv_product_img_bestselling"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="fitXY"
@@ -110,41 +110,37 @@
 
     </RelativeLayout>
 
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
         android:textStyle="bold"
         android:textSize="@dimen/text_16"
-        android:id="@+id/tv_product_name"
+        android:id="@+id/tv_product_name_bestselling"
         android:includeFontPadding="false"
         android:lines="1"
         android:ellipsize="end"
-        android:text="You can Get It Top - Orange"
         android:layout_marginTop="@dimen/padding5"
         android:layout_gravity="center|start"
         android:gravity="center|start"
         android:padding="@dimen/padding5"/>
     <RatingBar
-        android:id="@+id/ratingbar_gourment"
+        android:id="@+id/ratingbar_bestselling"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center|start"
         android:gravity="center|start"
         android:layout_marginTop="5dp"
         style="@style/Base.Widget.AppCompat.RatingBar.Small"
-        android:theme="@style/RatingBar"
-        android:rating="5"/>
+        android:theme="@style/RatingBar" />
     <TextView
-        android:id="@+id/tv_product_price"
+        android:id="@+id/tv_product_price_bestselling"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
         android:textStyle="bold"
         android:textSize="@dimen/text_16"
         android:includeFontPadding="false"
-        android:text="$777"
         android:layout_marginTop="@dimen/padding5"
         android:layout_gravity="center|start"
         android:gravity="center|start"

@@ -16,6 +16,11 @@ public class MediaGalleryEntry {
     @SerializedName("label")
     @Expose
     private Object label;
+
+    public MediaGalleryEntry(Integer id) {
+        this.id = id;
+    }
+
     @SerializedName("position")
     @Expose
     private Integer position;

@@ -2,6 +2,7 @@ package com.example.defaultdemotoken.Retrofit;
 
 
 import com.example.defaultdemotoken.Model.CategoriesModel;
+import com.example.defaultdemotoken.Model.ProductDetailModel.ProductDetailsM;
 import com.example.defaultdemotoken.Model.ProductModel.ProductModel;
 
 import okhttp3.ResponseBody;
@@ -174,6 +175,43 @@ public interface ApiInterface {
     //http://dkbraende.demoproject.info/rest/V1/directory/countries
     @GET("directory/countries")
     Call<ResponseBody> getCountryList(@Header("Authorization") String authHeader);
+
+    @GET("products")
+    Call<ProductDetailsM> getProductDetails(@Header("Authorization") String token,
+                                            @Query("searchCriteria[filterGroups][0][filters][0][field]") String field,
+                                            @Query("searchCriteria[filterGroups][0][filters][0][condition_type]") String type,
+                                            @Query("searchCriteria[filterGroups][0][filters][0][value]") String value);
+
+    @GET()
+    Call<ResponseBody> homepagetopbanner(@Url String ul);
+
+    //country list
+    //http://dkbraende.demoproject.info/rest/V1/carts/mine/payment-information
+    @GET("carts/mine/payment-information")
+    Call<ResponseBody> getpricedata(@Header("Authorization") String authHeader);
+
+    //product detail
+    //http://dkbraende.demoproject.info/rest/V1/products?searchCriteria[filterGroups][0][filters][0][field]=entity_id&searchCriteria[filterGroups][0][filters][0][condition_type]=eq&searchCriteria[filterGroups][0][filters][0][value]=130
+    @GET("products")
+    Call<ResponseBody> productsdetail(@Header("Authorization") String authHeader,
+                                      @Query("searchCriteria[filterGroups][0][filters][0][field]") String enitityid,
+                                      @Query("searchCriteria[filterGroups][0][filters][0][condition_type]") String eq,
+                                      @Query("searchCriteria[filterGroups][0][filters][0][value]") String id);
+
+    @GET()
+    Call<ResponseBody> getShippingMethod(@Header("Authorization") String authHeader,
+                                         @Url String url);
+
+    @GET()
+    Call<ResponseBody> getPaymentMethod(@Header("Authorization") String authHeader,
+                                        @Url String url);
+
+
+    //filterlist
+    //http://app.demoproject.info/rest/V1/filterlist?categoryId=2
+    @POST()
+    Call<ResponseBody> getFilterList(@Header("Authorization") String authHeader,
+                                        @Url String url);
 
 
 }

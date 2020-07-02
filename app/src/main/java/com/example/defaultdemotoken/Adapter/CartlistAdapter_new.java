@@ -28,6 +28,7 @@ import com.example.defaultdemotoken.Activity.NavigationActivity;
 import com.example.defaultdemotoken.Activity.SplashActivity;
 import com.example.defaultdemotoken.CheckNetwork;
 import com.example.defaultdemotoken.Fragment.CartListFragment;
+import com.example.defaultdemotoken.Fragment.ProductDetailFragment;
 import com.example.defaultdemotoken.Login_preference;
 import com.example.defaultdemotoken.Model.CartListModel;
 import com.example.defaultdemotoken.R;
@@ -110,6 +111,11 @@ public class CartlistAdapter_new extends RecyclerView.Adapter<CartlistAdapter_ne
                 removefromcart(itemid,holder);
             }
         });
+
+
+
+
+
 
 
 
@@ -202,7 +208,7 @@ public class CartlistAdapter_new extends RecyclerView.Adapter<CartlistAdapter_ne
 
     }
 
-    private void callUpdateCartApi(String itemid, String valueOf, final MyViewHolder holder) {
+    private void callUpdateCartApi(final String itemid, final String valueOf, final MyViewHolder holder) {
         Log.e("debug_232_update", "a" + itemid);
         Log.e("debug_233_update", "b" + valueOf);
         AppCompatActivity activity = (AppCompatActivity) holder.et_cart_qty.getContext();
@@ -263,7 +269,9 @@ public class CartlistAdapter_new extends RecyclerView.Adapter<CartlistAdapter_ne
                     AppCompatActivity activityy = (AppCompatActivity) holder.et_cart_qty.getContext();
 
                     hideKeyboard(activityy);
+                    NavigationActivity.get_Customer_tokenapi();
                     Log.e("status_wish402", "not_ok");
+                    callUpdateCartApi(itemid, valueOf, holder);
                     //Toast.makeText(context, updateCartQtyModel.getMessage(), Toast.LENGTH_SHORT).show();
 
                 }
@@ -326,6 +334,9 @@ public class CartlistAdapter_new extends RecyclerView.Adapter<CartlistAdapter_ne
                 }else {
                      cordinator_cart.setVisibility(View.VISIBLE);
                         lv_cartlist_progress.setVisibility(View.GONE);
+                    NavigationActivity.get_Customer_tokenapi();
+                    removefromcart(itemId,holder);
+
 
                 }
 
@@ -394,10 +405,11 @@ public class CartlistAdapter_new extends RecyclerView.Adapter<CartlistAdapter_ne
         ImageView iv_cartlist_product;
         /*RoundRectCornerImageView iv_cartlist_product;*/
         EditText et_cart_qty;
-        LinearLayout lv_remove_from_cart;
+        LinearLayout lv_remove_from_cart,lv_cart_click;
         public MyViewHolder(View view) {
             super(view);
 
+            lv_cart_click =  view.findViewById(R.id.lv_cart_click);
             tv_cartlist_product_name =  view.findViewById(R.id.tv_cartlist_product_name);
             tv_cartlist_price =  view.findViewById(R.id.tv_cartlist_price);
             tv_cart_sku =  view.findViewById(R.id.tv_cart_sku);

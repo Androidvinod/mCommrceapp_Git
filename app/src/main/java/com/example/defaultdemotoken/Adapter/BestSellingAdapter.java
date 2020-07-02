@@ -6,75 +6,67 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.defaultdemotoken.Activity.SplashActivity;
+
+import com.example.defaultdemotoken.Model.HomeModel.BestSelling;
 import com.example.defaultdemotoken.Model.HomebannerModel;
 import com.example.defaultdemotoken.R;
+import com.example.defaultdemotoken.RoundRectCornerImageView;
 
 import java.util.List;
 
-    public class BestSellingAdapter extends RecyclerView.Adapter<com.example.defaultdemotoken.Adapter.BestSellingAdapter.MyViewHolder> {
+    public class BestSellingAdapter extends RecyclerView.Adapter<BestSellingAdapter.MyViewHolder> {
         Context context;
-        private List<HomebannerModel> HomebannerModelList;
+        private List<BestSelling> bestSellingList;
 
-        public BestSellingAdapter(Context context,List<HomebannerModel> HomebannerModelList) {
+        public BestSellingAdapter(Context context,List<BestSelling> bestSellingList) {
             this.context = context;
-            this.HomebannerModelList = HomebannerModelList;
+            this.bestSellingList = bestSellingList;
         }
 
         @NonNull
         @Override
-        public com.example.defaultdemotoken.Adapter.BestSellingAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
             View itemView = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.best_selling_row, viewGroup, false);
-            return new com.example.defaultdemotoken.Adapter.BestSellingAdapter.MyViewHolder(itemView);
+            return new MyViewHolder(itemView);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull com.example.defaultdemotoken.Adapter.BestSellingAdapter.MyViewHolder holder, int position) {
-            final HomebannerModel HomebannerModel = HomebannerModelList.get(position);
-            final com.example.defaultdemotoken.Adapter.BestSellingAdapter.MyViewHolder myViewHolder = (com.example.defaultdemotoken.Adapter.BestSellingAdapter.MyViewHolder) holder;
+        public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+            final BestSelling bestSelling = bestSellingList.get(position);
+            final MyViewHolder myViewHolder = (MyViewHolder) holder;
 
-            holder.tv_product_new.setTypeface(SplashActivity.montserrat_medium);
-            holder.tv_product_name.setTypeface(SplashActivity.montserrat_medium);
-            holder.tv_product_price.setTypeface(SplashActivity.montserrat_semibold);
+            holder.tv_product_name_bestselling.setTypeface(SplashActivity.montserrat_medium);
+            holder.tv_product_price_bestselling.setTypeface(SplashActivity.montserrat_medium);
 
-            //            myViewHolder.lv_HomebannerModel_click.setEnabled(true);
-         /*   myViewHolder.tvHomebannerModelName.setText(Html.fromHtml(HomebannerModel.getName()));
-            holder.lv_HomebannerModel_click.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        public void run() {
-                            //  myViewHolder.lv_HomebannerModel_click.setEnabled(false);
-                            Bundle b=new Bundle();
-                            AppCompatActivity activity = (AppCompatActivity) v.getContext();
-                            b.putString("categoryid", String.valueOf(HomebannerModel.getId()));
-                            b.putString("categoryname",HomebannerModel.getName());
-                            b.putString("screen","HomebannerModel");
+            myViewHolder.tv_product_name_bestselling.setText(bestSellingList.get(position).getName());
+            myViewHolder.tv_product_price_bestselling.setText(bestSellingList.get(position).getPrice());
 
-                            ProductListFragment myFragment = new ProductListFragment();
-                            myFragment.setArguments(b);
-                            activity.getSupportFragmentManager().beginTransaction().replace(R.id.framlayout, myFragment)
-                                    .addToBackStack(null).commit();
+            Log.e("best_selling_name",""+bestSellingList.get(position).getName());
+            Log.e("best_selling_rats",""+bestSellingList.get(position).getRating());
 
-                        }
-                    }, 100);
-                    if (drawer.isDrawerOpen(GravityCompat.START)) {
-                        drawer.closeDrawer(GravityCompat.START);
-                    }
-                }
-            });*/
+            final RequestOptions requestOptions = new RequestOptions();
+            requestOptions.placeholder(R.drawable.image);
+            requestOptions.error(R.drawable.image);
 
+            Glide.with(context)
+                    .setDefaultRequestOptions(requestOptions)
+                    .load(bestSellingList.get(position).getImage()).into(myViewHolder.iv_product_img_bestselling);
 
+           myViewHolder.ratingbar_bestselling.setRating(Float.parseFloat(bestSellingList.get(position).getRating()));
 
         }
-        public void add(HomebannerModel r) {
+
+        /*public void add(HomebannerModel r) {
             HomebannerModelList.add(r);
             notifyItemInserted(HomebannerModelList.size() - 1);
         }
@@ -85,30 +77,26 @@ import java.util.List;
                 Log.e("debug_127adapter",""+result);
                 add(result);
             }
-        }
-
-
+        }*/
 
         @Override
         public int getItemCount() {
-            return HomebannerModelList.size();
+            return bestSellingList.size();
         }
 
         public class MyViewHolder extends RecyclerView.ViewHolder {
 
-            TextView tv_product_new,tv_product_name,tv_product_price;
-            LinearLayout lv_HomebannerModel_click;
-            View viewsubcat;
+            RoundRectCornerImageView iv_product_img_bestselling;
+            TextView tv_product_name_bestselling,tv_product_price_bestselling;
+            RatingBar ratingbar_bestselling;
 
             public MyViewHolder(@NonNull View view) {
                 super(view);
 
-
-                tv_product_price = view.findViewById(R.id.tv_product_price);
-                tv_product_name = view.findViewById(R.id.tv_product_name);
-                tv_product_new = view.findViewById(R.id.tv_product_new);
-                ////    tvHomebannerModelName = view.findViewById(R.id.tvHomebannerModelName);
-                //   viewsubcat = view.findViewById(R.id.viewsubcat);
+                iv_product_img_bestselling = view.findViewById(R.id.iv_product_img_bestselling);
+                tv_product_name_bestselling = view.findViewById(R.id.tv_product_name_bestselling);
+                tv_product_price_bestselling = view.findViewById(R.id.tv_product_price_bestselling);
+                ratingbar_bestselling = view.findViewById(R.id.ratingbar_bestselling);
 
             }
         }

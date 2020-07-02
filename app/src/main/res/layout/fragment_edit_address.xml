@@ -364,7 +364,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="35dp"
-                android:background="@drawable/rounded_blacl"
+                android:background="@drawable/rounded_greeeen"
                 android:gravity="center"
                 android:padding="@dimen/padding5"
                 android:orientation="vertical">

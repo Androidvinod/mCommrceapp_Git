@@ -162,7 +162,7 @@
                                 android:id="@+id/lv_sign_in"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@drawable/rounded_blacl"
+                                android:background="@drawable/rounded_greeeen"
                                 android:gravity="center"
                                 android:padding="@dimen/padding10">
 

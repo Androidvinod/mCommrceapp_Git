@@ -2,6 +2,7 @@ package com.example.defaultdemotoken.Fragment;
 
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
@@ -125,7 +126,22 @@ public class ProductListFragment extends Fragment {
         lv_filter_clickk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pushFragment(new FilterListFragment(),"filter");
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                Bundle b = new Bundle();
+                b.putString("categoryid", catid);
+                b.putString("categoryname", catname);
+             //   b.putString("product_name", String.valueOf(ItemList.get(position).getName()));
+                FilterListFragment myFragment = new FilterListFragment();
+                myFragment.setArguments(b);
+                activity.getSupportFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.fade_in,
+                                0, 0, R.anim.fade_out)
+                        .setCustomAnimations(R.anim.fade_in,
+                                0, 0, R.anim.fade_out)
+                        .add(R.id.framlayout, myFragment)
+                        .addToBackStack(null).commit();
+
             }
         });
 
@@ -163,16 +179,7 @@ public class ProductListFragment extends Fragment {
                                     Log.e("name", "=" + jsonObject.getJSONObject("product").optString("name"));
                                     Log.e("special_price", "=" + jsonObject.getJSONObject("product").optString("special_price"));
                                     Log.e("thumbnail", "=" + jsonObject.getJSONObject("product").optString("thumbnail"));
-                                   /* favouriteproductlist.add(new WishlistModel
-                                            (jsonObject.getString("wishlist_item_id"),
-                                                    jsonObject.getString("wishlist_id"),
-                                                    jsonObject.getString("product_id"),
-                                                    jsonObject.getJSONObject("product").optString("sku"),
-                                                    jsonObject.getJSONObject("product").optString("price"),
-                                                    jsonObject.getJSONObject("product").optString("special_price"),
-                                                    jsonObject.getJSONObject("product").optString("name"),
-                                                    jsonObject.getJSONObject("product").optString("thumbnail")));
-                        */        } catch (Exception e) {
+                                          } catch (Exception e) {
                                     Log.e("exception22", "=" + e.getLocalizedMessage());
                                 }
 

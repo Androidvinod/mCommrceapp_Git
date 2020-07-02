@@ -221,7 +221,7 @@
                         android:layout_marginLeft="20dp"
                         android:layout_marginTop="@dimen/padding5"
                         android:layout_marginRight="20dp"
-                        android:background="@drawable/rounded_button_fill"
+                        android:background="@drawable/rounded_greeeen"
                         android:gravity="center"
                         android:paddingLeft="10dp"
                         android:paddingTop="@dimen/padding10"

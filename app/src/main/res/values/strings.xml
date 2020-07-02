@@ -3,7 +3,7 @@
     <string name="fb_login_protocol_scheme">fb608148720133382</string>
     <string name="sign_ingoogleaccount">Sign In With Google</string>
     <string name="app_name">mCommerce App</string>
-    <string name="price">100</string>
+    <string name="price">PRICE :</string>
     <string name="title_activity_navigation">NavigationActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -150,4 +150,29 @@
     <string name="entervalidmobileno">Please enter valid mobile no</string>
     <string name="selectcountry">Select Country</string>
     <string name="selectecountry">Select Country</string>
+    <string name="sku">SKU :</string>
+    <string name="stock">IN A STOCK</string>
+    <string name="addcart">Add to Cart</string>
+    <string name="size">Size</string>
+    <string name="colour">Colour</string>
+    <string name="detailss">Details</string>
+    <string name="readmore">Read More</string>
+    <string name="productfeature">Product Feature</string>
+    <string name="similarproduct">Similar Product</string>
+    <string name="easypaymentoption">Easy Payment Options</string>
+    <string name="review">Reviews</string>
+    <string name="writereview">Write your review</string>
+    <string name="viewallreviews">View All Review</string>
+    <string name="havedouts">Have doubts regrading this project</string>
+    <string name="postque">Post your questions</string>
+    <string name="submit">Submit</string>
+    <string name="postyour">Post your quotation</string>
+
+    <string name="size_guide">Select Size</string>
+
+    <string name="checkout">Checkout</string>
+    <string name="delivery">Delivery</string>
+    <string name="payments">Payments</string>
+    <string name="next">Next</string>
+    <string name="backk">Back</string>
 </resources>
