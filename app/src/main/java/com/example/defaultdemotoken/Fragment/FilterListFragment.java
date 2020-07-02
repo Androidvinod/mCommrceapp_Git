@@ -141,7 +141,7 @@ public class FilterListFragment extends Fragment {
                             JSONArray filterarray=jsonObject.getJSONArray("filter");
                             JSONArray sortarray=jsonObject.getJSONArray("sort");
                             Log.e("filterarray", "=" + filterarray);
-                            Log.e("sortarray", "=" + sortarray);
+                            Log.e("sortarrayuu", "=" + sortarray);
 
                             //filter array
                             for (int j=0;j<filterarray.length();j++)
