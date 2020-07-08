@@ -1,6 +1,7 @@
 package com.example.defaultdemotoken.Retrofit;
 
 
+import com.example.defaultdemotoken.Model.AddressModel.AddressModell;
 import com.example.defaultdemotoken.Model.CategoriesModel;
 import com.example.defaultdemotoken.Model.ProductDetailModel.ProductDetailsM;
 import com.example.defaultdemotoken.Model.ProductModel.ProductModel;
@@ -212,6 +213,28 @@ public interface ApiInterface {
     @POST()
     Call<ResponseBody> getFilterList(@Header("Authorization") String authHeader,
                                         @Url String url);
+
+
+
+    //search first api
+    //http://dkbraende.demoproject.info/rest/V1/search?searchCriteria[requestName]=quick_search_container&searchCriteria[filter_groups][0][filters][0][field]=search_term&searchCriteria[filter_groups][0][filters][0][value]=brændetårn&fields=items[id]
+    //getsearch api
+    //http://dkbraende.demoproject.info/rest/all/V1/products?searchCriteria[filterGroups][0][filters][0][field]=entity_id&searchCriteria[filterGroups][0][filters][0][value]=364,227&searchCriteria[filterGroups][0][filters][0][conditionType]=fineset
+
+    @GET()
+    Call<ResponseBody> getSearchValue(@Header("Authorization") String authHeader,
+                                        @Url String url);
+
+    //address
+    //http://dkbraende.demoproject.info/rest//V1/customers/1
+    @GET()
+    Call<AddressModell> address(@Header("Authorization") String authHeader,@Url String url);
+
+    //create order
+    //http://dkbraende.demoproject.info/rest//V1/orders/create?entity[base_currency_code]=USD&entity[base_discount_amount]=0&entity[base_grand_total]=25.98&entity[base_shipping_amount]=0&entity[base_subtotal]=25.98&entity[base_tax_amount]=0&entity[customer_email]=test@gmail.com&entity[customer_firstname]=Test&entity[customer_group_id]=1&entity[customer_id]=2&entity[customer_is_guest]=0&entity[customer_lastname]=Test&entity[customer_note_notify]=1&entity[discount_amount]=0&entity[email_sent]=1&entity[grand_total]=25.98&entity[is_virtual]=0&entity[order_currency_code]=USD&entity[shipping_amount]=0&entity[shipping_description]=Shipping %26 Handling&entity[state]=new&entity[status]=pending&entity[store_currency_code]=usd&entity[store_id]=1&entity[store_name]=Main Website\nMain Website Store\n&entity[subtotal]=25.98&entity[subtotal_incl_tax]=25.98&entity[tax_amount]=0&entity[total_item_count]=2&entity[total_qty_ordered]=2&entity[items][0][base_discount_amount]=0&entity[items][0][base_original_price]=12.99&entity[items][0][base_price]=12.99&entity[items][0][base_price_incl_tax]=12.99&entity[items][0][base_row_invoiced]=25.98&entity[items][0][base_row_total]=25.98&entity[items][0][base_tax_amount]=0&entity[items][0][base_tax_invoiced]=0&entity[items][0][discount_amount]=0&entity[items][0][discount_percent]=0&entity[items][0][free_shipping]=0&entity[items][0][is_virtual]=0&entity[items][0][name]=Firestarter 30 stk&entity[items][0][original_price]=80&entity[items][0][price]=12.99&entity[items][0][price_incl_tax]=12.99&entity[items][0][product_id]=12.99&entity[items][0][product_type]=simple&entity[items][0][qty_ordered]=2&entity[items][0][row_total]=25.98&entity[items][0][row_total_incl_tax]=25.98&entity[items][0][sku]=CHECKED PINAFORE dress&entity[items][0][store_id]=1&entity[payment][method]=cashondelivery&entity[billing_address][address_type]=billing&entity[billing_address][city]=ahmedabad&entity[billing_address][country_id]=in&entity[billing_address][email]=test@gmail.com&entity[billing_address][firstname]=test&entity[billing_address][lastname]=test&entity[billing_address][postcode]=1222&entity[billing_address][region]=gujarat&entity[billing_address][region_code]=gj&entity[billing_address][region_id]=544&entity[billing_address][street][0]=ahm&entity[billing_address][street][1]=new&entity[billing_address][telephone]=1111&entity[extension_attributes][shipping_assignments][0][shipping][address][address_type]=shipping&entity[extension_attributes][shipping_assignments][0][shipping][address][city]=ahmedabad&entity[extension_attributes][shipping_assignments][0][shipping][address][country_id]=in&entity[extension_attributes][shipping_assignments][0][shipping][address][email]=test&entity[extension_attributes][shipping_assignments][0][shipping][address][firstname]=Test&entity[extension_attributes][shipping_assignments][0][shipping][address][lastname]=Test&entity[extension_attributes][shipping_assignments][0][shipping][address][postcode]=1234&entity[extension_attributes][shipping_assignments][0][shipping][address][region]=Gujarat&entity[extension_attributes][shipping_assignments][0][shipping][address][region_code]=GJ&entity[extension_attributes][shipping_assignments][0][shipping][address][region_id]=544&entity[extension_attributes][shipping_assignments][0][shipping][address][street][0]=AHm&entity[extension_attributes][shipping_assignments][0][shipping][address][street][1]=New&entity[extension_attributes][shipping_assignments][0][shipping][address][telephone]=111&entity[items][1][name]=½ palle Dkbrænde træpiller svenske 6mm 450kg 10kg poser
+    //pass auth token
+    @PUT()
+    Call<ResponseBody> createorder(@Header("Authorization") String authHeader,@Url String url);
 
 
 }

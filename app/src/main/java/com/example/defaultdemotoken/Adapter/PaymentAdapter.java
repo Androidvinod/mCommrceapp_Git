@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -20,6 +21,7 @@ import java.util.List;
 public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.MyViewHolder> {
     private Context context;
     private List<PaymentModel> paymentModels;
+    private int lastSelectedPosition=0;
 
     public PaymentAdapter(Context context, List<PaymentModel> paymentModels) {
         this.context = context;
@@ -41,7 +43,19 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.MyViewHo
         holder.tv_payment_method_name.setTypeface(SplashActivity.montserrat_bold);
 
         holder.tv_payment_method_name.setText(paymentModels.get(position).getTitle());
-
+        holder.lv_payment_row.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lastSelectedPosition = position;
+                notifyDataSetChanged();
+            }
+        });
+        if (lastSelectedPosition == position) {
+            Log.e("selectedpo_76", "" + lastSelectedPosition);
+            holder.lv_payment_row.setBackground(context.getResources().getDrawable(R.drawable.rounded));
+        } else {
+            holder.lv_payment_row.setBackground(context.getResources().getDrawable(R.drawable.square_borderr));
+        }
     }
 
     @Override
@@ -52,11 +66,13 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.MyViewHo
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView tv_payment_method_name;
+        LinearLayout lv_payment_row;
 
         public MyViewHolder(View view) {
             super(view);
 
             tv_payment_method_name = view.findViewById(R.id.tv_payment_method_name);
+            lv_payment_row = view.findViewById(R.id.lv_payment_row);
 
         }
     }

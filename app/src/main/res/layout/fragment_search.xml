@@ -66,7 +66,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-        <LinearLayout
+    <LinearLayout
             android:id="@+id/lv_search"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -106,7 +106,29 @@
                 app:queryHint="@string/search_hint" />
         </LinearLayout>
 
+    <include
+        android:id="@+id/lvnodata_searchist"
+        layout="@layout/datanotfound"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
     <LinearLayout
+        android:id="@+id/lv_progress_search"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/padding10"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateDrawable="@drawable/progressbar_ui" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lv_main_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -117,8 +139,6 @@
             android:layout_height="match_parent"
             android:id="@+id/recv_search"/>
 
-
     </LinearLayout>
-
 
 </LinearLayout>

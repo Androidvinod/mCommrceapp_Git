@@ -229,7 +229,7 @@
                         android:paddingBottom="@dimen/padding10">
 
                         <TextView
-                            android:id="@+id/tv_stock_status"
+                            android:id="@+id/tv_checkout_cart"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"

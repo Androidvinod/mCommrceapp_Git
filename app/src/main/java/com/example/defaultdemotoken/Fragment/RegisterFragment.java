@@ -539,4 +539,11 @@ public class RegisterFragment extends Fragment implements GoogleApiClient.OnConn
         super.onStop();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        googleApiClient.stopAutoManage(getActivity());
+        googleApiClient.disconnect();
+    }
+
 }

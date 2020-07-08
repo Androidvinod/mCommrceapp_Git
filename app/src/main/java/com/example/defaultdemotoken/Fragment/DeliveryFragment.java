@@ -24,48 +24,46 @@ import com.example.defaultdemotoken.Model.DeliveryModel;
 import com.example.defaultdemotoken.R;
 import com.example.defaultdemotoken.Retrofit.ApiClient;
 import com.example.defaultdemotoken.Retrofit.ApiInterface;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
 import static com.example.defaultdemotoken.Activity.NavigationActivity.drawer;
-
 import static com.example.defaultdemotoken.Adapter.DeliveryAdapter.MyViewHolder.rad_delivery_description;
 import static com.example.defaultdemotoken.Fragment.CheckoutFragment.rad_address;
 import static com.example.defaultdemotoken.Fragment.CheckoutFragment.rad_delivery;
 import static com.example.defaultdemotoken.Fragment.CheckoutFragment.rad_payments;
-import static com.example.defaultdemotoken.Fragment.CheckoutFragment.view_address_first_green;
-import static com.example.defaultdemotoken.Fragment.CheckoutFragment.view_address_first_grey;
+import static com.example.defaultdemotoken.Fragment.CheckoutFragment.view_address_last_green;
+import static com.example.defaultdemotoken.Fragment.CheckoutFragment.view_address_last_grey;
 import static com.example.defaultdemotoken.Fragment.CheckoutFragment.view_del_green;
 import static com.example.defaultdemotoken.Fragment.CheckoutFragment.view_del_grey;
-import static com.example.defaultdemotoken.Fragment.CheckoutFragment.view_payments_green;
-import static com.example.defaultdemotoken.Fragment.CheckoutFragment.view_payments_grey;
+
 
 public class DeliveryFragment extends Fragment implements View.OnClickListener {
 
     View v;
-    RecyclerView delivery_recyclerview;
+    RecyclerView delivery_recyclerview ;
+
     private List<DeliveryModel> deliveryModels = new ArrayList<DeliveryModel>();
     private DeliveryAdapter deliveryAdapter;
+
     LinearLayout lv_delivery_progress,lv_delivery_main,lv_delivery_next;
+
     public static ApiInterface apiInterface;
+    public  static String deliveryaddres;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_delivery, container, false);
-
+        deliveryaddres="";
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
         rad_delivery.setChecked(true);
@@ -75,19 +73,16 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener {
         view_del_grey.setVisibility(View.VISIBLE);
         view_del_green.setVisibility(View.GONE);
 
-        view_address_first_grey.setVisibility(View.VISIBLE);
-        view_address_first_green.setVisibility(View.GONE);
-
-        view_payments_grey.setVisibility(View.VISIBLE);
-        view_payments_green.setVisibility(View.GONE);
+        view_address_last_grey.setVisibility(View.VISIBLE);
+        view_address_last_green.setVisibility(View.GONE);
 
         AllocateMemory();
         AttachRecyclerview();
 
-        //Log.e("customer_quote_id",""+Login_preference.getCustomertoken(getActivity()));
-
         if (CheckNetwork.isNetworkAvailable(getActivity())) {
+
             CallDeliveryApi();
+
         } else {
             Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.internet), Toast.LENGTH_SHORT).show();
         }
@@ -99,12 +94,6 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener {
     }
 
     private void CallDeliveryApi() {
-
-        /*for (int i=0;i<3;i++) {
-            deliveryModels.add(new DeliveryModel("", ""));
-        }
-        deliveryAdapter.notifyDataSetChanged();*/
-
         lv_delivery_progress.setVisibility(View.VISIBLE);
         lv_delivery_main.setVisibility(View.GONE);
         deliveryModels.clear();
@@ -135,9 +124,7 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener {
                             } catch (Exception e) {
                                 Log.e("Exception", "" + e);
                             } finally {
-
                                 deliveryAdapter.notifyItemChanged(i);
-
                             }
                         }
 
@@ -153,7 +140,6 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener {
                 }
 
             }
-
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 lv_delivery_progress.setVisibility(View.GONE);
@@ -187,12 +173,23 @@ public class DeliveryFragment extends Fragment implements View.OnClickListener {
         if (v == lv_delivery_next) {
 
             if (rad_delivery_description.isChecked()==true){
-                pushFragment(new Checkout_Address_Fragment(), "checkout_address");
+
+                Bundle b = new Bundle();
+                b.putString("delivery_address", deliveryaddres);
+                Checkout_Address_Fragment myFragment = new Checkout_Address_Fragment();
+                myFragment.setArguments(b);
+                getFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.fade_in,
+                                0, 0, R.anim.fade_out)
+                        .setCustomAnimations(R.anim.fade_in,
+                                0, 0, R.anim.fade_out)
+                        .add(R.id.frameLayout_checkout, myFragment)
+                        .addToBackStack("checkout_address").commit();
+
             }else {
                 Toast.makeText(getActivity(), "Please select anyone shipping method...", Toast.LENGTH_SHORT).show();
             }
-
-            //pushFragment(new Checkout_Address_Fragment(), "checkout_address");
         }
     }
 

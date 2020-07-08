@@ -517,7 +517,7 @@ public class NavigationActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
+//        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     @Override

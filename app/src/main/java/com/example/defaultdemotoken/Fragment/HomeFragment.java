@@ -265,10 +265,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                             requestOptions.placeholder(R.drawable.image);
                             requestOptions.error(R.drawable.image);
 
-                            Glide.with(getActivity())
-                                    .setDefaultRequestOptions(requestOptions)
-                                    .load(value).into(iv_middle_block);
-
+                            if(getActivity() != null)
+                            {
+                                Glide.with(getActivity())
+                                        .setDefaultRequestOptions(requestOptions)
+                                        .load(value).into(iv_middle_block);
+                            }
                         }
 
                         JSONArray newProducts = jsonObject.getJSONArray("newProducts");
@@ -290,10 +292,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                                 newArrivalsAdapter.notifyItemChanged(i);
                             }
                         }
-
                         JSONArray bottomBlock = jsonObject.getJSONArray("bottomBlock");
                         Log.e("homepage_bottomBlock", "" + middleBlock);
-
                         for (int i = 0; i < bottomBlock.length(); i++) {
 
                             String value = bottomBlock.getString(i);
@@ -307,22 +307,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                             Glide.with(getActivity())
                                     .setDefaultRequestOptions(requestOptions)
                                     .load(value).into(iv_bottom_block);
-
                         }
-
-
                     } catch (JSONException | IOException e) {
                         e.printStackTrace();
                         lv_home_progress.setVisibility(View.GONE);
                         home_nested.setVisibility(View.VISIBLE);
                         Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-
-
-                } else {
-
-                }
-
+                } else { }
             }
 
             @Override

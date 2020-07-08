@@ -36,6 +36,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.defaultdemotoken.Activity.NavigationActivity;
+import com.example.defaultdemotoken.Activity.SplashActivity;
 import com.example.defaultdemotoken.Adapter.CartlistAdapter_new;
 import com.example.defaultdemotoken.CheckNetwork;
 import com.example.defaultdemotoken.Login_preference;
@@ -80,7 +81,7 @@ public class CartListFragment extends Fragment {
     public static CoordinatorLayout cordinator_cart;
     public static Context context;
     static LinearLayout lv_nodata_cart;
-    TextView tv_cart_subtotal;
+    TextView tv_cart_subtotal,tv_checkout_cart;
     public CartListFragment() {
         // Required empty public constructor
     }
@@ -393,7 +394,10 @@ public class CartListFragment extends Fragment {
         cordinator_cart = v.findViewById(R.id.cordinator_cart);
         lv_nodata_cart = v.findViewById(R.id.lv_nodata_cart);
         tv_cart_subtotal = v.findViewById(R.id.tv_cart_subtotal);
+        tv_checkout_cart = v.findViewById(R.id.tv_checkout_cart);
       //  lv_cart_Main = v.findViewById(R.id.lv_cart_Main);
+
+        tv_checkout_cart.setTypeface(SplashActivity.montserrat_semibold);
     }
 
     @Override

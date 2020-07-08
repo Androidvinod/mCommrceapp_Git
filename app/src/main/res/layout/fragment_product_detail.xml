@@ -75,6 +75,12 @@
                         android:layout_height="wrap_content"
                         android:src="@drawable/wishlist"
                         android:tint="@color/black"/>
+                    <ImageView
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/fill_wishlist"
+                        />
                 </LinearLayout>
 
 
@@ -525,10 +531,11 @@
                             android:layout_height="wrap_content">
                             <ImageView
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/ic_check_circle_black_24dp"/>
+                                android:layout_height="25dp"
+                                android:src="@drawable/check_round"/>
                         </LinearLayout>
                         <TextView
+                            android:layout_marginLeft="@dimen/padding10"
                             android:id="@+id/tv_feature_value1"
                             android:layout_weight="0.3"
                             android:layout_width="match_parent"
@@ -555,12 +562,12 @@
                             android:layout_height="wrap_content">
                             <ImageView
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/ic_check_circle_black_24dp"/>
+                                android:layout_height="25dp"
+                                android:src="@drawable/check_round"/>
                         </LinearLayout>
                         <TextView
                             android:id="@+id/tv_feature_value2"
-
+                            android:layout_marginLeft="@dimen/padding10"
                             android:layout_weight="0.3"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -586,10 +593,11 @@
                             android:layout_height="wrap_content">
                             <ImageView
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/ic_check_circle_black_24dp"/>
+                                android:layout_height="25dp"
+                                android:src="@drawable/check_round"/>
                         </LinearLayout>
                         <TextView
+                            android:layout_marginLeft="@dimen/padding10"
                             android:id="@+id/tv_feature_value3"
                             android:layout_weight="0.3"
                             android:layout_width="match_parent"

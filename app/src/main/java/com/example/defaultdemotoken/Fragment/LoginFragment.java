@@ -594,7 +594,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener,Goog
         if (googleApiClient != null) {
             googleApiClient.connect();
         }
-
     }
 
     @Override
@@ -604,6 +603,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener,Goog
             googleApiClient.disconnect();
         }
         super.onStop();
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        googleApiClient.stopAutoManage(getActivity());
+        googleApiClient.disconnect();
     }
 
 }

@@ -16,7 +16,7 @@ import com.example.defaultdemotoken.Activity.SplashActivity;
 import com.example.defaultdemotoken.R;
 
 
-public class OrderSuccessful extends Fragment {
+public class OrderSuccessfulFragment extends Fragment {
 
     View v;
     LinearLayout lv_back_to_home;

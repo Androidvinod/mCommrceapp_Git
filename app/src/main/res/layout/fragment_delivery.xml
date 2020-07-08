@@ -54,7 +54,7 @@
                 android:id="@+id/lv_delivery_next"
                 android:layout_width="150dp"
                 android:layout_height="45dp"
-                android:background="@drawable/rounded"
+                android:background="@drawable/rounded_greeeen"
                 android:layout_gravity="end"
                 android:layout_marginRight="@dimen/margin20">
 

@@ -131,8 +131,7 @@
                         android:layout_gravity="end"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:tint="@color/black"
-                        android:src="@drawable/ic_favorite_black_24dp"/>
+                        android:src="@drawable/fill_wishlist"/>
 
                 </LinearLayout>
 

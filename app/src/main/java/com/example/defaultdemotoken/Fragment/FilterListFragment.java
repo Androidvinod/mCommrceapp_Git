@@ -86,7 +86,6 @@ public class FilterListFragment extends Fragment {
             catid=b.getString("categoryid");
             catname=b.getString("categoryname");
             Log.e("catid83", "=" + catid);
-
         }
         ((NavigationActivity) getActivity()).setSupportActionBar(toolbar_filter);
         ((NavigationActivity) getActivity()).getSupportActionBar()
@@ -101,8 +100,6 @@ public class FilterListFragment extends Fragment {
         sortByAdapter = new SortByAdapter(getActivity(),sortModelList);
         rv_sort_by.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
         rv_sort_by.setAdapter(sortByAdapter);
-
-
 
         if (CheckNetwork.isNetworkAvailable(getActivity())) {
             CALL_Filter_Api(catid);
@@ -136,7 +133,6 @@ public class FilterListFragment extends Fragment {
                         Log.e("jsonarray", "=" + jsonArray.length());
                         Log.e("jsonarray", "=" + jsonArray);
 
-
                             JSONObject jsonObject=jsonArray.getJSONObject(0);
                             JSONArray filterarray=jsonObject.getJSONArray("filter");
                             JSONArray sortarray=jsonObject.getJSONArray("sort");
@@ -155,10 +151,7 @@ public class FilterListFragment extends Fragment {
                             {
                                 JSONObject jsonObject1=sortarray.getJSONObject(i);
                                 sortModelList.add(new SortModel(jsonObject1.optString("label"),jsonObject1.optString("name")));
-
                             }
-
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     } catch (IOException e) {

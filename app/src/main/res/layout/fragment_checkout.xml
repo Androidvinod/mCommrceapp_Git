@@ -42,7 +42,7 @@
                     android:gravity="center">
 
                     <TextView
-                        android:id="@+id/tv_acc_info"
+                        android:id="@+id/tv_checkout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -96,6 +96,185 @@
             android:layout_weight="3.6"
             android:background="@color/white"
             android:gravity="center|top"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/padding10"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="10"
+                android:paddingLeft="@dimen/padding15"
+                android:paddingRight="@dimen/padding8"
+                android:paddingTop="@dimen/padding3"
+                android:paddingBottom="@dimen/padding3">
+
+                <RadioButton
+                    android:id="@+id/rad_delivery"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2.33"
+                    android:button="@drawable/radiobutton_drawable"
+                    android:enabled="false"
+                    android:focusable="false"
+                     />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.505"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                     <View
+                            android:id="@+id/view_del_grey"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:visibility="visible"
+                            android:background="@color/view_bg"
+                            android:layout_gravity="center"/>
+                    <View
+                        android:id="@+id/view_del_green"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:visibility="gone"
+                        android:background="@color/green"
+                        android:layout_gravity="center"/>
+
+                </LinearLayout>
+
+              <!--  <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2.33"
+                    >
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/padding30"
+                        android:src="@drawable/checked_radio"/>
+
+                </LinearLayout>-->
+
+                <RadioButton
+                    android:visibility="visible"
+                    android:id="@+id/rad_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2.33"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:enabled="false"
+                    android:focusable="false"
+                    android:button="@drawable/radiobutton_drawable"
+                     />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.505"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <View
+                        android:id="@+id/view_address_last_grey"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:visibility="visible"
+                        android:background="@color/view_bg"
+                        android:layout_gravity="center"/>
+                    <View
+                        android:id="@+id/view_address_last_green"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:visibility="gone"
+                        android:background="@color/greeen"
+                        android:layout_gravity="center"/>
+
+                </LinearLayout>
+
+                <RadioButton
+                    android:id="@+id/rad_payments"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2.32"
+                    android:layout_gravity="center|start"
+                    android:gravity="center|start"
+                    android:button="@drawable/radiobutton_drawable"
+                    android:enabled="false"
+                    android:focusable="false"
+                     />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="6"
+                android:paddingRight="@dimen/padding10"
+                android:paddingLeft="@dimen/padding10">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center|start"
+                    android:layout_weight="2">
+
+                    <TextView
+                        android:id="@+id/tv_checkout_delevery"
+                            android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/delivery"
+                        android:gravity="center|start"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp"
+                        android:visibility="visible" />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_weight="2">
+                    <TextView
+                        android:id="@+id/tv_checkout_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/address"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:visibility="visible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center|end"
+                    android:layout_weight="2">
+                    <TextView
+                        android:id="@+id/tv_checkout_payments"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/payments"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp"
+                        android:gravity="center|end"
+                        android:visibility="visible" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+       <!-- <LinearLayout
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center|top"
+            android:layout_weight="3.6"
+            android:background="@color/white"
+            android:gravity="center|top"
             android:orientation="horizontal"
             android:weightSum="6">
 
@@ -126,7 +305,7 @@
                             android:id="@+id/rad_delivery"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1.3"
+                            android:layout_weight="1.6"
                             android:backgroundTint="@color/greeen"
                             android:buttonTint="@color/greeen"
                             android:drawableTint="@color/greeen"
@@ -138,7 +317,7 @@
                             android:id="@+id/view_del_grey"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:layout_weight="0.7"
+                            android:layout_weight="0.4"
                             android:visibility="visible"
                             android:background="@color/view_bg"
                             android:layout_gravity="center"/>
@@ -146,7 +325,7 @@
                         <View
                             android:id="@+id/view_del_green"
                             android:layout_width="match_parent"
-                            android:layout_weight="0.7"
+                            android:layout_weight="0.4"
                             android:layout_height="1dp"
                             android:visibility="gone"
                             android:background="@color/green"
@@ -198,13 +377,14 @@
                         android:layout_height="match_parent"
                         android:orientation="horizontal"
                         android:gravity="center"
+                        android:layout_gravity="center"
                         android:layout_weight="1"
                         android:weightSum="3">
 
                         <View
                             android:id="@+id/view_address_first_grey"
                             android:layout_width="match_parent"
-                            android:layout_weight="1"
+                            android:layout_weight="0.9"
                             android:layout_height="1dp"
                             android:visibility="visible"
                             android:background="@color/view_bg"
@@ -215,7 +395,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:visibility="gone"
-                            android:layout_weight="1"
+                            android:layout_weight="0.9"
                             android:background="@color/greeen"
                             android:layout_gravity="center"/>
 
@@ -223,8 +403,9 @@
                             android:id="@+id/rad_address"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:layout_marginLeft="3dp"
+                            android:layout_weight="1.2"
+                            android:layout_gravity="center|left"
+                            android:gravity="center|start"
                             android:buttonTint="@color/greeen"
                             android:backgroundTint="@color/greeen"
                             android:drawableTint="@color/greeen"
@@ -236,7 +417,7 @@
                             android:id="@+id/view_address_last_grey"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:layout_weight="1"
+                            android:layout_weight="0.9"
                             android:visibility="visible"
                             android:background="@color/view_bg"
                             android:layout_gravity="center"/>
@@ -246,7 +427,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:visibility="gone"
-                            android:layout_weight="1"
+                            android:layout_weight="0.9"
                             android:background="@color/greeen"
                             android:layout_gravity="center"/>
 
@@ -297,7 +478,7 @@
                         <View
                             android:id="@+id/view_payments_grey"
                             android:layout_width="match_parent"
-                            android:layout_weight="0.7"
+                            android:layout_weight="0.6"
                             android:layout_height="1dp"
                             android:visibility="visible"
                             android:background="@color/view_bg"
@@ -308,7 +489,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:visibility="gone"
-                            android:layout_weight="0.7"
+                            android:layout_weight="0.6"
                             android:background="@color/green"
                             android:layout_gravity="center"/>
 
@@ -316,7 +497,8 @@
                             android:id="@+id/rad_payments"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1.3"
+                            android:layout_weight="1.2"
+                            android:layout_gravity="center|start"
                             android:buttonTint="@color/greeen"
                             android:backgroundTint="@color/greeen"
                             android:drawableTint="@color/greeen"
@@ -346,7 +528,7 @@
 
             </LinearLayout>
 
-            <!--<LinearLayout
+            &lt;!&ndash;<LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center|top"
@@ -495,9 +677,9 @@
 
                 </LinearLayout>
 
-            </LinearLayout>-->
+            </LinearLayout>&ndash;&gt;
 
-        </LinearLayout>
+        </LinearLayout>-->
 
         <LinearLayout
             android:layout_width="match_parent"

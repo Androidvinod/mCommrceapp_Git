@@ -110,6 +110,7 @@
     <string name="signup">SIGN UP</string>
     <string name="createaccounttt">Create An Account</string>
 
+    <string name="vall">Please enter 3 or more characters</string>
 
 
     <string name="enterfirstname">Please Enter First Name</string>
@@ -175,4 +176,15 @@
     <string name="payments">Payments</string>
     <string name="next">Next</string>
     <string name="backk">Back</string>
+    <string name="nameoncard">Name on Card</string>
+    <string name="cardnoo">Card Number</string>
+    <string name="expirydate">Expiry Date</string>
+    <string name="cvv">CVV</string>
+    <string name="savecard">Save this card details</string>
+    <string name="vouchercode">Enter Voucher Code</string>
+    <string name="subtotal">Sub Total (3 items)</string>
+    <string name="tax">Tax</string>
+    <string name="order">Place Your Order</string>
+    <string name="discount">Discount</string>
+    <string name="total">Total</string>
 </resources>

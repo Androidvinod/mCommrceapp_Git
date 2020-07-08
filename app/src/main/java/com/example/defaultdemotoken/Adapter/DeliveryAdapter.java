@@ -18,6 +18,8 @@ import com.example.defaultdemotoken.R;
 
 import java.util.List;
 
+import static com.example.defaultdemotoken.Fragment.DeliveryFragment.deliveryaddres;
+
 public class DeliveryAdapter extends RecyclerView.Adapter<DeliveryAdapter.MyViewHolder> {
     private Context context;
     private List<DeliveryModel> deliveryModels;
@@ -50,9 +52,10 @@ public class DeliveryAdapter extends RecyclerView.Adapter<DeliveryAdapter.MyView
             @Override
             public void onClick(View v) {
                 lastSelectedPosition = position;
-               /* Log.e("redio_selected", "" + datum.getValue());*/
+                deliveryaddres=deliveryModels.get(position).getCarrier_code();
+                Log.e("deliveryaddres", "" + deliveryaddres);
                // CheckoutFragment.paymentmethod_selcted = datum.getValue();
-                //notifyDataSetChanged();
+                notifyDataSetChanged();
             }
         });
 
