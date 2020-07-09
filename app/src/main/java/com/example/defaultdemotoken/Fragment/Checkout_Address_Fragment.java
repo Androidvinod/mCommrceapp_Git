@@ -1,4 +1,4 @@
-package com.example.defaultdemotoken.Adapter;
+package com.example.defaultdemotoken.Fragment;
 
 import android.os.Bundle;
 
@@ -14,10 +14,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.defaultdemotoken.Activity.NavigationActivity;
+import com.example.defaultdemotoken.Adapter.AddressBookAdapter;
 import com.example.defaultdemotoken.CheckNetwork;
 import com.example.defaultdemotoken.Fragment.DeliveryFragment;
 import com.example.defaultdemotoken.Login_preference;
@@ -53,6 +55,8 @@ public class Checkout_Address_Fragment extends Fragment implements View.OnClickL
     AddressBookAdapter addressBookAdapter;
     String delivery_address;
     public static String addressidd;
+    CheckBox checkbox_biling;
+    Boolean isBillingAddress=false;
     Bundle b;
 
     @Override
@@ -69,6 +73,28 @@ public class Checkout_Address_Fragment extends Fragment implements View.OnClickL
             delivery_address=b.getString("delivery_address");
             Log.e("debug_706","="+delivery_address);
         }
+
+        checkbox_biling.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean checked = ((CheckBox) v).isChecked();
+                // Check which checkbox was clicked
+                if (checked){
+                    isBillingAddress=checked;
+                    Log.e("debug_89","="+checked);
+                    Log.e("debug_89","="+isBillingAddress);
+
+                    // Do your coding
+                }
+                else{
+                    isBillingAddress=checked;
+
+                    Log.e("debug_00_unchecked","="+checked);
+                    Log.e("debug_00_unchecked","="+isBillingAddress);
+                    // Do your coding
+                }
+            }
+        });
 
 
         rad_delivery.setChecked(false);
@@ -108,6 +134,7 @@ public class Checkout_Address_Fragment extends Fragment implements View.OnClickL
         recyclerview_address = v.findViewById(R.id.recyclerview_address);
         lvnodata_addres = v.findViewById(R.id.lvnodata_addres);
         lv_progress_address = v.findViewById(R.id.lv_progress_address);
+        checkbox_biling = v.findViewById(R.id.checkbox_biling);
     }
 
 
@@ -187,6 +214,7 @@ public class Checkout_Address_Fragment extends Fragment implements View.OnClickL
     @Override
     public void onClick(View v) {
         if (v == lv_address_back) {
+
             Bundle b = new Bundle();
             b.putString("delivery_address", delivery_address);
             DeliveryFragment myFragment = new DeliveryFragment();
@@ -206,6 +234,7 @@ public class Checkout_Address_Fragment extends Fragment implements View.OnClickL
             Bundle b = new Bundle();
             b.putString("delivery_address", delivery_address);
             b.putString("addressidd", addressidd);
+            b.putBoolean("isBillingAddress", isBillingAddress);
             PaymentsFragment myFragment = new PaymentsFragment();
             myFragment.setArguments(b);
             getFragmentManager()

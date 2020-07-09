@@ -91,6 +91,7 @@ public class PaymentsFragment extends Fragment implements View.OnClickListener {
             ,cart_base_row_total="",cart_base_tax_amount="",cart_discount_amount="",cart_discount_percent="",cart_name="",cart_original_price="",cart_price="",
             cart_price_incl_tax="",cart_product_id="",cart_qty_ordered="",cart_row_total="",cart_row_total_incl_tax="";
     String halfUrl="",billingaddressurl="",shippingAddressUrl="",cartItemsUrl="";
+    Boolean isBillingAddress;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -112,8 +113,10 @@ public class PaymentsFragment extends Fragment implements View.OnClickListener {
         {
             delivery_address=b.getString("delivery_address");
             addressidd=b.getString("addressidd");
+            isBillingAddress=b.getBoolean("isBillingAddress");
             Log.e("debug_100","s"+delivery_address);
             Log.e("addressidd","s"+addressidd);
+            Log.e("isBillingAddress","s"+isBillingAddress);
         }
 
         rad_delivery.setChecked(false);
@@ -313,7 +316,7 @@ public class PaymentsFragment extends Fragment implements View.OnClickListener {
 
                         }
 
-                        halfUrl="entity[base_currency_code]="+base_currency_code+"&entity[base_discount_amount]="+base_discount_amount+
+                        halfUrl="entity[payment][method]="+paymentMethod+"&entity[base_currency_code]="+base_currency_code+"&entity[base_discount_amount]="+base_discount_amount+
                                     "&entity[base_grand_total]="+base_grand_total+"&entity[base_shipping_amount]="+base_shipping_amount+
                                 "&entity[base_subtotal]="+base_subtotal+"&entity[base_tax_amount]="+base_tax_amount+
                                 "&entity[customer_email]="+customer_email+"&entity[customer_firstname]="+customer_firstname+
@@ -323,17 +326,17 @@ public class PaymentsFragment extends Fragment implements View.OnClickListener {
                             "&entity[subtotal_incl_tax]="+subtotal_incl_tax+"&entity[tax_amount]="+tax_amount+"&total_qty_ordered="+total_qty_ordered;
 
 
-                        cartItemsUrl=cart_base_discount_amount+"&"+cart_base_original_price+"&"+cart_base_price+"&"+cart_base_row_invoiced+
+                        cartItemsUrl=cart_base_discount_amount+"&"+cart_base_original_price+"&"+cart_base_price+
                                 "&"+cart_base_price_incl_tax+"&"+cart_base_price_incl_tax+"&"+cart_discount_amount+"&"+cart_base_row_total+"&"+
                                 cart_row_total_incl_tax+"&"+cart_row_total+"&"+cart_qty_ordered+"&"+cart_product_id+"&"+cart_price_incl_tax+
                                 "&"+cart_price+"&"+cart_original_price+"&"+cart_name+"&"+cart_discount_percent+"&"+cart_discount_amount;
 
 
-                        Log.e("cart_base_discount_amount_212", "" +cart_base_discount_amount);
-                        Log.e("cart_base_original_price", "" +cart_base_original_price);
+                        Log.e("cartdiscountamount_212", "" +cart_base_discount_amount);
+                        Log.e("cart_base_riginalprice", "" +cart_base_original_price);
                         Log.e("cart_base_price", "" +cart_base_price);
                         Log.e("cart_base_row_invoiced", "" +cart_base_row_invoiced);
-                        Log.e("cart_base_price_incl_tax", "" +cart_base_price_incl_tax);
+                        Log.e("cart_basepricencl_tax", "" +cart_base_price_incl_tax);
                         Log.e("cart_discount_amount", "" +cart_discount_amount);
                         Log.e("cart_base_row_total", "" +cart_base_row_total);
                         Log.e("cart_row_total_incl_tax", "" +cart_row_total_incl_tax);
@@ -417,7 +420,7 @@ public class PaymentsFragment extends Fragment implements View.OnClickListener {
                         Log.e("telephone", "=" + telephone);
                         Log.e("city", "=" + city);
 
-                        billingaddressurl="&entity[payment][method]="+paymentMethod+"&entity[billing_address][address_type]="+address_type+
+                        billingaddressurl="&entity[billing_address][address_type]="+address_type+
                                 "&entity[billing_address][city]="+city+"&entity[billing_address][country_id]="+country_id+
                                 "&entity[billing_address][email]="+email+"&entity[billing_address][firstname]="+firstname+
                                 "&entity[billing_address][lastname]="+lastname+"&entity[billing_address][postcode]="+postcode+
@@ -520,7 +523,7 @@ public class PaymentsFragment extends Fragment implements View.OnClickListener {
     }
 
     public Call<ResponseBody> callPaymentMethodsApi() {
-        return apiInterface.getPaymentMethod("Bearer " + Login_preference.gettoken(getActivity()), "http://dkbraende.demoproject.info/rest//V1/carts/"+"192001"+"/payment-methods");
+        return apiInterface.getPaymentMethod("Bearer " + Login_preference.gettoken(getActivity()), "http://dkbraende.demoproject.info/rest//V1/carts/"+Login_preference.getquote_id(getActivity())+"/payment-methods");
     }
 
     private void AllocateMemory() {
@@ -618,7 +621,7 @@ public class PaymentsFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         if (v==lv_placeorder){
 
-           // CallCreateOrderApi();
+            CallCreateOrderApi();
        }
     }
 
@@ -640,6 +643,14 @@ public class PaymentsFragment extends Fragment implements View.OnClickListener {
                     try {
                         jsonObject = new JSONObject(response.body().string());
                         Log.e("jsonObject_640", "" + jsonObject);
+
+                        JSONArray jsonArray=jsonObject.getJSONArray("items");
+                        Log.e("jsonArray", "" + jsonArray);
+
+                        JSONObject billing_address=jsonObject.getJSONObject("billing_address");
+                        Log.e("billing_address", "" + billing_address);
+                        Toast.makeText(getActivity(), "Order Placed successfully", Toast.LENGTH_SHORT).show();
+                        pushFragment(new OrderSuccessfulFragment(),"ordersuces");
 
                       /*  for (int i = 0; i < itemArray.length(); i++) {
                             try {
@@ -688,10 +699,14 @@ public class PaymentsFragment extends Fragment implements View.OnClickListener {
 
         Log.e("debug_authtoken", "=" + Login_preference.gettoken(getActivity()));
         Log.e("cuome3333", "=" + Login_preference.getCustomertoken(getActivity()));
-        String url = ApiClient.MAIN_URLL + "orders/create?" + halfUrl+"&"+cartItemsUrl+shippingAddressUrl+billingaddressurl;
+        String url;
+         if(isBillingAddress==true)
+         {
+              url = ApiClient.MAIN_URLL + "orders/create?" + halfUrl+"&"+cartItemsUrl+shippingAddressUrl+billingaddressurl;
+         }else {
+              url = ApiClient.MAIN_URLL + "orders/create?" + halfUrl+"&"+cartItemsUrl+billingaddressurl;
+         }
         Log.e("debug_155", "=" + url);
-
-
         return apiInterface.createorder("Bearer " + Login_preference.gettoken(getActivity()), url);
     }
 
@@ -711,8 +726,7 @@ public class PaymentsFragment extends Fragment implements View.OnClickListener {
         if (fragmentManager != null) {
             FragmentTransaction ft = fragmentManager.beginTransaction();
             if (ft != null) {
-                ft.replace(R.id.frameLayout_checkout, fragment);
-                ft.addToBackStack(add_to_backstack);
+                ft.replace(R.id.framlayout, fragment);
                 ft.commit();
             }
         }

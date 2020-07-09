@@ -214,8 +214,6 @@ public interface ApiInterface {
     Call<ResponseBody> getFilterList(@Header("Authorization") String authHeader,
                                         @Url String url);
 
-
-
     //search first api
     //http://dkbraende.demoproject.info/rest/V1/search?searchCriteria[requestName]=quick_search_container&searchCriteria[filter_groups][0][filters][0][field]=search_term&searchCriteria[filter_groups][0][filters][0][value]=brændetårn&fields=items[id]
     //getsearch api

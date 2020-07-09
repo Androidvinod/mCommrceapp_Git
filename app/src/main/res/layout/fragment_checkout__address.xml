@@ -24,6 +24,7 @@
                 android:orientation="vertical">
 
                 <CheckBox
+                    android:id="@+id/checkbox_biling"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:button="@drawable/checkbox_selector"

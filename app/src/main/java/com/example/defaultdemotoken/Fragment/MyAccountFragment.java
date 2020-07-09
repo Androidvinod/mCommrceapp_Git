@@ -36,10 +36,10 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
 
     public Toolbar toolbar_account;
     TextView tv_signinnn,tv_create_acc,tv_sihnin,tv_my_settings_title,tv_app_setting,tv_help,
-            tv_hotline,tv_no,tv_terms_condition,tv_privacy,tv_changepssword,tv_my_account_title,tv_detail,tv_create_logout;
+            tv_hotline,tv_no,tv_terms_condition,tv_privacy,tv_changepssword,tv_my_account_title,tv_detail,tv_create_logout,tv_myorder;
 
     LinearLayout lv_create_account,lv_sign_in,lv_app_ssettings,lv_help,lv_hotline,lv_terms_condition,lv_privacy,lv_change_password,lv_my_detail,lv_with_login,
-            lv_without_login,lv_logut;
+            lv_without_login,lv_logut,lv_my_order;
 
     public MyAccountFragment() {
         // Required empty public constructor
@@ -72,6 +72,7 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
         lv_sign_in.setOnClickListener(this);
         lv_create_account.setOnClickListener(this);
         lv_logut.setOnClickListener(this);
+        lv_my_order.setOnClickListener(this);
 
 
         if(Login_preference.getLogin_flag(getActivity()).equalsIgnoreCase("1"))
@@ -89,6 +90,7 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
     }
 
     private void AllocateMemory(View v) {
+        tv_myorder = v.findViewById(R.id.tv_myorder);
         tv_create_logout = v.findViewById(R.id.tv_create_logout);
         lv_logut = v.findViewById(R.id.lv_logut);
         lv_without_login = v.findViewById(R.id.lv_without_login);
@@ -116,6 +118,7 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
         tv_sihnin = v.findViewById(R.id.tv_sihnin);
         tv_my_settings_title = v.findViewById(R.id.tv_my_settings_title);
         lv_change_password = v.findViewById(R.id.lv_change_password);
+        lv_my_order = v.findViewById(R.id.lv_my_order);
 
 
 
@@ -133,6 +136,7 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
         tv_privacy.setTypeface(SplashActivity.montserrat_medium);
         tv_changepssword.setTypeface(SplashActivity.montserrat_medium);
         tv_detail.setTypeface(SplashActivity.montserrat_medium);
+        tv_myorder.setTypeface(SplashActivity.montserrat_medium);
     }
     private void pushFragment(Fragment fragment, String add_to_backstack) {
         if (fragment == null)
@@ -229,6 +233,9 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
                         .commit();
 
             }
+        }else if(v==lv_my_order)
+        {
+            pushFragment(new OrderListFragment(),"order");
 
         }
     }

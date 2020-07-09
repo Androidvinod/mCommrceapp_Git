@@ -32,7 +32,6 @@
     <string name="wentwrong">Something went wrong ..</string>
 
 
-
     <string name="google_maps_key">AIzaSyACEdrg8VTLbxmOWcGGYI8YMsQN-OfdwKE</string>
     <string name="delete">Delete</string>
     <string name="search_hint">Search Here..</string>
@@ -106,7 +105,7 @@
     <string name="sign_withfb">Sign In With Facebook</string>
     <string name="sign_upgoogleaccount">Sign In With Google</string>
     <string name="register">Register</string>
-    <string name="name" >Name</string>
+    <string name="name">Name</string>
     <string name="signup">SIGN UP</string>
     <string name="createaccounttt">Create An Account</string>
 
@@ -187,4 +186,11 @@
     <string name="order">Place Your Order</string>
     <string name="discount">Discount</string>
     <string name="total">Total</string>
+    <string name="orderlist">Order List</string>
+    <string name="myorder">My Orders</string>
+    <string name="my_orders">My Current Order</string>
+    <string name="order_history">My Complete Order</string>
+    <string name="itemid">Item ID :</string>
+    <string name="orderstatus">Order Status :</string>
+    <string name="reorder">Reorder</string>
 </resources>

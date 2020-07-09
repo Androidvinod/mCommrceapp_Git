@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.example.defaultdemotoken.Adapter.Checkout_Address_Fragment;
 import com.example.defaultdemotoken.Adapter.DeliveryAdapter;
 import com.example.defaultdemotoken.CheckNetwork;
 import com.example.defaultdemotoken.Login_preference;

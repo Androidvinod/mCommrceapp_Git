@@ -60,8 +60,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="5dp"
-                                app:hintTextAppearance="@style/HintText"
-                                >
+                                app:hintTextAppearance="@style/HintText">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/et_card_name"

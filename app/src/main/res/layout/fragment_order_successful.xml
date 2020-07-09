@@ -31,7 +31,7 @@
                     android:gravity="center"
                     android:layout_gravity="center"
                     android:layout_margin="@dimen/margin20"
-                    android:layout_marginBottom="50dp">
+                    android:layout_marginBottom="30dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -89,6 +89,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="bottom"
                     android:gravity="bottom"
+                    android:layout_marginBottom="@dimen/padding30"
                     android:orientation="vertical">
 
                     <LinearLayout
@@ -97,8 +98,8 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/rounded_greeeen"
                         android:gravity="center"
-                        android:layout_marginRight="@dimen/margin10"
-                        android:layout_marginLeft="@dimen/margin10"
+                        android:layout_marginRight="@dimen/padding15"
+                        android:layout_marginLeft="@dimen/padding15"
                         android:padding="@dimen/padding10">
 
                         <TextView
@@ -107,7 +108,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:includeFontPadding="false"
-                            android:padding="@dimen/padding2"
+                            android:padding="@dimen/padding3"
                             android:text="B A C K  T O  H O M E"
                             android:textColor="@color/white"
                             android:textSize="@dimen/text_12" />
